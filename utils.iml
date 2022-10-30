@@ -89,5 +89,6 @@
     <orderEntry type="library" name="benchfella" level="project" />
     <orderEntry type="library" name="uuid" level="project" />
     <orderEntry type="library" name="inflex" level="project" />
+    <orderEntry type="library" name="benchfella" level="project" />
   </component>
 </module>
