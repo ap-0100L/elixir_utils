@@ -90,5 +90,6 @@
     <orderEntry type="library" name="uuid" level="project" />
     <orderEntry type="library" name="inflex" level="project" />
     <orderEntry type="library" name="benchfella" level="project" />
+    <orderEntry type="library" name="logger_file_backend" level="project" />
   </component>
 </module>
