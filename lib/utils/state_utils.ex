@@ -241,7 +241,7 @@ defmodule StateUtils do
 
     result =
       case result do
-        {:error, _data, _messages} ->
+        {:error, _code, _data, _messages} ->
           false
 
         {:error, _reason} ->
