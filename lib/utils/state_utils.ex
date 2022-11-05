@@ -252,7 +252,7 @@ defmodule StateUtils do
           true
       end
 
-    {:ok, result}
+    result
   end
 
   ##############################################################################
