@@ -296,13 +296,7 @@ defmodule Macros do
           data = Map.put(data, :euid, UUID.uuid1())
           opt = Keyword.delete(unquote(opt), :data)
 
-          Enum.reduce(
-            opt,
-            data,
-            fn {key, value}, accum ->
-              Map.put(accum, key, value)
-            end
-          )
+          Enum.into(opt, %{})
         end
 
       {
