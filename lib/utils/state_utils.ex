@@ -225,5 +225,35 @@ defmodule StateUtils do
   end
 
   ##############################################################################
+  @doc """
+
+  """
+  def is_exists?(name)
+      when not is_atom(name),
+      do: throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name cannot be nil; name must be an atom"])
+
+  def is_exists?(name) do
+    result =
+      catch_error!(
+        Agent.get(name, fn state -> state end),
+        false
+      )
+
+    result =
+      case result do
+        {:error, _data, _messages} ->
+          false
+
+        {:error, _reason} ->
+          false
+
+        result ->
+          true
+      end
+
+    {:ok, result}
+  end
+
+  ##############################################################################
   ##############################################################################
 end
