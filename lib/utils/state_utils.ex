@@ -236,6 +236,7 @@ defmodule StateUtils do
     result =
       catch_error!(
         Agent.get(name, fn state -> state end),
+        false,
         false
       )
 
