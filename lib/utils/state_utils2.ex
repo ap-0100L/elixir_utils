@@ -1,8 +1,11 @@
-defmodule StateUtils2 do
+defmodule StateUtils do
   ##############################################################################
   ##############################################################################
   @moduledoc """
-
+    children = [
+      {Registry, keys: :unique, name: StateUtils.Registry},
+      {DynamicSupervisor, strategy: :one_for_one, name: StateUtils.Supervisor},
+  ]
   """
 
   use GenServer
@@ -14,6 +17,7 @@ defmodule StateUtils2 do
 
   alias __MODULE__, as: SelfModule
 
+  @registry_name StateUtils.Registry
   @supervisor_name StateUtils.Supervisor
 
   ##############################################################################
@@ -23,7 +27,7 @@ defmodule StateUtils2 do
   @impl true
   def init(state) do
     name = Map.fetch!(state, :name)
-    Registry.register(AP.Registry, name, :value)
+    Registry.register(@registry_name, name, :value)
 
     {:ok, state}
   end
@@ -84,27 +88,13 @@ defmodule StateUtils2 do
     result =
       catch_error!(
         (
-          opts = [
-            strategy: :one_for_one,
-            name: @supervisor_name
-          ]
 
           state = Map.put(state, :name, name)
           item = Supervisor.child_spec({SelfModule, state}, id: name)
 
-          result = Supervisor.start_link([item], opts)
+          DynamicSupervisor.start_child(@supervisor_name, item)
 
-          result =
-            case result do
-              {:error, {:already_started, _}} ->
-                Supervisor.start_child(@supervisor_name, item)
-
-              _ ->
-                result
-            end
-
-          result
-        ),
+          ),
         false
       )
 
