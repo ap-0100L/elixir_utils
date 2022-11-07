@@ -13,7 +13,7 @@ defmodule Utils do
   @application_name :api_core
   @valid_id_start_at -1
   @string_separator ";"
-  @json_converter ApiCore.Serializers.Json.Converter
+  @json_converter Jason
 
   @format_string_wildcard_pattern "{#}"
 
@@ -1068,7 +1068,7 @@ defmodule Utils do
 
   def create_module(module, module_text, env)
       when not is_atom(module) or not is_bitstring(module_text) or (not is_nil(env) and not is_list(env)),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string; env is not nil must be a list"])
+      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string; if env is not nil must be a list"])
 
   def create_module(module, module_text, env) do
     module_contents = Code.string_to_quoted!(module_text)

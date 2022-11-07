@@ -80,8 +80,8 @@ defmodule ConfigUtils do
     do: throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["env can not be nil; env must be a string"])
 
   def get_env_name!(env) do
-    in_docker = System.get_env("PROJECT_IN_DOCKER")
-    throw_if_empty!(in_docker, :string, "Wrong PROJECT_IN_DOCKER value")
+    in_docker = System.get_env("PROJECT_IN_CONTAINER")
+    throw_if_empty!(in_docker, :string, "Wrong PROJECT_IN_CONTAINER value")
     in_docker = String.downcase(in_docker)
 
     if in_docker in ["true", "yes", "in", "1"] do
