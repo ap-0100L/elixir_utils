@@ -157,15 +157,19 @@ defmodule Macros do
               nil
             end
 
+          e =
+            Macros.build_error_(:CODE_RESCUED_ERROR, ["Error rescued"],
+              reason: e_origin,
+              stacktrace: __STACKTRACE__,
+              rescue_func_result: result
+            )
+
           if unquote(reraise) do
-            reraise(e_origin, __STACKTRACE__)
+            # reraise(e_origin, __STACKTRACE__)
+            throw(e)
           end
 
-          Macros.build_error_(:CODE_RESCUED_ERROR, ["Error rescued"],
-            reason: e_origin,
-            stacktrace: __STACKTRACE__,
-            rescue_func_result: result
-          )
+          e
       catch
         e ->
           if unquote(log_error) do
@@ -237,15 +241,17 @@ defmodule Macros do
               nil
             end
 
-          if unquote(reraise) do
-            exit(reason)
-          end
+          e =
+            Macros.build_error_(:CODE_EXIT_CAUGHT_ERROR, ["EXIT caught error"],
+              reason: reason,
+              stacktrace: __STACKTRACE__,
+              rescue_func_result: result
+            )
 
-          Macros.build_error_(:CODE_EXIT_CAUGHT_ERROR, ["EXIT caught error"],
-            reason: reason,
-            stacktrace: __STACKTRACE__,
-            rescue_func_result: result
-          )
+          if unquote(reraise) do
+            # exit(reason)
+            throw(e)
+          end
       end
     end
   end
