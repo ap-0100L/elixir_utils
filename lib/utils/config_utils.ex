@@ -90,7 +90,7 @@ defmodule ConfigUtils do
       project_name = System.get_env("PROJECT_NAME")
       throw_if_empty!(project_name, :string, "Wrong PROJECT_NAME value")
 
-      env = project_name <> "_" <> env
+      project_name <> "_" <> env
     end
   end
 end

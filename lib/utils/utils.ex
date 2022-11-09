@@ -594,6 +594,8 @@ defmodule Utils do
                 reason: unexpected
               )
           end
+
+        result
       end
     )
 
@@ -696,7 +698,7 @@ defmodule Utils do
       when is_nil(var) or is_nil(type) or not is_atom(type) or not is_bitstring(var),
       do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["var and type cannot be nil; var must be a string; type must be an atom"])
 
-  def string_to_type!(var, type)
+  def string_to_type!(_var, type)
       when type not in @types,
       do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type must be one of #{inspect(@types)}"], type: type, types: @types)
 
@@ -713,6 +715,8 @@ defmodule Utils do
     Macros.throw_if_empty!(var, :string, "Wrong var value")
 
     {:ok, result} = Utils.string_to_atom(var)
+
+    {:ok, result}
   end
 
   def string_to_type!(var, :list) do
@@ -730,6 +734,8 @@ defmodule Utils do
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, false)
+
+    {:ok, result}
   end
 
   def string_to_type!(var, :list_of_tuples_with_atoms) do
@@ -739,6 +745,8 @@ defmodule Utils do
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, false, :atom)
+
+    {:ok, result}
   end
 
   def string_to_type!(var, :keyword_list) do
@@ -748,6 +756,8 @@ defmodule Utils do
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, true)
+
+    {:ok, result}
   end
 
   def string_to_type!(var, :keyword_list_of_atoms) do
@@ -757,6 +767,8 @@ defmodule Utils do
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, true, :atom)
+
+    {:ok, result}
   end
 
   def string_to_type!(var, :list_of_atoms) do
@@ -765,6 +777,8 @@ defmodule Utils do
     {:ok, list} = string_to_type!(var, :list)
 
     {:ok, result} = Utils.list_of_strings_to_list_of!(list)
+
+    {:ok, result}
   end
 
   def string_to_type!(var, :boolean)
@@ -804,9 +818,11 @@ defmodule Utils do
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = convert_to_atoms_keys_in_map(var)
+
+    {:ok, result}
   end
 
-  def string_to_type!(var, type),
+  def string_to_type!(_var, type),
     do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["Wrong type: #{inspect(type)}"], type: type, types: @types)
 
   ##############################################################################
@@ -982,6 +998,8 @@ defmodule Utils do
             opts: opts
           )
       end
+
+    result
   end
 
   ##############################################################################
@@ -1016,6 +1034,8 @@ defmodule Utils do
             reason: unexpected
           )
       end
+
+    result
   end
 
   ##############################################################################

@@ -56,6 +56,8 @@ defmodule StateUtils do
             name: name
           )
       end
+
+    result
   end
 
   ##############################################################################
@@ -178,13 +180,15 @@ defmodule StateUtils do
             name: name
           )
       end
+
+    result
   end
 
   ##############################################################################
   @doc """
 
   """
-  def set_state!(name, key, value)
+  def set_state!(name, key, _value)
       when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
       do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, key, state cannot be nil; name must be an atom; key must an atom or a string"])
 
@@ -224,6 +228,8 @@ defmodule StateUtils do
             name: name
           )
       end
+
+    result
   end
 
   ##############################################################################
@@ -250,7 +256,7 @@ defmodule StateUtils do
         {:error, _reason} ->
           false
 
-        result ->
+        _ ->
           true
       end
 

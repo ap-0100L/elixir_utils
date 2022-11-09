@@ -130,6 +130,8 @@ defmodule StateUtils2 do
             name: name
           )
       end
+
+      result
   end
 
   ##############################################################################
@@ -261,13 +263,15 @@ defmodule StateUtils2 do
             name: name
           )
       end
+
+    result
   end
 
   ##############################################################################
   @doc """
 
   """
-  def set_state!(name, key, value)
+  def set_state!(name, key, _value)
       when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
       do:
         throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
@@ -310,6 +314,8 @@ defmodule StateUtils2 do
             name: name
           )
       end
+
+    result
   end
 
   ##############################################################################
@@ -339,7 +345,7 @@ defmodule StateUtils2 do
         {:error, _reason} ->
           false
 
-        result ->
+        _ ->
           true
       end
 

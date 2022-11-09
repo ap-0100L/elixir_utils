@@ -296,7 +296,7 @@ defmodule Macros do
     quote do
       data =
         if is_nil(unquote(data)) or (not is_list(unquote(data)) and not is_map(unquote(data))) do
-          if not is_list(unquote(data)) and not is_map(unquote(data)) do
+          if not is_list(unquote(data)) and not is_map(unquote(data)) and not is_nil(unquote(data)) do
             %{
               euid: UUID.uuid1(),
               data: unquote(data)
