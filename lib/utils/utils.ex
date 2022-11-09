@@ -49,6 +49,7 @@ defmodule Utils do
       require Logger
 
       alias Utils, as: Utils
+      alias EtsUtils, as: EtsUtils
     end
   end
 

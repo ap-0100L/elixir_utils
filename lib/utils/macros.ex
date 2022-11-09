@@ -290,19 +290,32 @@ defmodule Macros do
   @doc """
 
   """
-  defmacro build_error_(code, messages, opt \\ nil)
+  defmacro build_error_(code, messages, data \\ nil)
 
-  defmacro build_error_(code, messages, opt) do
+  defmacro build_error_(code, messages, data) do
     quote do
       data =
-        if is_nil(unquote(opt)) or not is_list(unquote(opt)) do
-          %{euid: UUID.uuid1()}
+        if is_nil(unquote(data)) or (not is_list(unquote(data)) and not is_map(unquote(data))) do
+          if not is_list(unquote(data)) and not is_map(unquote(data)) do
+            %{
+              euid: UUID.uuid1(),
+              data: unquote(data)
+            }
+          else
+            %{euid: UUID.uuid1()}
+          end
         else
-          data = Keyword.get(unquote(opt), :data, %{})
-          data = Map.put(data, :euid, UUID.uuid1())
-          opt = Keyword.delete(unquote(opt), :data)
+          data =
+            if is_list(unquote(data)) do
+              Enum.into(unquote(data), %{})
+            else
+              unquote(data)
+            end
 
-          Enum.into(opt, %{})
+          # TODO: previous {:error, code, data, messages} to %{code: code, data: data, messages: messages}
+          # previous = Map.get(data, :previous, nil) || {}
+
+          data = Map.put(data, :euid, UUID.uuid1())
         end
 
       {
@@ -381,6 +394,20 @@ defmodule Macros do
       application_name_atom = Application.get_application(__MODULE__)
       throw_if_empty!(application_name_atom, :atom, "Wrong application_name_atom value")
       Utils.get_app_env!(application_name_atom, unquote(key))
+    end
+  end
+
+  ##############################################################################
+  @doc """
+
+  """
+  defmacro get_app_env_(key) do
+    quote do
+      application_name_atom = Application.get_application(__MODULE__)
+      throw_if_empty!(application_name_atom, :atom, "Wrong application_name_atom value")
+      {:ok, value} = Utils.get_app_env!(application_name_atom, unquote(key))
+
+      value
     end
   end
 
