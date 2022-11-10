@@ -24,37 +24,44 @@ defmodule ConfigUtils do
   set.
   """
   @spec get_env!(String.t(), config_type(), :no_default | any()) :: any()
-  def get_env!(var, type \\ :string, default \\ :no_default)
+  def get_env!(var, type, default \\ :no_default)
 
   def get_env!(var, type, default) do
     result =
       with {:ok, val} <- System.fetch_env(var) do
-        try do
-          result =
-            if val == "all" do
-              {:ok, val} = Utils.string_to_atom(val)
+        result =
+          catch_error!(
+            (
+              result =
+                if val == "all" do
+                  {:ok, val} = Utils.string_to_atom(val)
 
-              val
-            else
-              {:ok, result} = Utils.string_to_type!(val, type)
+                  val
+                else
+                  {:ok, result} = Utils.string_to_type!(val, type)
 
+                  result
+                end
+
+              {:ok, result}
+            ),
+            false
+          )
+
+        result =
+          case result do
+            {:ok, result} ->
               result
-            end
 
-          result
-        rescue
-          e ->
-            raise(e)
-        catch
-          e ->
-            case e do
-              {:error, code, data, messages} ->
-                throw_error!(code, messages ++ ["Error caught while read environment variable #{var} of type #{type}"], data: data, variable: var, type: type, stack: __STACKTRACE__)
-
-              _ ->
-                throw(e)
-            end
-        end
+            {:error, _code, _data, _messages} = e ->
+              throw_error!(
+                :CODE_OS_ENV_ERROR,
+                "Error caught while read environment variable #{var} of type #{type}",
+                previous: e,
+                variable: var,
+                type: type
+              )
+          end
       else
         :error ->
           case default do

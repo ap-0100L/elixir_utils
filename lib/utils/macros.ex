@@ -294,16 +294,19 @@ defmodule Macros do
 
   defmacro build_error_(code, messages, data) do
     quote do
-      data =
+      {previous_messages, data} =
         if is_nil(unquote(data)) or (not is_list(unquote(data)) and not is_map(unquote(data))) do
-          if not is_list(unquote(data)) and not is_map(unquote(data)) and not is_nil(unquote(data)) do
-            %{
-              euid: UUID.uuid1(),
-              data: unquote(data)
-            }
-          else
-            %{euid: UUID.uuid1()}
-          end
+          data =
+            if not is_list(unquote(data)) and not is_map(unquote(data)) and not is_nil(unquote(data)) do
+              %{
+                euid: UUID.uuid1(),
+                data: unquote(data)
+              }
+            else
+              %{euid: UUID.uuid1()}
+            end
+
+          {[], data}
         else
           data =
             if is_list(unquote(data)) do
@@ -313,16 +316,32 @@ defmodule Macros do
             end
 
           # TODO: previous {:error, code, data, messages} to %{code: code, data: data, messages: messages}
-          # previous = Map.get(data, :previous, nil) || {}
+          previous = Map.get(data, :previous, nil)
+
+          {messages, data} =
+            if is_nil(previous) do
+              data = Map.delete(data, :previous)
+              {[], data}
+            else
+              {:error, code, data, messages} = previous
+              previous = %{code: code, data: data, messages: messages}
+              data = Map.put(data, :previous, previous)
+              {messages, data}
+            end
 
           data = Map.put(data, :euid, UUID.uuid1())
+
+          {messages, data}
         end
+
+      timestamp = now = System.system_time(:nanosecond)
+      data = Map.put(data, :timestamp, timestamp)
 
       {
         :error,
         unquote(code),
         data,
-        unquote(messages)
+        previous_messages ++ unquote(messages)
       }
     end
   end
@@ -348,14 +367,9 @@ defmodule Macros do
       result = Utils.is_not_empty(unquote(o), unquote(type))
 
       if result !== :ok do
-        {:error, code, data, messages} = result
+        {:error, code, _data, _messages} = result
 
-        messages =
-          if :ok == Utils.is_not_empty(unquote(message), :string) do
-            messages ++ [unquote(message)]
-          end
-
-        Macros.throw_error!(code, messages, data: data)
+        Macros.throw_error!(code, [unquote(message)], previous: result)
       end
 
       :ok

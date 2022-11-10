@@ -101,8 +101,19 @@ defmodule Utils do
   @doc """
 
   """
-  def get_now_datetime_with_TZ!() do
-    {:ok, timezone} = get_app_env!(:time_zone)
+  def get_now_datetime_with_TZ!(timezone \\ nil)
+
+  def get_now_datetime_with_TZ!(timezone) do
+    result = is_not_empty(timezone, :string)
+
+    timezone =
+      if result == :ok do
+        timezone
+      else
+        {:ok, timezone} = get_app_env!(:time_zone)
+
+        timezone
+      end
 
     #    result = Timex.now(timezone)
     #    {:ok, result}
@@ -128,10 +139,12 @@ defmodule Utils do
   @doc """
 
   """
-  def get_now_datetime_with_TZ_to_iso8601!() do
-    {:ok, timezone} = get_now_datetime_with_TZ!()
+  def get_now_datetime_with_TZ_to_iso8601!(timezone \\ nil)
 
-    {:ok, DateTime.to_iso8601(timezone)}
+  def get_now_datetime_with_TZ_to_iso8601!(timezone) do
+    {:ok, date_time} = get_now_datetime_with_TZ!(timezone)
+
+    {:ok, DateTime.to_iso8601(date_time)}
   end
 
   ##############################################################################
@@ -730,7 +743,8 @@ defmodule Utils do
   def string_to_type!(var, :list_of_tuples) do
     Macros.throw_if_empty!(var, :string, "Wrong var value")
 
-    {:ok, var} = @json_converter.decode!(var)
+    # {:ok, var} = @json_converter.decode!(var)
+    var = @json_converter.decode!(var)
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, false)
@@ -741,7 +755,8 @@ defmodule Utils do
   def string_to_type!(var, :list_of_tuples_with_atoms) do
     Macros.throw_if_empty!(var, :string, "Wrong var value")
 
-    {:ok, var} = @json_converter.decode!(var)
+    # {:ok, var} = @json_converter.decode!(var)
+    var = @json_converter.decode!(var)
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, false, :atom)
@@ -752,7 +767,8 @@ defmodule Utils do
   def string_to_type!(var, :keyword_list) do
     Macros.throw_if_empty!(var, :string, "Wrong var value")
 
-    {:ok, var} = @json_converter.decode!(var)
+    # {:ok, var} = @json_converter.decode!(var)
+    var = @json_converter.decode!(var)
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, true)
@@ -763,7 +779,8 @@ defmodule Utils do
   def string_to_type!(var, :keyword_list_of_atoms) do
     Macros.throw_if_empty!(var, :string, "Wrong var value")
 
-    {:ok, var} = @json_converter.decode!(var)
+    # {:ok, var} = @json_converter.decode!(var)
+    var = @json_converter.decode!(var)
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, true, :atom)
@@ -794,7 +811,9 @@ defmodule Utils do
   def string_to_type!(var, :json) do
     Macros.throw_if_empty!(var, :string, "Wrong var value")
 
-    @json_converter.decode!(var)
+    var = @json_converter.decode!(var)
+
+    {:ok, var}
   end
 
   def string_to_type!(var, :regex) do
@@ -814,7 +833,8 @@ defmodule Utils do
   def string_to_type!(var, :map_with_atom_keys) do
     Macros.throw_if_empty!(var, :string, "Wrong var value")
 
-    {:ok, var} = @json_converter.decode!(var)
+    # {:ok, var} = @json_converter.decode!(var)
+    var = @json_converter.decode!(var)
     Macros.throw_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = convert_to_atoms_keys_in_map(var)
