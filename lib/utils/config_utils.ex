@@ -62,6 +62,8 @@ defmodule ConfigUtils do
                 type: type
               )
           end
+
+        result
       else
         :error ->
           case default do
