@@ -18,11 +18,11 @@ defmodule EtsUtils do
 
     result =
       case result do
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e ->
           throw_error!(
             :CODE_NEW_TABLE_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
-            reason: reason,
+            previous: e,
             table_name: table_name,
             opt: opt
           )
@@ -46,11 +46,11 @@ defmodule EtsUtils do
         true ->
           :ok
         
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e ->
           throw_error!(
             :CODE_INSER_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
-            reason: reason,
+            previous: e,
             table_name: table_name,
             key: key
           )
@@ -80,13 +80,40 @@ defmodule EtsUtils do
         [] ->
           :CODE_NOTHING_FOUND
 
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e ->
           throw_error!(
-            :CODE_LOOKUP_ETS_CAUGHT_ERROR,
+            :CODE_LOOKUP_ONE_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
-            reason: reason,
+            previous: e,
             table_name: table_name,
             key: key
+          )
+
+        result ->
+          result
+      end
+
+    {:ok, result}
+  end
+
+  ##############################################################################
+  @doc """
+
+  """
+  def tab2list!(table_name) do
+    result = catch_error!(Ets.tab2list(table_name), false)
+
+    result =
+      case result do
+        [] ->
+          :CODE_NOTHING_FOUND
+
+        {:error, _code, _data, _messages} = e ->
+          throw_error!(
+            :CODE_TAB2LIST_ETS_CAUGHT_ERROR,
+            ["Error caught while process operation on ETS"],
+            previous: e,
+            table_name: table_name
           )
 
         result ->
@@ -108,11 +135,11 @@ defmodule EtsUtils do
         [] ->
           :CODE_NOTHING_FOUND
 
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e ->
           throw_error!(
             :CODE_LOOKUP_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
-            reason: reason,
+            previous: e,
             table_name: table_name,
             key: key
           )
@@ -123,7 +150,41 @@ defmodule EtsUtils do
 
     {:ok, result}
   end
-  
+
+  ##############################################################################
+  @doc """
+
+  """
+  def delete!(table_name, key) do
+    result = catch_error!(Ets.delete(table_name, key), false)
+
+    result =
+      case result do
+        true ->
+          :ok
+
+        {:error, _code, _data, _messages} = e ->
+          throw_error!(
+            :CODE_INSER_ETS_CAUGHT_ERROR,
+            ["Error caught while process operation on ETS"],
+            previous: e,
+            table_name: table_name,
+            key: key
+          )
+
+        unexpected ->
+          throw_error!(
+            :CODE_INSER_ETS_CAUGHT_UNEXPECTED_ERROR,
+            ["Unexpected error caught while process operation on ETS"],
+            reason: unexpected,
+            table_name: table_name,
+            key: key
+          )
+      end
+
+    result
+  end
+
   ##############################################################################
   ##############################################################################
 end
