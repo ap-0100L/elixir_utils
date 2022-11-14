@@ -340,11 +340,23 @@ defmodule Macros do
       timestamp = now = System.system_time(:nanosecond)
       data = Map.put(data, :timestamp, timestamp)
 
+      messages = if not is_list(unquote(messages)) do
+        [unquote(messages)]
+      else
+        unquote(messages)
+      end
+
+      previous_messages = if not is_list(previous_messages) do
+        [previous_messages]
+      else
+        previous_messages
+      end
+
       result = {
         :error,
         unquote(code),
         data,
-        previous_messages ++ unquote(messages)
+        previous_messages ++ messages
       }
     end
   end
