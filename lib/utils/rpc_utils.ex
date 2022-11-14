@@ -28,11 +28,11 @@ defmodule RPCUtils do
         {:badrpc, reason} ->
           throw_error!(
             :CODE_RPC_CALL_FAIL_ERROR,
-            ["Call rpc fail"],
+            ["RPC call fail"],
             node: node,
             module: module,
             function: function,
-            args: args,
+            #args: args,
             reason: reason
           )
 
@@ -42,14 +42,17 @@ defmodule RPCUtils do
         {:ok, _result} ->
           result
 
+        :ok ->
+          result
+
         unexpected ->
           throw_error!(
             :CODE_RPC_CALL_RESULT_UNEXPECTED_ERROR,
-            ["Send channel result unexpected error"],
+            ["RPC call result unexpected error"],
             node: node,
             module: module,
             function: function,
-            args: args,
+            #args: args,
             reason: unexpected
           )
       end
