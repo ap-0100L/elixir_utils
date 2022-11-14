@@ -139,7 +139,7 @@ defmodule Macros do
 
           e =
             Macros.build_error_(:CODE_RESCUED_ERROR, ["Error rescued"],
-              reason: e_origin,
+              previous: e_origin,
               stacktrace: __STACKTRACE__
             )
 
@@ -159,7 +159,7 @@ defmodule Macros do
 
           e =
             Macros.build_error_(:CODE_RESCUED_ERROR, ["Error rescued"],
-              reason: e_origin,
+              previous: e_origin,
               stacktrace: __STACKTRACE__,
               rescue_func_result: result
             )
@@ -184,7 +184,7 @@ defmodule Macros do
                 e
 
               _ ->
-                Macros.build_error_(:CODE_CAUGHT_ERROR, ["Error caught"], reason: e_origin)
+                Macros.build_error_(:CODE_CAUGHT_ERROR, ["Error caught"], previous: e_origin)
             end
 
           module = unquote(module)
@@ -207,7 +207,7 @@ defmodule Macros do
                 e
 
               _ ->
-                Macros.build_error_(:CODE_CAUGHT_ERROR, ["Error caught"], reason: e_origin)
+                Macros.build_error_(:CODE_CAUGHT_ERROR, ["Error caught"], previous: e_origin)
             end
 
           if unquote(reraise) do
@@ -300,7 +300,7 @@ defmodule Macros do
             if not is_list(unquote(data)) and not is_map(unquote(data)) and not is_nil(unquote(data)) do
               %{
                 euid: UUID.uuid1(),
-                data: unquote(data)
+                unsupported_data: unquote(data)
               }
             else
               %{euid: UUID.uuid1()}
@@ -323,10 +323,13 @@ defmodule Macros do
               data = Map.delete(data, :previous)
               {[], data}
             else
-              {:error, code, data, messages} = previous
-              previous = %{code: code, data: data, messages: messages}
-              data = Map.put(data, :previous, previous)
-              {messages, data}
+              case previous do
+                {:error, _code, _data, messages} ->
+                  {messages, data}
+
+                _ ->
+                  {[], data}
+              end
             end
 
           data = Map.put(data, :euid, UUID.uuid1())
@@ -337,7 +340,7 @@ defmodule Macros do
       timestamp = now = System.system_time(:nanosecond)
       data = Map.put(data, :timestamp, timestamp)
 
-      {
+      result = {
         :error,
         unquote(code),
         data,
@@ -350,11 +353,22 @@ defmodule Macros do
   @doc """
 
   """
-  defmacro throw_error!(code, messages, opt \\ nil)
+  defmacro throw_error!(code, messages, data \\ nil)
 
-  defmacro throw_error!(code, messages, opt) do
+  defmacro throw_error!(code, messages, data) do
     quote do
-      throw(Macros.build_error_(unquote(code), unquote(messages), unquote(opt)))
+      throw(Macros.build_error_(unquote(code), unquote(messages), unquote(data)))
+    end
+  end
+
+  ##############################################################################
+  @doc """
+
+  """
+  defmacro throw_error!(e) do
+    quote do
+      {:error, code, data, messages} = unquote(e)
+      throw_error!(code, messages, data)
     end
   end
 
@@ -385,14 +399,8 @@ defmodule Macros do
       result = Utils.is_not_empty(unquote(map), unquote(key), unquote(key_value_type))
 
       if result !== :ok do
-        {:error, code, data, messages} = result
-
-        messages =
-          if :ok == Utils.is_not_empty(unquote(message), :string) do
-            messages ++ [unquote(message)]
-          end
-
-        Macros.throw_error!(code, messages, data: data)
+        {:error, code, _data, _messages} = result
+        Macros.throw_error!(code, unquote(message), previous: result)
       end
 
       {:ok, Map.get(unquote(map), unquote(key))}

@@ -36,8 +36,22 @@ defmodule RPCUtils do
             reason: reason
           )
 
-        other ->
-          other
+        {:error, _code, _data, _messages} = e ->
+          throw_error!(e)
+
+        {:ok, _result} ->
+          result
+
+        unexpected ->
+          throw_error!(
+            :CODE_RPC_CALL_RESULT_UNEXPECTED_ERROR,
+            ["Send channel result unexpected error"],
+            node: node,
+            module: module,
+            function: function,
+            args: args,
+            reason: unexpected
+          )
       end
 
     result
@@ -51,7 +65,6 @@ defmodule RPCUtils do
 
     call_rpc!(node, module, function, args)
   end
-
 
   ##############################################################################
   @doc """
@@ -70,11 +83,9 @@ defmodule RPCUtils do
       node = Enum.random(nodes)
 
       call_rpc!(node, module, function, args)
-
     else
       apply(module, function, args)
     end
-
   end
 
   ##############################################################################
