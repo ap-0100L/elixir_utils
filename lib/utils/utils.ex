@@ -212,7 +212,7 @@ defmodule Utils do
     result =
       if is_bitstring(o) do
         if String.length(o) == 0 do
-          Macros.build_error_(:CODE_WRONG_VALUE_ERROR, ["string is empty"])
+          Macros.build_error_(:CODE_EMPTY_VALUE_ERROR, ["string is empty"])
         else
           :ok
         end
@@ -227,7 +227,7 @@ defmodule Utils do
     result =
       if is_binary(o) do
         if byte_size(o) == 0 do
-          Macros.build_error_(:CODE_WRONG_VALUE_ERROR, ["bytes is empty"])
+          Macros.build_error_(:CODE_EMPTY_VALUE_ERROR, ["bytes is empty"])
         else
           :ok
         end
@@ -277,7 +277,7 @@ defmodule Utils do
         if o >= @valid_id_start_at do
           :ok
         else
-          Macros.build_error_(:CODE_WRONG_VALUE_ERROR, ["value with type integer_id must be >= #{@valid_id_start_at}"])
+          Macros.build_error_(:CODE_WRONG_INTEGER_ID_VALUE_ERROR, ["value with type integer_id must be >= #{@valid_id_start_at}"])
         end
       else
         Macros.build_error_(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not integer_id"])
@@ -292,7 +292,7 @@ defmodule Utils do
         if map_size(o) > 0 do
           :ok
         else
-          Macros.build_error_(:CODE_WRONG_VALUE_ERROR, ["map is empty"])
+          Macros.build_error_(:CODE_EMPTY_VALUE_ERROR, ["map is empty"])
         end
       else
         Macros.build_error_(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not map"])
@@ -307,7 +307,7 @@ defmodule Utils do
         if length(o) > 0 do
           :ok
         else
-          Macros.build_error_(:CODE_WRONG_VALUE_ERROR, ["list is empty"])
+          Macros.build_error_(:CODE_EMPTY_VALUE_ERROR, ["list is empty"])
         end
       else
         Macros.build_error_(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not list"])
@@ -991,11 +991,11 @@ defmodule Utils do
         {:error, {:already_started, pid}} ->
           {:ok, pid}
 
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e->
           Macros.throw_error!(
             :CODE_CAN_NOT_START_SUPERVISOR_CAUGHT_ERROR,
             ["Error caught while starting child"],
-            reason: reason,
+            previous: e,
             child_spec: child_spec,
             opts: opts
           )
@@ -1040,11 +1040,11 @@ defmodule Utils do
         :ok ->
           {:ok, :STOPPED}
 
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e->
           Macros.throw_error!(
             :CODE_CAN_NOT_STOP_SUPERVISOR_CAUGHT_ERROR,
             ["Error caught while starting child"],
-            reason: reason
+            previous: e
           )
 
         unexpected ->

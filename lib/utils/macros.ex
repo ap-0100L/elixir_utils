@@ -393,9 +393,9 @@ defmodule Macros do
       result = Utils.is_not_empty(unquote(o), unquote(type))
 
       if result !== :ok do
-        {:error, code, _data, _messages} = result
+        {:error, code, _data, messages} = result
 
-        Macros.throw_error!(code, [unquote(message)], previous: result)
+        Macros.throw_error!(code, messages ++ [unquote(message)])
       end
 
       :ok

@@ -32,11 +32,11 @@ defmodule StateUtils do
         {:error, {:already_started, pid}} ->
           {:ok, pid}
 
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e ->
           throw_error!(
             :CODE_CAN_NOT_START_AGENT_CAUGHT_ERROR,
             ["Error caught while starting agent"],
-            reason: reason,
+            previous: e,
             name: name
           )
 
@@ -77,11 +77,11 @@ defmodule StateUtils do
 
     result =
       case result do
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e ->
           throw_error!(
             :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_CAUGHT_ERROR,
             ["Error caught while getting state agent"],
-            reason: reason
+            previous: e
           )
 
         {:error, reason} ->
@@ -115,11 +115,11 @@ defmodule StateUtils do
 
     result =
       case result do
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e ->
           throw_error!(
             :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_CAUGHT_ERROR,
             ["Error caught while getting state by key agent"],
-            reason: reason
+            previous: e
           )
 
         {:error, reason} ->
@@ -156,11 +156,11 @@ defmodule StateUtils do
         :ok ->
           :ok
 
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e ->
           throw_error!(
             :CODE_CAN_NOT_SET_STATE_AGENT_CAUGHT_ERROR,
             ["Error caught while starting agent"],
-            reason: reason,
+            previous: e,
             name: name
           )
 
@@ -204,11 +204,11 @@ defmodule StateUtils do
         :ok ->
           :ok
 
-        {:error, _code, %{reason: reason} = _data, _messages} ->
+        {:error, _code, _data, _messages} = e->
           throw_error!(
             :CODE_CAN_NOT_SET_STATE_BY_KEY_AGENT_CAUGHT_ERROR,
             ["Error caught while starting agent"],
-            reason: reason,
+            previous: e,
             name: name
           )
 
