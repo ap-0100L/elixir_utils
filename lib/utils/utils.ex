@@ -1129,5 +1129,35 @@ defmodule Utils do
   end
 
   ##############################################################################
+  @doc """
+
+  """
+  def error_to_map_(error)
+      when not is_tuple(error),
+      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["error cannot be nil; error must be a tuple"])
+
+  def error_to_map_({:error, code, data, messages} = _error)
+      when not is_atom(code) or not is_map(data) or not is_list(messages),
+      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["code, messages, data cannot be nil; code must be an atom; data must be a map; messages must be a list"])
+
+  def error_to_map_({:error, code, data, messages} = _error) do
+    result = %{
+      code: code,
+      data: data,
+      messages: messages
+    }
+
+    result
+  end
+
+  def error_to_map_(error),
+    do:
+      Macros.throw_error!(
+        :CODE_WRONG_ARGUMENT_COMBINATION_ERROR,
+        ["Wrong argument combination"],
+        error: error
+      )
+
+  ##############################################################################
   ##############################################################################
 end

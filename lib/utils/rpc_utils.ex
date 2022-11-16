@@ -32,29 +32,15 @@ defmodule RPCUtils do
             node: node,
             module: module,
             function: function,
-            #args: args,
+            # args: args,
             reason: reason
           )
 
         {:error, _code, _data, _messages} = e ->
           throw_error!(e)
 
-        {:ok, _result} ->
+        result ->
           result
-
-        :ok ->
-          result
-
-        unexpected ->
-          throw_error!(
-            :CODE_RPC_CALL_RESULT_UNEXPECTED_ERROR,
-            ["RPC call result unexpected error"],
-            node: node,
-            module: module,
-            function: function,
-            #args: args,
-            reason: unexpected
-          )
       end
 
     result
