@@ -1112,12 +1112,17 @@ defmodule Utils do
       do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string"])
 
   def create_module!(module, module_text, env) do
-    module_contents = Code.string_to_quoted!(module_text)
+    Macros.catch_error!(
+      (
+        module_contents = Code.string_to_quoted!(module_text)
 
-    env = env || Macro.Env.location(__ENV__)
-    Module.create(module, module_contents, env)
+        env = env || Macro.Env.location(__ENV__)
+        Module.create(module, module_contents, env)
 
-    {:ok, module}
+        {:ok, module}
+      ),
+      true
+    )
   end
 
   ##############################################################################
