@@ -8,30 +8,6 @@ defmodule HttpResponseUtils do
   use Utils
 
   ##############################################################################
-  #
-  #
-  @response_code_groupes %{
-    INTERNAL_SERVER_ERROR: 1000,
-    CLIENT_ERROR: 3000
-  }
-
-  ##############################################################################
-  #
-  #
-  @response_codes %{
-    CODE_UNEXPECTED_ERROR: 0,
-    #
-    CODE_OK: 1,
-    #
-    CODE_AUTH_TOKEN_GENERATION_FAILURE: @response_code_groupes[:INTERNAL_SERVER_ERROR] + 1,
-    #
-    CODE_WRONG_REQUEST_ARGUMENT: @response_code_groupes[:CLIENT_ERROR] + 1,
-    CODE_USERNAME_NOT_FOUND: @response_code_groupes[:CLIENT_ERROR] + 2,
-    CODE_USER_PASSWORD_IS_WRONG: @response_code_groupes[:CLIENT_ERROR] + 3,
-    CODE_USERNAME_OR_PASSWORD_IS_WRONG: @response_code_groupes[:CLIENT_ERROR] + 4
-  }
-
-  ##############################################################################
   @doc """
 
   """
@@ -40,8 +16,7 @@ defmodule HttpResponseUtils do
 
     response = %{
       timestamptz: timestamptz,
-      code: @response_codes[code],
-      codeAsString: code,
+      code: code,
       data: data
     }
 
