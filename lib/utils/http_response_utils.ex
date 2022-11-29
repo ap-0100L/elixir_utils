@@ -59,21 +59,17 @@ defmodule HttpResponseUtils do
   @doc """
 
   """
-  defp get_debug_data(data, messages, stack, inspect_all \\ true)
+  defp get_debug_data(data, messages, stack, inspect_debug_data \\ true)
 
-  defp get_debug_data(data, messages, stack, inspect_all) do
+  defp get_debug_data(data, messages, stack, inspect_debug_data) do
     {:ok, hostname} = :inet.gethostname()
     # {:ok, addrs} = Utils.get_if_addrs!()
 
-    {data, stack} =
-      data =
-      if inspect_all do
-        data = inspect(data)
-        stack = inspect(stack)
-
-        {data, stack}
+    data =
+      if inspect_debug_data do
+        inspect(data)
       else
-        {data, stack}
+        data
       end
 
     debug_data = %{
@@ -82,7 +78,7 @@ defmodule HttpResponseUtils do
       nodes: Node.list(),
       # ifaddrs: addrs,
       error_data: data,
-      stack: stack,
+      stack: inspect(stack),
       messages: messages
     }
 

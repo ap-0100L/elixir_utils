@@ -203,11 +203,12 @@ defmodule Macros do
 
           e =
             case e_origin do
-              {:error, _code, _data, _messages} ->
-                e
+              {:error, code, data, messages} ->
+                data = Map.put(data, :rescue_func_result, result)
+                {:error, code, data, messages}
 
               _ ->
-                Macros.build_error_(:CODE_CAUGHT_ERROR, ["Error caught"], previous: e_origin)
+                Macros.build_error_(:CODE_CAUGHT_ERROR, ["Error caught"], previous: e_origin, rescue_func_result: result)
             end
 
           if unquote(reraise) do
@@ -252,6 +253,8 @@ defmodule Macros do
             # exit(reason)
             throw(e)
           end
+
+          e
       end
     end
   end
@@ -299,11 +302,11 @@ defmodule Macros do
           data =
             if not is_list(unquote(data)) and not is_map(unquote(data)) and not is_nil(unquote(data)) do
               %{
-                euid: UUID.uuid1(),
+                eid: UUID.uuid1(),
                 unsupported_data: unquote(data)
               }
             else
-              %{euid: UUID.uuid1()}
+              %{eid: UUID.uuid1()}
             end
 
           {[], data}
@@ -332,7 +335,7 @@ defmodule Macros do
               end
             end
 
-          data = Map.put(data, :euid, UUID.uuid1())
+          data = Map.put(data, :eid, UUID.uuid1())
 
           {messages, data}
         end
@@ -340,17 +343,19 @@ defmodule Macros do
       timestamp = now = System.system_time(:nanosecond)
       data = Map.put(data, :timestamp, timestamp)
 
-      messages = if not is_list(unquote(messages)) do
-        [unquote(messages)]
-      else
-        unquote(messages)
-      end
+      messages =
+        if not is_list(unquote(messages)) do
+          [unquote(messages)]
+        else
+          unquote(messages)
+        end
 
-      previous_messages = if not is_list(previous_messages) do
-        [previous_messages]
-      else
-        previous_messages
-      end
+      previous_messages =
+        if not is_list(previous_messages) do
+          [previous_messages]
+        else
+          previous_messages
+        end
 
       result = {
         :error,
@@ -379,8 +384,13 @@ defmodule Macros do
   """
   defmacro throw_error!(e) do
     quote do
-      {:error, code, data, messages} = unquote(e)
-      throw_error!(code, messages, data)
+      case unquote(e) do
+        {:error, _code, _data, _messages} ->
+          throw(unquote(e))
+
+        _ ->
+          throw(Macros.build_error_(:CODE_UNEXPECTED_ERROR, ["Unexpected error"], error: unquote(e)))
+      end
     end
   end
 
@@ -411,8 +421,9 @@ defmodule Macros do
       result = Utils.is_not_empty(unquote(map), unquote(key), unquote(key_value_type))
 
       if result !== :ok do
-        {:error, code, _data, _messages} = result
-        Macros.throw_error!(code, unquote(message), previous: result)
+        {:error, code, data, messages} = result
+        messages = messages || []
+        Macros.throw_error!({:error, code, data, messages ++ [unquote(message)]})
       end
 
       {:ok, Map.get(unquote(map), unquote(key))}

@@ -171,14 +171,17 @@ defmodule Utils do
   @doc """
   Is valid key value for different types in map
   """
-  def is_not_empty(map, key, keyValueType)
-      when is_nil(map) or is_nil(key) or is_nil(keyValueType),
-      do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["map, key, keyValueType cannot be nil"])
+  def is_not_empty(_map, key, keyValueType)
+      when is_nil(key) or is_nil(keyValueType),
+      do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["key, keyValueType cannot be nil"])
+
+  def is_not_empty(nil, _key, _keyValueType),
+      do: Macros.build_error_(:CODE_MAP_IS_NIL_ERROR, ["map cannot be nil"])
 
   def is_not_empty(map, key, keyValueType) do
     result =
       if not Map.has_key?(map, key) do
-        Macros.build_error_(:CODE_WRONG_VALUE_ERROR, ["No key '#{key}' in map"], key: key, type: keyValueType)
+        Macros.build_error_(:CODE_NO_KEY_IN_MAP_ERROR, ["No key '#{key}' in map"], key: key, type: keyValueType)
       else
         result = is_not_empty(Map.get(map, key), keyValueType)
 
@@ -187,8 +190,8 @@ defmodule Utils do
             :ok ->
               :ok
 
-            {:error, code, data, messages} ->
-              Macros.build_error_(code, messages ++ ["Key #{key}"], data: data, key: key, type: keyValueType)
+            {:error, code, data, messages} = e ->
+              Macros.build_error_(:CODE_WRONG_VALUE_IN_MAP_ERROR, ["Required key #{key}"], previous: e, key: key, type: keyValueType)
           end
 
         result
@@ -201,12 +204,11 @@ defmodule Utils do
   @doc """
   Is empty value for different types
   """
-  def is_not_empty(o, type) when is_nil(o) or is_nil(type) or not is_atom(type),
-    do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["o and type cannot be nil or type is not atom type"])
+  def is_not_empty(_, type) when is_nil(type) or not is_atom(type) or type not in @primitive_types,
+    do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type cannot be nil; type must be an atom; type must be one of #{@primitive_types}"])
 
-  def is_not_empty(_, type)
-      when type not in @primitive_types,
-      do: Macros.build_error_(:CODE_UNKNOWN_VALUE_TYPE_ERROR, ["Unknown key value type #{type}; must be one of #{@primitive_types}"], type: type, types: @primitive_types)
+  def is_not_empty(o, _) when is_nil(o),
+      do: Macros.build_error_(:CODE_EMPTY_VALUE_ERROR, ["is nil"])
 
   def is_not_empty(o, :string) do
     result =
