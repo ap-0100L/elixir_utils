@@ -208,7 +208,7 @@ defmodule Utils do
     do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type cannot be nil; type must be an atom; type must be one of #{@primitive_types}"])
 
   def is_not_empty(o, _) when is_nil(o),
-      do: Macros.build_error_(:CODE_EMPTY_VALUE_ERROR, ["is nil"])
+      do: Macros.build_error_(:CODE_VALUE_IS_NIL_ERROR, ["is nil"])
 
   def is_not_empty(o, :string) do
     result =
