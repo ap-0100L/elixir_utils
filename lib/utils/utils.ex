@@ -17,7 +17,7 @@ defmodule Utils do
 
   @format_string_wildcard_pattern "{#}"
 
-  @primitive_types [:string, :binary, :integer, :integer_id, :map, :atom, :boolean, :list]
+  @primitive_types [:string, :binary, :integer, :integer_id, :map, :atom, :boolean, :list, :uuid_string]
 
   @types [
     :string,
@@ -33,7 +33,8 @@ defmodule Utils do
     :keyword_list_of_atoms,
     :list_of_tuples_with_atoms,
     :regex,
-    :list_of_regex
+    :list_of_regex,
+    :uuid_string
   ]
 
   ##############################################################################
@@ -176,7 +177,7 @@ defmodule Utils do
       do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["key, keyValueType cannot be nil"])
 
   def is_not_empty(nil, _key, _keyValueType),
-      do: Macros.build_error_(:CODE_MAP_IS_NIL_ERROR, ["map cannot be nil"])
+    do: Macros.build_error_(:CODE_MAP_IS_NIL_ERROR, ["map cannot be nil"])
 
   def is_not_empty(map, key, keyValueType) do
     result =
@@ -208,7 +209,7 @@ defmodule Utils do
     do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type cannot be nil; type must be an atom; type must be one of #{@primitive_types}"])
 
   def is_not_empty(o, _) when is_nil(o),
-      do: Macros.build_error_(:CODE_VALUE_IS_NIL_ERROR, ["is nil"])
+    do: Macros.build_error_(:CODE_VALUE_IS_NIL_ERROR, ["is nil"])
 
   def is_not_empty(o, :string) do
     result =
@@ -220,6 +221,25 @@ defmodule Utils do
         end
       else
         Macros.build_error_(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not string"])
+      end
+
+    result
+  end
+
+  def is_not_empty(o, :uuid_string) do
+    result =
+      if is_bitstring(o) do
+        if String.length(o) == 0 do
+          Macros.build_error_(:CODE_EMPTY_VALUE_ERROR, ["uuid_string is empty"])
+        else
+          if String.match?(o, ~r/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/) do
+            :ok
+          else
+            Macros.build_error_(:CODE_WRONG_VALUE_FORMAT_ERROR, ["is not uuid_string format"])
+          end
+        end
+      else
+        Macros.build_error_(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not uuid_string"])
       end
 
     result

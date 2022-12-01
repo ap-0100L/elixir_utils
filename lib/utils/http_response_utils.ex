@@ -65,6 +65,18 @@ defmodule HttpResponseUtils do
     {:ok, hostname} = :inet.gethostname()
     # {:ok, addrs} = Utils.get_if_addrs!()
 
+    stacktrace = Map.get(data, :stacktrace, nil)
+    stack_from_map = Map.get(data, :stack, nil)
+
+    stacktrace = stacktrace || stack_from_map
+
+    data =
+      if is_nil(stacktrace) or is_bitstring(stacktrace) do
+        data
+      else
+        %{data | stacktrace: inspect(stacktrace)}
+      end
+
     data =
       if inspect_debug_data do
         inspect(data)
@@ -78,7 +90,7 @@ defmodule HttpResponseUtils do
       nodes: Node.list(),
       # ifaddrs: addrs,
       error_data: data,
-      stack: inspect(stack),
+      stacktrace: inspect(stack),
       messages: messages
     }
 
