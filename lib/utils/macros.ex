@@ -208,7 +208,11 @@ defmodule Macros do
                 {:error, code, data, messages}
 
               _ ->
-                Macros.build_error_(:CODE_CAUGHT_ERROR, ["Error caught"], previous: e_origin, rescue_func_result: result)
+                Macros.build_error_(:CODE_CAUGHT_ERROR, ["Error caught"],
+                  previous: e_origin,
+                  stacktrace: __STACKTRACE__,
+                  rescue_func_result: result
+                )
             end
 
           if unquote(reraise) do
@@ -363,6 +367,94 @@ defmodule Macros do
         data,
         previous_messages ++ messages
       }
+    end
+  end
+
+  ##############################################################################
+  @doc """
+
+  """
+  defmacro build_uni_error_(code, messages, data \\ nil)
+
+  defmacro build_uni_error_(code, messages, data) do
+    quote do
+      {previous_messages, data} =
+        if is_nil(unquote(data)) or (not is_list(unquote(data)) and not is_map(unquote(data))) do
+          data =
+            if not is_list(unquote(data)) and not is_map(unquote(data)) and not is_nil(unquote(data)) do
+              %{
+                eid: UUID.uuid1(),
+                unsupported_data: unquote(data)
+              }
+            else
+              %{eid: UUID.uuid1()}
+            end
+
+          {[], data}
+        else
+          data =
+            if is_list(unquote(data)) do
+              Enum.into(unquote(data), %{})
+            else
+              unquote(data)
+            end
+
+          previous = Map.get(data, :previous, nil)
+
+          {messages, data} =
+            if is_nil(previous) do
+              data = Map.delete(data, :previous)
+              {[], data}
+            else
+              case previous do
+                {:error, _code, _data, messages} ->
+                  {messages, data}
+
+                _ ->
+                  {[], data}
+              end
+            end
+
+          data = Map.put(data, :eid, UUID.uuid1())
+
+          {messages, data}
+        end
+
+      timestamp = now = System.system_time(:nanosecond)
+      data = Map.put(data, :timestamp, timestamp)
+
+      messages =
+        if not is_list(unquote(messages)) do
+          [unquote(messages)]
+        else
+          unquote(messages)
+        end
+
+      previous_messages =
+        if not is_list(previous_messages) do
+          [previous_messages]
+        else
+          previous_messages
+        end
+
+      result = %UniError{
+        code: unquote(code),
+        data: data,
+        messages: previous_messages ++ messages
+      }
+    end
+  end
+
+  ##############################################################################
+  @doc """
+
+  """
+  defmacro build_uni_error_(error) do
+    quote do
+      origin_error = unquote(error)
+
+
+
     end
   end
 
