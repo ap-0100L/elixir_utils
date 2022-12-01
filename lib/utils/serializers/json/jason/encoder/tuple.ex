@@ -14,9 +14,9 @@ defimpl Jason.Encoder, for: Tuple do
     case value do
       {:error, code, data, messages} ->
         stacktrace = Map.get(data, :stacktrace, nil)
-        stack = Map.get(data, :stack, nil)
+        stack_from_data = Map.get(data, :stack, nil)
 
-        stacktrace = stacktrace || stack
+        stacktrace = stacktrace || stack_from_data
 
         data =
           if is_nil(stacktrace) or is_bitstring(stacktrace) do

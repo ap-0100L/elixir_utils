@@ -66,9 +66,9 @@ defmodule HttpResponseUtils do
     # {:ok, addrs} = Utils.get_if_addrs!()
 
     stacktrace = Map.get(data, :stacktrace, nil)
-    stack_from_map = Map.get(data, :stack, nil)
+    stack_from_data = Map.get(data, :stack, nil)
 
-    stacktrace = stacktrace || stack_from_map
+    stacktrace = stacktrace || stack_from_data
 
     data =
       if is_nil(stacktrace) or is_bitstring(stacktrace) do
