@@ -28,6 +28,10 @@ defimpl Jason.Encoder, for: Tuple do
         %{code: code, data: data, messages: messages}
         |> Jason.Encode.map(options)
 
+      {:EXIT, {reason, data}} ->
+        %{code: :EXIT, data: %{stacktrace: inspect(data), reason: reason}, messages: "Exit"}
+        |> Jason.Encode.map(options)
+
       _ ->
         value
         |> Tuple.to_list()

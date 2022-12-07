@@ -142,6 +142,10 @@ defimpl Jason.Encoder,
     Ecto.Query.CastError,
     Ecto.MultiplePrimaryKeyError,
     Ecto.MultipleResultsError,
+    #
+    Ecto.Changeset,
+    Ecto.Schema.Metadata,
+    #
     Error,
     Phoenix.PubSub.BroadcastError,
     Phoenix.Template.UndefinedError,
@@ -157,7 +161,7 @@ defimpl Jason.Encoder,
     Swoosh.AttachmentContentError,
     Swoosh.DeliveryError,
     Postgrex.QueryError,
-    Postgrex.Error,
+    Postgrex.Error
   ] do
   ##############################################################################
   ##############################################################################
