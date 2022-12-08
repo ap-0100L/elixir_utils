@@ -727,6 +727,19 @@ defmodule Utils do
   @doc """
 
   """
+  def decode64!(str) when not is_bitstring(str),
+    do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["str must be a string"])
+
+  def decode64!(str) do
+    result = Base.url_decode64!(str)
+
+    {:ok, result}
+  end
+
+  ##############################################################################
+  @doc """
+
+  """
   def string_to_type!(var, type \\ :string)
 
   def string_to_type!(var, type)
