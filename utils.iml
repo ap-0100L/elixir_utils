@@ -91,5 +91,10 @@
     <orderEntry type="library" name="inflex" level="project" />
     <orderEntry type="library" name="benchfella" level="project" />
     <orderEntry type="library" name="logger_file_backend" level="project" />
+    <orderEntry type="library" name="credo" level="project" />
+    <orderEntry type="library" name="ex_doc" level="project" />
+    <orderEntry type="library" name="earmark" level="project" />
+    <orderEntry type="library" name="benchfella" level="project" />
+    <orderEntry type="library" name="crypto" level="project" />
   </component>
 </module>

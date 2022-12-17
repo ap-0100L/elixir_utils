@@ -50,9 +50,11 @@ defmodule Utils do
       require Kernel
       require Macros
       require Logger
+      require UniError
 
       alias Utils, as: Utils
       alias EtsUtils, as: EtsUtils
+      alias UniError, as: UniError
     end
   end
 
@@ -193,7 +195,7 @@ defmodule Utils do
             :ok ->
               :ok
 
-            {:error, code, data, messages} = e ->
+            {:error, _code, _data, _messages} = e ->
               Macros.build_error_(:CODE_WRONG_VALUE_IN_MAP_ERROR, ["Required key #{key}"], previous: e, key: key, type: keyValueType)
           end
 
@@ -1138,7 +1140,7 @@ defmodule Utils do
   """
   def create_module!(module, module_text, env \\ nil)
 
-  def create_module!(module, module_text, env)
+  def create_module!(module, module_text, _env)
       when not is_atom(module) or not is_bitstring(module_text),
       do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string"])
 

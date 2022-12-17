@@ -59,8 +59,6 @@ defmodule HttpResponseUtils do
   @doc """
 
   """
-  defp get_debug_data(data, messages, stack, inspect_debug_data \\ true)
-
   defp get_debug_data(data, messages, stack, inspect_debug_data) do
     {:ok, hostname} = :inet.gethostname()
     # {:ok, addrs} = Utils.get_if_addrs!()

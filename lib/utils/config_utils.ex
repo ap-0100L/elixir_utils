@@ -1,8 +1,6 @@
 defmodule ConfigUtils do
   use Utils
 
-  @boolean_true ["true", "yes", "in", "on", "1"]
-
   @type config_type ::
           :string
           | :integer
@@ -90,7 +88,7 @@ defmodule ConfigUtils do
   def in_container!() do
     env_value = System.get_env("PROJECT_IN_CONTAINER")
     throw_if_empty!(env_value, :string, "Wrong PROJECT_IN_CONTAINER value")
-    Utils.string_to_type!(var, :boolean)
+    Utils.string_to_type!(env_value, :boolean)
   end
 
   def get_env_name!(env) when is_nil(env) or not is_bitstring(env),
