@@ -19,6 +19,8 @@ defmodule Utils do
 
   @primitive_types [:string, :binary, :integer, :integer_id, :map, :atom, :boolean, :list, :uuid_string]
 
+  @boolean_true ["true", "yes", "in", "on", "1"]
+
   @types [
     :string,
     :integer,
@@ -833,15 +835,9 @@ defmodule Utils do
     {:ok, result}
   end
 
-  def string_to_type!(var, :boolean)
-      when not is_nil(var) and
-             var in ["TRUE", "True", "true", "YES", "Yes", "yes", "1", "On", "on"],
-      do: {:ok, true}
-
-  def string_to_type!(var, :boolean)
-      when not is_nil(var) and
-             var not in ["TRUE", "True", "true", "YES", "Yes", "yes", "1", "On", "on"],
-      do: {:ok, false}
+  def string_to_type!(var, :boolean) when not is_nil(var) do
+    String.downcase(var) in @boolean_true
+  end
 
   def string_to_type!(var, :json) do
     Macros.throw_if_empty!(var, :string, "Wrong var value")

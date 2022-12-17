@@ -1,6 +1,8 @@
 defmodule ConfigUtils do
   use Utils
 
+  @boolean_true ["true", "yes", "in", "on", "1"]
+
   @type config_type ::
           :string
           | :integer
@@ -85,15 +87,19 @@ defmodule ConfigUtils do
     result
   end
 
+  def in_container!() do
+    env_value = System.get_env("PROJECT_IN_CONTAINER")
+    throw_if_empty!(env_value, :string, "Wrong PROJECT_IN_CONTAINER value")
+    Utils.string_to_type!(var, :boolean)
+  end
+
   def get_env_name!(env) when is_nil(env) or not is_bitstring(env),
     do: throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["env can not be nil; env must be a string"])
 
   def get_env_name!(env) do
-    in_docker = System.get_env("PROJECT_IN_CONTAINER")
-    throw_if_empty!(in_docker, :string, "Wrong PROJECT_IN_CONTAINER value")
-    in_docker = String.downcase(in_docker)
+    in_container = in_container!()
 
-    if in_docker in ["true", "yes", "in", "1"] do
+    if in_container do
       env
     else
       project_name = System.get_env("PROJECT_NAME")
