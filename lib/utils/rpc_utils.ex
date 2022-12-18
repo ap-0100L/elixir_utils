@@ -18,7 +18,7 @@ defmodule RPCUtils do
              (not is_atom(node) and not is_list(node)) or not is_atom(module) or
              not is_atom(function) or
              not is_list(args),
-      do: throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node, module, function, args cannot be nil; module, function must be an atom; node must be an atom or a list; args must be list"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node, module, function, args cannot be nil; module, function must be an atom; node must be an atom or a list; args must be list"])
 
   def call_rpc!(node, module, function, args) when is_atom(node) do
     result = :rpc.call(node, module, function, args)
@@ -26,7 +26,7 @@ defmodule RPCUtils do
     result =
       case result do
         {:badrpc, reason} ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_RPC_CALL_FAIL_ERROR,
             ["RPC call fail"],
             node: node,
@@ -37,7 +37,7 @@ defmodule RPCUtils do
           )
 
         {:error, _code, _data, _messages} = e ->
-          throw_error!(e)
+          UniError.raise_error!(e)
 
         result ->
           result
@@ -48,7 +48,7 @@ defmodule RPCUtils do
 
   def call_rpc!(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
     {:ok, nodes} = Utils.get_nodes_list_by_prefixes!(remote_node_name_prefixes, Node.list())
-    throw_if_empty!(nodes, :list, "Wrong nodes value")
+    raise_if_empty!(nodes, :list, "Wrong nodes value")
 
     node = Enum.random(nodes)
 
@@ -60,14 +60,14 @@ defmodule RPCUtils do
 
   """
   def call_local_or_rpc!(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
-    throw_if_empty!(remote_node_name_prefixes, :list, "Wrong remote_node_name_prefixes value")
+    raise_if_empty!(remote_node_name_prefixes, :list, "Wrong remote_node_name_prefixes value")
 
     node = Node.self()
     {:ok, nodes} = Utils.get_nodes_list_by_prefixes!(remote_node_name_prefixes, [node])
 
     if nodes == [] do
       {:ok, nodes} = Utils.get_nodes_list_by_prefixes!(remote_node_name_prefixes, Node.list())
-      throw_if_empty!(nodes, :list, "Wrong nodes value")
+      raise_if_empty!(nodes, :list, "Wrong nodes value")
 
       node = Enum.random(nodes)
 

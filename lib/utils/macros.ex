@@ -442,6 +442,42 @@ defmodule Macros do
   @doc """
 
   """
+  defmacro raise_if_empty!(o, type, message) do
+    quote do
+      result = Utils.is_not_empty(unquote(o), unquote(type))
+
+      if result !== :ok do
+        {:error, code, _data, messages} = result
+        messages = messages || []
+        UniError.raise_error!(code, messages ++ [unquote(message)])
+      end
+
+      :ok
+    end
+  end
+
+  ##############################################################################
+  @doc """
+
+  """
+  defmacro raise_if_empty!(map, key, key_value_type, message) do
+    quote do
+      result = Utils.is_not_empty(unquote(map), unquote(key), unquote(key_value_type))
+
+      if result !== :ok do
+        {:error, code, data, messages} = result
+        messages = messages || []
+        UniError.raise_error!({:error, code, data, messages ++ [unquote(message)]})
+      end
+
+      {:ok, Map.get(unquote(map), unquote(key))}
+    end
+  end
+
+  ##############################################################################
+  @doc """
+
+  """
   defmacro get_app_env!(key) do
     quote do
       application_name_atom = Application.get_application(__MODULE__)

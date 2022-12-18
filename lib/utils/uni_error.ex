@@ -21,7 +21,9 @@ defmodule UniError do
   @doc """
 
   """
-  defmacro build_error_(code, messages, data) do
+  defmacro build_uni_error_(code, messages, data \\ nil)
+
+  defmacro build_uni_error_(code, messages, data) do
     quote do
       {previous_messages, data} =
         if is_nil(unquote(data)) or (not is_list(unquote(data)) and not is_map(unquote(data))) do
@@ -102,6 +104,29 @@ defmodule UniError do
   ##############################################################################
   @doc """
 
+  """
+  defmacro build_error_(code, messages, data \\ nil)
+
+  defmacro build_error_(code, messages, data) do
+    quote do
+      code = unquote(code)
+      messages = unquote(messages)
+      data = unquote(data)
+      e = UniError.build_uni_error_(code, messages, data)
+
+      %UniError{
+        code: code,
+        data: data,
+        messages: messages
+      } = e
+
+      {:error, code, data, messages}
+    end
+  end
+
+  ##############################################################################
+  @doc """
+
   rescue_func.(%UniError{} = e, __STACKTRACE__, rescue_func_args)
 
   {:error, %UniError{} = e}
@@ -152,7 +177,7 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNSUPPORTED ERROR: #{inspect(unsupported)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          e = UniError.build_error_(:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported)
+          e = UniError.build_uni_error_(:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported)
 
           result =
             if not is_nil(rescue_func) do
@@ -185,7 +210,7 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT REASON: #{inspect(reason)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          # e = UniError.build_error_(:CODE_EXIT_CAUGHT_ERROR, ["Caught EXIT Uni-reason"], previous: reason)
+          # e = UniError.build_uni_error_(:CODE_EXIT_CAUGHT_ERROR, ["Caught EXIT Uni-reason"], previous: reason)
           e = reason
 
           result =
@@ -217,7 +242,7 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT UNSUPPORTED REASON: #{inspect(reason)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          e = UniError.build_error_(:CODE_EXIT_CAUGHT_ERROR, ["Caught unsupported EXIT reason"], previous: reason)
+          e = UniError.build_uni_error_(:CODE_EXIT_CAUGHT_ERROR, ["Caught unsupported EXIT reason"], previous: reason)
 
           result =
             if not is_nil(rescue_func) do
@@ -250,9 +275,21 @@ defmodule UniError do
   @doc """
 
   """
+  defmacro raise_error!(e) do
+    quote do
+      raise(UniError, unquote(e))
+    end
+  end
+
+  ##############################################################################
+  @doc """
+
+  """
+  defmacro raise_error!(code, messages, data \\ nil)
+
   defmacro raise_error!(code, messages, data) do
     quote do
-      raise(UniError.build_error_(unquote(code), unquote(messages), unquote(data)))
+      raise(UniError, code: unquote(code), data: unquote(data), messages: unquote(messages))
     end
   end
 
@@ -262,17 +299,17 @@ defmodule UniError do
   """
   @impl true
   def exception(code: code, data: data, messages: messages) do
-    build_error_(code, messages, data)
+    build_uni_error_(code, messages, data)
   end
 
   @impl true
   def exception({:error, code, data, messages} = _exception) do
-    build_error_(code, messages, data)
+    build_uni_error_(code, messages, data)
   end
 
   @impl true
   def exception(exception) do
-    build_error_(:CODE_UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: exception)
+    build_uni_error_(:CODE_UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: exception)
   end
 
   ##############################################################################
