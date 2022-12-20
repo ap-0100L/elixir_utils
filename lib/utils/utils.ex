@@ -9,6 +9,7 @@ defmodule Utils do
   require Macros
   require Logger
   require Integer
+  require UniError
 
   @application_name :api_core
   @valid_id_start_at -1
@@ -71,10 +72,10 @@ defmodule Utils do
           ifaddr
 
         {:error, reason} ->
-          UniError.raise_error!(:CODE_CAN_NOT_GET_IF_ADDRS_ERROR, ["Cannot get If address"], reason: reason)
+          UniError.raise_error!(:CODE_CAN_NOT_GET_IF_ADDRS_ERROR, ["Cannot get If address"], previous: reason)
 
         unexpected ->
-          UniError.raise_error!(:CODE_CAN_NOT_GET_IF_ADDRS_UNEXPECTED_ERROR, ["Cannot get If address"], reason: unexpected)
+          UniError.raise_error!(:CODE_CAN_NOT_GET_IF_ADDRS_UNEXPECTED_ERROR, ["Cannot get If address"], previous: unexpected)
       end
 
     result =
@@ -131,10 +132,10 @@ defmodule Utils do
           {:ok, datetime}
 
         {:error, reason} ->
-          UniError.raise_error!(:CODE_GET_DATE_WITH_TZ_ERROR, ["Can not get datetime with TZ"], reason: reason, timezone: timezone)
+          UniError.raise_error!(:CODE_GET_DATE_WITH_TZ_ERROR, ["Can not get datetime with TZ"], previous: reason, timezone: timezone)
 
         unexpected ->
-          UniError.raise_error!(:CODE_GET_DATE_WITH_TZ_UNEXPECTED_ERROR, ["Can not get datetime with TZ"], reason: unexpected, timezone: timezone)
+          UniError.raise_error!(:CODE_GET_DATE_WITH_TZ_UNEXPECTED_ERROR, ["Can not get datetime with TZ"], previous: unexpected, timezone: timezone)
       end
 
     result
@@ -624,13 +625,13 @@ defmodule Utils do
             {:error, reason} ->
               UniError.raise_error!(:CODE_ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
                 app: app,
-                reason: reason
+                previous: reason
               )
 
             unexpected ->
               UniError.raise_error!(:CODE_ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
                 app: app,
-                reason: unexpected
+                previous: unexpected
               )
           end
 
@@ -1013,9 +1014,8 @@ defmodule Utils do
 
   def supervisor_start_link!(child_spec, opts) do
     result =
-      Macros.catch_error!(
-        Supervisor.start_link(child_spec, opts),
-        false
+      UniError.rescue_error!(
+        Supervisor.start_link(child_spec, opts)
       )
 
     result =
@@ -1026,20 +1026,11 @@ defmodule Utils do
         {:error, {:already_started, pid}} ->
           {:ok, pid}
 
-        {:error, _code, _data, _messages} = e ->
-          UniError.raise_error!(
-            :CODE_CAN_NOT_START_SUPERVISOR_CAUGHT_ERROR,
-            ["Error caught while starting child"],
-            previous: e,
-            child_spec: child_spec,
-            opts: opts
-          )
-
         {:error, reason} ->
           UniError.raise_error!(
             :CODE_CAN_NOT_START_SUPERVISOR_ERROR,
             ["Error occurred while starting child"],
-            reason: reason,
+            previous: reason,
             child_spec: child_spec,
             opts: opts
           )
@@ -1048,7 +1039,7 @@ defmodule Utils do
           UniError.raise_error!(
             :CODE_CAN_NOT_START_SUPERVISOR_UNEXPECTED_ERROR,
             ["Unexpected error while starting child"],
-            reason: unexpected,
+            previous: unexpected,
             child_spec: child_spec,
             opts: opts
           )
@@ -1065,9 +1056,8 @@ defmodule Utils do
 
   def supervisor_stop!(name, reason, timeout) do
     result =
-      Macros.catch_error!(
-        Supervisor.stop(name, reason, timeout),
-        false
+      UniError.rescue_error!(
+        Supervisor.stop(name, reason, timeout)
       )
 
     result =
@@ -1075,18 +1065,11 @@ defmodule Utils do
         :ok ->
           {:ok, :STOPPED}
 
-        {:error, _code, _data, _messages} = e ->
-          UniError.raise_error!(
-            :CODE_CAN_NOT_STOP_SUPERVISOR_CAUGHT_ERROR,
-            ["Error caught while starting child"],
-            previous: e
-          )
-
         unexpected ->
           UniError.raise_error!(
             :CODE_CAN_NOT_STOP_SUPERVISOR_UNEXPECTED_ERROR,
             ["Unexpected error while starting child"],
-            reason: unexpected
+            previous: unexpected
           )
       end
 
@@ -1147,7 +1130,7 @@ defmodule Utils do
       do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string"])
 
   def create_module!(module, module_text, env) do
-    Macros.catch_error!(
+    UniError.rescue_error!(
       (
         module_contents = Code.string_to_quoted!(module_text)
 

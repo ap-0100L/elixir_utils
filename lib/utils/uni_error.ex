@@ -86,6 +86,8 @@ defmodule UniError do
           unquote(messages)
         end
 
+      previous_messages = previous_messages || []
+
       previous_messages =
         if not is_list(previous_messages) do
           [previous_messages]

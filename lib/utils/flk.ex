@@ -34,7 +34,7 @@ defmodule Flk do
             graphemes,
             [],
             fn g, accum ->
-              n = catch_error!(String.to_integer(g))
+              n = UniError.rescue_error!(String.to_integer(g))
 
               :lists.append(accum, [n])
             end

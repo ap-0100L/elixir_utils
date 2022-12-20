@@ -9,6 +9,7 @@ defmodule StateUtils2 do
   """
 
   use GenServer
+  use Utils
 
   import Macros
 
@@ -86,7 +87,7 @@ defmodule StateUtils2 do
 
   def init_state!(name, state) do
     result =
-      catch_error!(
+      UniError.rescue_error!(
         (
 
           state = Map.put(state, :name, name)
@@ -94,8 +95,7 @@ defmodule StateUtils2 do
 
           DynamicSupervisor.start_child(@supervisor_name, item)
 
-          ),
-        false
+          )
       )
 
     result =
@@ -106,19 +106,11 @@ defmodule StateUtils2 do
         {:error, {:already_started, pid}} ->
           {:ok, pid}
 
-        {:error, _code, _data, _messages} = e ->
-          UniError.raise_error!(
-            :CODE_CAN_NOT_START_AGENT_CAUGHT_ERROR,
-            ["Error caught while starting agent"],
-            previous: e,
-            name: name
-          )
-
         {:error, reason} ->
           UniError.raise_error!(
             :CODE_CAN_NOT_START_AGENT_ERROR,
             ["Error occurred while starting agent"],
-            reason: reason,
+            previous: reason,
             name: name
           )
 
@@ -126,7 +118,7 @@ defmodule StateUtils2 do
           UniError.raise_error!(
             :CODE_CAN_NOT_START_AGENT_UNEXPECTED_ERROR,
             ["Unexpected error while starting agent"],
-            reason: unexpected,
+            previous: unexpected,
             name: name
           )
       end
@@ -147,25 +139,18 @@ defmodule StateUtils2 do
 
   def get_state!(name) do
     result =
-      catch_error!(
-        GenServer.call(name, :get),
-        false
+      UniError.rescue_error!(
+        GenServer.call(name, :get)
       )
 
     result =
       case result do
-        {:error, _code, _data, _messages} = e ->
-          UniError.raise_error!(
-            :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_CAUGHT_ERROR,
-            ["Error caught while getting state agent"],
-            previous: e
-          )
 
         {:error, reason} ->
           UniError.raise_error!(
             :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_ERROR,
             ["Error occurred while getting state agent"],
-            reason: reason
+            previous: reason
           )
 
         result ->
@@ -188,25 +173,17 @@ defmodule StateUtils2 do
 
   def get_state!(name, key) do
     result =
-      catch_error!(
-        GenServer.call(name, {:get, key}),
-        false
+      UniError.rescue_error!(
+        GenServer.call(name, {:get, key})
       )
 
     result =
       case result do
-        {:error, _code, _data, _messages} = e ->
-          UniError.raise_error!(
-            :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_CAUGHT_ERROR,
-            ["Error caught while getting state by key agent"],
-            previous: e
-          )
-
         {:error, reason} ->
           UniError.raise_error!(
             :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_ERROR,
             ["Error occurred while getting state by key agent"],
-            reason: reason
+            previous: reason
           )
 
         result ->
@@ -229,9 +206,8 @@ defmodule StateUtils2 do
 
   def set_state!(name, state) do
     result =
-      catch_error!(
-        GenServer.call(name, {:set, state}),
-        false
+      UniError.rescue_error!(
+        GenServer.call(name, {:set, state})
       )
 
     result =
@@ -239,19 +215,11 @@ defmodule StateUtils2 do
         {:ok, _} ->
           result
 
-        {:error, _code, _data, _messages} = e ->
-          UniError.raise_error!(
-            :CODE_CAN_NOT_SET_STATE_AGENT_CAUGHT_ERROR,
-            ["Error caught while starting agent"],
-            previous: e,
-            name: name
-          )
-
         {:error, reason} ->
           UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_AGENT_ERROR,
             ["Error occurred while starting agent"],
-            reason: reason,
+            previous: reason,
             name: name
           )
 
@@ -259,7 +227,7 @@ defmodule StateUtils2 do
           UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_AGENT_UNEXPECTED_ERROR,
             ["Unexpected error while starting agent"],
-            reason: unexpected,
+            previous: unexpected,
             name: name
           )
       end
@@ -280,9 +248,8 @@ defmodule StateUtils2 do
 
   def set_state!(name, key, value) do
     result =
-      catch_error!(
-        GenServer.call(name, {:set, key, value}),
-        false
+      UniError.rescue_error!(
+        GenServer.call(name, {:set, key, value})
       )
 
     result =
@@ -290,19 +257,11 @@ defmodule StateUtils2 do
         {:ok, _} ->
           result
 
-        {:error, _code, _data, _messages} = e ->
-          UniError.raise_error!(
-            :CODE_CAN_NOT_SET_STATE_BY_KEY_AGENT_CAUGHT_ERROR,
-            ["Error caught while starting agent"],
-            previous: e,
-            name: name
-          )
-
         {:error, reason} ->
           UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_BY_KEY_AGENT_ERROR,
             ["Error occurred while starting agent"],
-            reason: reason,
+            previous: reason,
             name: name
           )
 
@@ -310,7 +269,7 @@ defmodule StateUtils2 do
           UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_BY_KEY_AGENT_UNEXPECTED_ERROR,
             ["Unexpected error while starting agent"],
-            reason: unexpected,
+            previous: unexpected,
             name: name
           )
       end
@@ -331,7 +290,7 @@ defmodule StateUtils2 do
 
   def is_exists?(name) do
     result =
-      catch_error!(
+      UniError.rescue_error!(
         Agent.get(name, fn state -> state end),
         false,
         false
@@ -339,7 +298,7 @@ defmodule StateUtils2 do
 
     result =
       case result do
-        {:error, _code, _data, _messages} ->
+        %UniError{} ->
           false
 
         {:error, _reason} ->

@@ -95,7 +95,7 @@ defmodule Macros do
 
               e =
                 Macros.build_error_(:CODE_EXIT_CAUGHT_ERROR, ["EXIT caught error"],
-                  reason: reason,
+                  previous: reason,
                   stacktrace: __STACKTRACE__
                 )
 
@@ -235,7 +235,7 @@ defmodule Macros do
 
           e =
             Macros.build_error_(:CODE_EXIT_CAUGHT_ERROR, ["EXIT caught error"],
-              reason: reason,
+              previous: reason,
               stacktrace: __STACKTRACE__
             )
 
@@ -255,7 +255,7 @@ defmodule Macros do
 
           e =
             Macros.build_error_(:CODE_EXIT_CAUGHT_ERROR, ["EXIT caught error"],
-              reason: reason,
+              previous: reason,
               stacktrace: __STACKTRACE__,
               rescue_func_result: result
             )

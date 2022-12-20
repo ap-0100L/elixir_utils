@@ -33,7 +33,7 @@ defmodule RPCUtils do
             module: module,
             function: function,
             # args: args,
-            reason: reason
+            previous: reason
           )
 
         {:error, _code, _data, _messages} = e ->

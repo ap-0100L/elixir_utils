@@ -29,8 +29,8 @@ defmodule ConfigUtils do
   def get_env!(var, type, default) do
     result =
       with {:ok, val} <- System.fetch_env(var) do
-        result =
-          catch_error!(
+        {:ok, result} =
+          UniError.rescue_error!(
             (
               result =
                 if val == "all" do
@@ -44,24 +44,8 @@ defmodule ConfigUtils do
                 end
 
               {:ok, result}
-            ),
-            false
+            )
           )
-
-        result =
-          case result do
-            {:ok, result} ->
-              result
-
-            {:error, _code, _data, _messages} = e ->
-              UniError.raise_error!(
-                :CODE_OS_ENV_ERROR,
-                "Error caught while read environment variable #{var} of type #{type}",
-                previous: e,
-                variable: var,
-                type: type
-              )
-          end
 
         result
       else
