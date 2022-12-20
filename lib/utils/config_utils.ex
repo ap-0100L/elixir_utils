@@ -54,7 +54,7 @@ defmodule ConfigUtils do
               result
 
             {:error, _code, _data, _messages} = e ->
-              throw_error!(
+              UniError.raise_error!(
                 :CODE_OS_ENV_ERROR,
                 "Error caught while read environment variable #{var} of type #{type}",
                 previous: e,
@@ -68,7 +68,7 @@ defmodule ConfigUtils do
         :error ->
           case default do
             :no_default ->
-              throw_error!(:CODE_SYSTEM_ENVIRONMENT_VARIABLE_NOT_FOUND_ERROR, ["Variable with name #{var} of type #{type} in system environment not found"], variable: var, type: type)
+              UniError.raise_error!(:CODE_SYSTEM_ENVIRONMENT_VARIABLE_NOT_FOUND_ERROR, ["Variable with name #{var} of type #{type} in system environment not found"], variable: var, type: type)
 
             _ ->
               default
@@ -87,12 +87,12 @@ defmodule ConfigUtils do
 
   def in_container!() do
     env_value = System.get_env("PROJECT_IN_CONTAINER")
-    throw_if_empty!(env_value, :string, "Wrong PROJECT_IN_CONTAINER value")
+    raise_if_empty!(env_value, :string, "Wrong PROJECT_IN_CONTAINER value")
     Utils.string_to_type!(env_value, :boolean)
   end
 
   def get_env_name!(env) when is_nil(env) or not is_bitstring(env),
-    do: throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["env can not be nil; env must be a string"])
+    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["env can not be nil; env must be a string"])
 
   def get_env_name!(env) do
     in_container = in_container!()
@@ -101,7 +101,7 @@ defmodule ConfigUtils do
       env
     else
       project_name = System.get_env("PROJECT_NAME")
-      throw_if_empty!(project_name, :string, "Wrong PROJECT_NAME value")
+      raise_if_empty!(project_name, :string, "Wrong PROJECT_NAME value")
 
       project_name <> "_" <> env
     end

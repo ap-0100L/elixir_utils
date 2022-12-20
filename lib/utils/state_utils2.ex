@@ -80,7 +80,7 @@ defmodule StateUtils2 do
   def init_state!(name, state)
       when not is_atom(name) or not is_map(state),
       do:
-        throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
+        UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
           "name, state cannot be nil; name must be an atom; state must a map"
         ])
 
@@ -107,7 +107,7 @@ defmodule StateUtils2 do
           {:ok, pid}
 
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_START_AGENT_CAUGHT_ERROR,
             ["Error caught while starting agent"],
             previous: e,
@@ -115,7 +115,7 @@ defmodule StateUtils2 do
           )
 
         {:error, reason} ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_START_AGENT_ERROR,
             ["Error occurred while starting agent"],
             reason: reason,
@@ -123,7 +123,7 @@ defmodule StateUtils2 do
           )
 
         unexpected ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_START_AGENT_UNEXPECTED_ERROR,
             ["Unexpected error while starting agent"],
             reason: unexpected,
@@ -141,7 +141,7 @@ defmodule StateUtils2 do
   def get_state!(name)
       when not is_atom(name),
       do:
-        throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
+        UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
           "name cannot be nil; name must be an atom"
         ])
 
@@ -155,14 +155,14 @@ defmodule StateUtils2 do
     result =
       case result do
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_CAUGHT_ERROR,
             ["Error caught while getting state agent"],
             previous: e
           )
 
         {:error, reason} ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_ERROR,
             ["Error occurred while getting state agent"],
             reason: reason
@@ -182,7 +182,7 @@ defmodule StateUtils2 do
   def get_state!(name, key)
       when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
       do:
-        throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
+        UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
           "name, key cannot be nil; name must be an atom; key must a string or an atom"
         ])
 
@@ -196,14 +196,14 @@ defmodule StateUtils2 do
     result =
       case result do
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_CAUGHT_ERROR,
             ["Error caught while getting state by key agent"],
             previous: e
           )
 
         {:error, reason} ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_ERROR,
             ["Error occurred while getting state by key agent"],
             reason: reason
@@ -223,7 +223,7 @@ defmodule StateUtils2 do
   def set_state!(name, state)
       when not is_atom(name) or not is_map(state),
       do:
-        throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
+        UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
           "name, state cannot be nil; name must be an atom; state must a map"
         ])
 
@@ -240,7 +240,7 @@ defmodule StateUtils2 do
           result
 
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_AGENT_CAUGHT_ERROR,
             ["Error caught while starting agent"],
             previous: e,
@@ -248,7 +248,7 @@ defmodule StateUtils2 do
           )
 
         {:error, reason} ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_AGENT_ERROR,
             ["Error occurred while starting agent"],
             reason: reason,
@@ -256,7 +256,7 @@ defmodule StateUtils2 do
           )
 
         unexpected ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_AGENT_UNEXPECTED_ERROR,
             ["Unexpected error while starting agent"],
             reason: unexpected,
@@ -274,7 +274,7 @@ defmodule StateUtils2 do
   def set_state!(name, key, _value)
       when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
       do:
-        throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
+        UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
           "name, key, state cannot be nil; name must be an atom; key must an atom or a string"
         ])
 
@@ -291,7 +291,7 @@ defmodule StateUtils2 do
           result
 
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_BY_KEY_AGENT_CAUGHT_ERROR,
             ["Error caught while starting agent"],
             previous: e,
@@ -299,7 +299,7 @@ defmodule StateUtils2 do
           )
 
         {:error, reason} ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_BY_KEY_AGENT_ERROR,
             ["Error occurred while starting agent"],
             reason: reason,
@@ -307,7 +307,7 @@ defmodule StateUtils2 do
           )
 
         unexpected ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_SET_STATE_BY_KEY_AGENT_UNEXPECTED_ERROR,
             ["Unexpected error while starting agent"],
             reason: unexpected,
@@ -325,7 +325,7 @@ defmodule StateUtils2 do
   def is_exists?(name)
       when not is_atom(name),
       do:
-        throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
+        UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, [
           "name cannot be nil; name must be an atom"
         ])
 

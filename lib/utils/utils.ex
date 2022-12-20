@@ -71,10 +71,10 @@ defmodule Utils do
           ifaddr
 
         {:error, reason} ->
-          Macros.throw_error!(:CODE_CAN_NOT_GET_IF_ADDRS_ERROR, ["Cannot get If address"], reason: reason)
+          UniError.raise_error!(:CODE_CAN_NOT_GET_IF_ADDRS_ERROR, ["Cannot get If address"], reason: reason)
 
         unexpected ->
-          Macros.throw_error!(:CODE_CAN_NOT_GET_IF_ADDRS_UNEXPECTED_ERROR, ["Cannot get If address"], reason: unexpected)
+          UniError.raise_error!(:CODE_CAN_NOT_GET_IF_ADDRS_UNEXPECTED_ERROR, ["Cannot get If address"], reason: unexpected)
       end
 
     result =
@@ -131,10 +131,10 @@ defmodule Utils do
           {:ok, datetime}
 
         {:error, reason} ->
-          Macros.throw_error!(:CODE_GET_DATE_WITH_TZ_ERROR, ["Can not get datetime with TZ"], reason: reason, timezone: timezone)
+          UniError.raise_error!(:CODE_GET_DATE_WITH_TZ_ERROR, ["Can not get datetime with TZ"], reason: reason, timezone: timezone)
 
         unexpected ->
-          Macros.throw_error!(:CODE_GET_DATE_WITH_TZ_UNEXPECTED_ERROR, ["Can not get datetime with TZ"], reason: unexpected, timezone: timezone)
+          UniError.raise_error!(:CODE_GET_DATE_WITH_TZ_UNEXPECTED_ERROR, ["Can not get datetime with TZ"], reason: unexpected, timezone: timezone)
       end
 
     result
@@ -351,17 +351,17 @@ defmodule Utils do
   end
 
   def get_app_all_env!(application_name) do
-    Macros.throw_if_empty!(application_name, :atom, "Wrong application_name value")
+    Macros.raise_if_empty!(application_name, :atom, "Wrong application_name value")
 
     result = Application.get_all_env(application_name)
 
     result =
       case result do
         nil ->
-          Macros.throw_error!(:CODE_CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name)
+          UniError.raise_error!(:CODE_CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name)
 
         :undefined ->
-          Macros.throw_error!(:CODE_CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
+          UniError.raise_error!(:CODE_CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
 
         result ->
           result
@@ -379,18 +379,18 @@ defmodule Utils do
   end
 
   def get_app_env!(application_name, key) do
-    Macros.throw_if_empty!(application_name, :atom, "Wrong application_name value")
-    Macros.throw_if_empty!(key, :atom, "Wrong key value")
+    Macros.raise_if_empty!(application_name, :atom, "Wrong application_name value")
+    Macros.raise_if_empty!(key, :atom, "Wrong key value")
 
     result = Application.get_env(application_name, key)
 
     result =
       case result do
         nil ->
-          Macros.throw_error!(:CODE_CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name, key: key)
+          UniError.raise_error!(:CODE_CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name, key: key)
 
         :undefined ->
-          Macros.throw_error!(:CODE_CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
+          UniError.raise_error!(:CODE_CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
 
         result ->
           result
@@ -484,7 +484,7 @@ defmodule Utils do
   def list_of_strings_to_list_of!(list, type \\ :atom)
 
   def list_of_strings_to_list_of!(list, type) when is_nil(list) or is_nil(type) or not is_list(list) or not is_atom(type) or type not in @types,
-    do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["list, type cannot be nil; list must be a list; type must be an atom; type must be one of #{inspect(@types)}"], type: type, types: @types)
+    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["list, type cannot be nil; list must be a list; type must be an atom; type must be one of #{inspect(@types)}"], type: type, types: @types)
 
   def list_of_strings_to_list_of!(list, type) do
     result =
@@ -606,10 +606,10 @@ defmodule Utils do
 
   """
   def ensure_all_started!(apps) when is_nil(apps) or not is_list(apps),
-    do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["apps cannot be nil; apps must be a list"])
+    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["apps cannot be nil; apps must be a list"])
 
   def ensure_all_started!(apps) do
-    Macros.throw_if_empty!(apps, :list, "Wrong apps value")
+    Macros.raise_if_empty!(apps, :list, "Wrong apps value")
 
     Enum.each(
       apps,
@@ -622,13 +622,13 @@ defmodule Utils do
               {:ok, obj}
 
             {:error, reason} ->
-              Macros.throw_error!(:CODE_ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
+              UniError.raise_error!(:CODE_ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
                 app: app,
                 reason: reason
               )
 
             unexpected ->
-              Macros.throw_error!(:CODE_ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
+              UniError.raise_error!(:CODE_ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
                 app: app,
                 reason: unexpected
               )
@@ -650,7 +650,7 @@ defmodule Utils do
   def enum_each!(enum, function, args)
       when is_nil(enum) or is_nil(function) or not Macros.is_enumerable(enum) or
              (not is_nil(args) and not is_list(args)),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["enum, function cannot be nil; enum must be an enumerable; args must be a list"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["enum, function cannot be nil; enum must be an enumerable; args must be a list"])
 
   def enum_each!(enum, function, args) do
     Enum.each(
@@ -676,7 +676,7 @@ defmodule Utils do
   def enum_reduce_to_list!(enum, function, args)
       when is_nil(enum) or not Macros.is_enumerable(enum) or
              (not is_nil(function) and (not is_nil(args) and not is_list(args))),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["enum, function cannot be nil; enum must be an enumerable; args must be a list"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["enum, function cannot be nil; enum must be an enumerable; args must be a list"])
 
   def enum_reduce_to_list!(enum, function, args) do
     result =
@@ -719,7 +719,7 @@ defmodule Utils do
 
   """
   def encode64!(str) when not is_bitstring(str),
-    do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["str must be a string"])
+    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["str must be a string"])
 
   def encode64!(str) do
     result = Base.url_encode64(str)
@@ -732,7 +732,7 @@ defmodule Utils do
 
   """
   def decode64!(str) when not is_bitstring(str),
-    do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["str must be a string"])
+    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["str must be a string"])
 
   def decode64!(str) do
     result = Base.url_decode64!(str)
@@ -748,23 +748,23 @@ defmodule Utils do
 
   def string_to_type!(var, type)
       when is_nil(var) or is_nil(type) or not is_atom(type) or not is_bitstring(var),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["var and type cannot be nil; var must be a string; type must be an atom"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["var and type cannot be nil; var must be a string; type must be an atom"])
 
   def string_to_type!(_var, type)
       when type not in @types,
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type must be one of #{inspect(@types)}"], type: type, types: @types)
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type must be one of #{inspect(@types)}"], type: type, types: @types)
 
   def string_to_type!(var, :string), do: {:ok, var}
 
   def string_to_type!(var, :integer) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     result = String.to_integer(var)
     {:ok, result}
   end
 
   def string_to_type!(var, :atom) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     {:ok, result} = Utils.string_to_atom(var)
 
@@ -772,7 +772,7 @@ defmodule Utils do
   end
 
   def string_to_type!(var, :list) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     result = String.split(var, @string_separator, trim: true)
 
@@ -780,11 +780,11 @@ defmodule Utils do
   end
 
   def string_to_type!(var, :list_of_tuples) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     # {:ok, var} = @json_converter.decode!(var)
     var = @json_converter.decode!(var)
-    Macros.throw_if_empty!(var, :map, "Wrong var value")
+    Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, false)
 
@@ -792,11 +792,11 @@ defmodule Utils do
   end
 
   def string_to_type!(var, :list_of_tuples_with_atoms) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     # {:ok, var} = @json_converter.decode!(var)
     var = @json_converter.decode!(var)
-    Macros.throw_if_empty!(var, :map, "Wrong var value")
+    Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, false, :atom)
 
@@ -804,11 +804,11 @@ defmodule Utils do
   end
 
   def string_to_type!(var, :keyword_list) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     # {:ok, var} = @json_converter.decode!(var)
     var = @json_converter.decode!(var)
-    Macros.throw_if_empty!(var, :map, "Wrong var value")
+    Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, true)
 
@@ -816,11 +816,11 @@ defmodule Utils do
   end
 
   def string_to_type!(var, :keyword_list_of_atoms) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     # {:ok, var} = @json_converter.decode!(var)
     var = @json_converter.decode!(var)
-    Macros.throw_if_empty!(var, :map, "Wrong var value")
+    Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, true, :atom)
 
@@ -828,7 +828,7 @@ defmodule Utils do
   end
 
   def string_to_type!(var, :list_of_atoms) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     {:ok, list} = string_to_type!(var, :list)
 
@@ -838,11 +838,13 @@ defmodule Utils do
   end
 
   def string_to_type!(var, :boolean) when not is_nil(var) do
-    String.downcase(var) in @boolean_true
+    var = String.downcase(var) in @boolean_true
+
+    {:ok, var}
   end
 
   def string_to_type!(var, :json) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     var = @json_converter.decode!(var)
 
@@ -850,13 +852,13 @@ defmodule Utils do
   end
 
   def string_to_type!(var, :regex) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     string_to_code!(var)
   end
 
   def string_to_type!(var, :list_of_regex) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     {:ok, list} = string_to_type!(var, :list)
 
@@ -864,11 +866,11 @@ defmodule Utils do
   end
 
   def string_to_type!(var, :map_with_atom_keys) do
-    Macros.throw_if_empty!(var, :string, "Wrong var value")
+    Macros.raise_if_empty!(var, :string, "Wrong var value")
 
     # {:ok, var} = @json_converter.decode!(var)
     var = @json_converter.decode!(var)
-    Macros.throw_if_empty!(var, :map, "Wrong var value")
+    Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = convert_to_atoms_keys_in_map(var)
 
@@ -876,7 +878,7 @@ defmodule Utils do
   end
 
   def string_to_type!(_var, type),
-    do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["Wrong type: #{inspect(type)}"], type: type, types: @types)
+    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["Wrong type: #{inspect(type)}"], type: type, types: @types)
 
   ##############################################################################
   @doc """
@@ -900,7 +902,7 @@ defmodule Utils do
       when is_nil(map) or is_nil(type_of_second_elem) or is_nil(to_keyword_list) or
              not is_map(map) or not is_boolean(to_keyword_list) or is_nil(type_of_second_elem) or
              type_of_second_elem not in [:not_change, :atom],
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["map, type_of_second_elem, to_keyword_list cannot be nil; map must be a map; to_keyword_list mast be a boolean; type_of_second_elem must be on of :not_change, :atom"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["map, type_of_second_elem, to_keyword_list cannot be nil; map must be a map; to_keyword_list mast be a boolean; type_of_second_elem must be on of :not_change, :atom"])
 
   def map_to_list_of_tuples!(map, to_keyword_list, type_of_second_elem) do
     map =
@@ -934,7 +936,7 @@ defmodule Utils do
   def get_nodes_list_by_prefixes!(node_name_prefixes, nodes)
       when is_nil(node_name_prefixes) or is_nil(nodes) or
              not is_list(node_name_prefixes) or not is_list(nodes),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node_name_prefixes, nodes cannot be nil; node_name_prefixes must be a string; nodes must be a list"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node_name_prefixes, nodes cannot be nil; node_name_prefixes must be a string; nodes must be a list"])
 
   def get_nodes_list_by_prefixes!(node_name_prefixes, nodes) do
     result =
@@ -979,7 +981,7 @@ defmodule Utils do
   def random_string!(length)
       when is_nil(length) or
              not is_number(length),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["length cannot be nil; length must be a number"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["length cannot be nil; length must be a number"])
 
   def random_string!(length) do
     result =
@@ -1025,7 +1027,7 @@ defmodule Utils do
           {:ok, pid}
 
         {:error, _code, _data, _messages} = e ->
-          Macros.throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_START_SUPERVISOR_CAUGHT_ERROR,
             ["Error caught while starting child"],
             previous: e,
@@ -1034,7 +1036,7 @@ defmodule Utils do
           )
 
         {:error, reason} ->
-          Macros.throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_START_SUPERVISOR_ERROR,
             ["Error occurred while starting child"],
             reason: reason,
@@ -1043,7 +1045,7 @@ defmodule Utils do
           )
 
         unexpected ->
-          Macros.throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_START_SUPERVISOR_UNEXPECTED_ERROR,
             ["Unexpected error while starting child"],
             reason: unexpected,
@@ -1074,14 +1076,14 @@ defmodule Utils do
           {:ok, :STOPPED}
 
         {:error, _code, _data, _messages} = e ->
-          Macros.throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_STOP_SUPERVISOR_CAUGHT_ERROR,
             ["Error caught while starting child"],
             previous: e
           )
 
         unexpected ->
-          Macros.throw_error!(
+          UniError.raise_error!(
             :CODE_CAN_NOT_STOP_SUPERVISOR_UNEXPECTED_ERROR,
             ["Unexpected error while starting child"],
             reason: unexpected
@@ -1097,7 +1099,7 @@ defmodule Utils do
   """
   def map_to_struct!(module, map)
       when is_nil(map) or is_nil(module) or not is_map(map) or not is_atom(module),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["map, module cannot be nil; map must be a map; module must be an atom"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["map, module cannot be nil; map must be a map; module must be an atom"])
 
   def map_to_struct!(module, map) do
     struct = struct(module)
@@ -1123,7 +1125,7 @@ defmodule Utils do
 
         value =
           if not is_nil(value_from_atom_key) and not is_nil(value_from_string_key) do
-            Macros.throw_error!(:CODE_MAP_HAS_ATOM_AND_STRING_KEYS_WITH_SAME_NAME_ERROR, ["Map has atom and string keys with same name"], struct: module, key: k)
+            UniError.raise_error!(:CODE_MAP_HAS_ATOM_AND_STRING_KEYS_WITH_SAME_NAME_ERROR, ["Map has atom and string keys with same name"], struct: module, key: k)
           else
             value_from_atom_key || value_from_string_key
           end
@@ -1142,7 +1144,7 @@ defmodule Utils do
 
   def create_module!(module, module_text, _env)
       when not is_atom(module) or not is_bitstring(module_text),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string"])
 
   def create_module!(module, module_text, env) do
     Macros.catch_error!(
@@ -1164,11 +1166,11 @@ defmodule Utils do
   """
   def error_to_map_(error)
       when not is_tuple(error),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["error cannot be nil; error must be a tuple"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["error cannot be nil; error must be a tuple"])
 
   def error_to_map_({:error, code, data, messages} = _error)
       when not is_atom(code) or not is_map(data) or not is_list(messages),
-      do: Macros.throw_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["code, messages, data cannot be nil; code must be an atom; data must be a map; messages must be a list"])
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["code, messages, data cannot be nil; code must be an atom; data must be a map; messages must be a list"])
 
   def error_to_map_({:error, code, data, messages} = _error) do
     result = %{
@@ -1182,7 +1184,7 @@ defmodule Utils do
 
   def error_to_map_(error),
     do:
-      Macros.throw_error!(
+      UniError.raise_error!(
         :CODE_WRONG_ARGUMENT_COMBINATION_ERROR,
         ["Wrong argument combination"],
         error: error

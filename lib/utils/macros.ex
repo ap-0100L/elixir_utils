@@ -7,7 +7,10 @@ defmodule Macros do
 
   """
 
+  require UniError
+
   alias Utils, as: Utils
+  alias UniError, as: UniError
 
   def expand_macro() do
     Macro.expand(
@@ -411,9 +414,10 @@ defmodule Macros do
       result = Utils.is_not_empty(unquote(o), unquote(type))
 
       if result !== :ok do
-        {:error, code, _data, messages} = result
-
-        Macros.throw_error!(code, messages ++ [unquote(message)])
+        {:error, code, data, messages} = result
+        messages = messages || []
+        messages = messages ++ [unquote(message)]
+        Macros.throw_error!({:error, code, data, messages})
       end
 
       :ok
@@ -431,7 +435,8 @@ defmodule Macros do
       if result !== :ok do
         {:error, code, data, messages} = result
         messages = messages || []
-        Macros.throw_error!({:error, code, data, messages ++ [unquote(message)]})
+        messages = messages ++ [unquote(message)]
+        Macros.throw_error!({:error, code, data, messages})
       end
 
       {:ok, Map.get(unquote(map), unquote(key))}
@@ -449,7 +454,8 @@ defmodule Macros do
       if result !== :ok do
         {:error, code, _data, messages} = result
         messages = messages || []
-        UniError.raise_error!(code, messages ++ [unquote(message)])
+        messages = messages ++ [unquote(message)]
+        UniError.raise_error!(code, messages)
       end
 
       :ok
@@ -467,7 +473,8 @@ defmodule Macros do
       if result !== :ok do
         {:error, code, data, messages} = result
         messages = messages || []
-        UniError.raise_error!({:error, code, data, messages ++ [unquote(message)]})
+        messages = messages ++ [unquote(message)]
+        UniError.raise_error!({:error, code, data, messages})
       end
 
       {:ok, Map.get(unquote(map), unquote(key))}
@@ -481,7 +488,7 @@ defmodule Macros do
   defmacro get_app_env!(key) do
     quote do
       application_name_atom = Application.get_application(__MODULE__)
-      throw_if_empty!(application_name_atom, :atom, "Wrong application_name_atom value")
+      Macros.raise_if_empty!(application_name_atom, :atom, "Wrong application_name_atom value")
       Utils.get_app_env!(application_name_atom, unquote(key))
     end
   end
@@ -493,7 +500,7 @@ defmodule Macros do
   defmacro get_app_env_(key) do
     quote do
       application_name_atom = Application.get_application(__MODULE__)
-      throw_if_empty!(application_name_atom, :atom, "Wrong application_name_atom value")
+      Macros.raise_if_empty!(application_name_atom, :atom, "Wrong application_name_atom value")
       {:ok, value} = Utils.get_app_env!(application_name_atom, unquote(key))
 
       value

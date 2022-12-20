@@ -19,7 +19,7 @@ defmodule EtsUtils do
     result =
       case result do
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_NEW_TABLE_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
             previous: e,
@@ -47,7 +47,7 @@ defmodule EtsUtils do
           :ok
         
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_INSER_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
             previous: e,
@@ -56,7 +56,7 @@ defmodule EtsUtils do
           )
 
         unexpected ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_INSER_ETS_CAUGHT_UNEXPECTED_ERROR,
             ["Unexpected error caught while process operation on ETS"],
             reason: unexpected,
@@ -81,7 +81,7 @@ defmodule EtsUtils do
           :CODE_NOTHING_FOUND
 
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_LOOKUP_ONE_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
             previous: e,
@@ -109,7 +109,7 @@ defmodule EtsUtils do
           :CODE_NOTHING_FOUND
 
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_TAB2LIST_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
             previous: e,
@@ -136,7 +136,7 @@ defmodule EtsUtils do
           :CODE_NOTHING_FOUND
 
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_LOOKUP_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
             previous: e,
@@ -164,7 +164,7 @@ defmodule EtsUtils do
           :ok
 
         {:error, _code, _data, _messages} = e ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_INSER_ETS_CAUGHT_ERROR,
             ["Error caught while process operation on ETS"],
             previous: e,
@@ -173,7 +173,7 @@ defmodule EtsUtils do
           )
 
         unexpected ->
-          throw_error!(
+          UniError.raise_error!(
             :CODE_INSER_ETS_CAUGHT_UNEXPECTED_ERROR,
             ["Unexpected error caught while process operation on ETS"],
             reason: unexpected,
