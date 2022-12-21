@@ -42,7 +42,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
@@ -61,7 +61,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def get_if_addrs!() do
     result = :inet.getifaddrs()
@@ -105,7 +105,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def get_now_datetime_with_TZ!(timezone \\ nil)
 
@@ -143,7 +143,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def get_now_datetime_with_TZ_to_iso8601!(timezone \\ nil)
 
@@ -345,7 +345,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def get_app_all_env!() do
     get_app_all_env!(@application_name)
@@ -373,7 +373,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def get_app_env!(key) do
     get_app_env!(@application_name, key)
@@ -402,7 +402,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def convert_to_atoms_keys_in_map(val, underscore_keys \\ false, camelize_keys \\ false)
 
@@ -480,7 +480,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def list_of_strings_to_list_of!(list, type \\ :atom)
 
@@ -515,7 +515,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def string_to_atom(val) when not is_bitstring(val) and not is_atom(val),
     do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val must be an atom or string"])
@@ -541,7 +541,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def atom_to_string(val) when not is_bitstring(val) and not is_atom(val),
     do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val must be an atom or string"])
@@ -562,7 +562,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def underscore(val) when is_nil(val) or (not is_bitstring(val) and not is_atom(val)),
     do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val cannot be nil and must be an atom or string"])
@@ -582,7 +582,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def camelize(val) when is_nil(val) or (not is_bitstring(val) and not is_atom(val)),
     do: Macros.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val cannot be nil and must be an atom or string"])
@@ -604,7 +604,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def ensure_all_started!(apps) when is_nil(apps) or not is_list(apps),
     do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["apps cannot be nil; apps must be a list"])
@@ -644,7 +644,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def enum_each!(enum, function, args \\ nil)
 
@@ -670,7 +670,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def enum_reduce_to_list!(enum, function \\ nil, args \\ nil)
 
@@ -717,7 +717,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def encode64!(str) when not is_bitstring(str),
     do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["str must be a string"])
@@ -730,7 +730,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def decode64!(str) when not is_bitstring(str),
     do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["str must be a string"])
@@ -743,7 +743,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def string_to_type!(var, type \\ :string)
 
@@ -883,7 +883,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def string_to_code!(str) do
     code_str = "Macros.string_clause_to_code!(#{inspect(str)})\n"
@@ -895,7 +895,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def map_to_list_of_tuples!(map, to_keyword_list \\ false, type_of_second_elem \\ :not_change)
 
@@ -932,7 +932,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def get_nodes_list_by_prefixes!(node_name_prefixes, nodes)
       when is_nil(node_name_prefixes) or is_nil(nodes) or
@@ -968,7 +968,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def uppercase_first(<<first::utf8, rest::binary>>) do
     result = String.upcase(<<first::utf8>>) <> rest
@@ -995,7 +995,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def format_string_(string, [head | tail]) do
     string = String.replace(string, @format_string_wildcard_pattern, head, global: false)
@@ -1008,7 +1008,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def supervisor_start_link!(child_spec, opts \\ [])
 
@@ -1050,7 +1050,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def supervisor_stop!(name, reason \\ :normal, timeout \\ :infinity)
 
@@ -1078,7 +1078,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def map_to_struct!(module, map)
       when is_nil(map) or is_nil(module) or not is_map(map) or not is_atom(module),
@@ -1121,7 +1121,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def create_module!(module, module_text, env \\ nil)
 
@@ -1145,7 +1145,7 @@ defmodule Utils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def error_to_map_(error)
       when not is_tuple(error),

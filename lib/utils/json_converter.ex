@@ -2,14 +2,14 @@ defmodule JsonConverter do
   ##############################################################################
   ##############################################################################
   @moduledoc """
-
+  ## Module
   """
 
   # FIXME: load json converter from config
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def encode!(input, opts \\ []) do
 
@@ -20,7 +20,7 @@ defmodule JsonConverter do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def decode!(input, opts \\ []) do
     result = Jason.decode!(input, opts)

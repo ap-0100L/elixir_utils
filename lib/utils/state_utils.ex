@@ -2,14 +2,14 @@ defmodule StateUtils do
   ##############################################################################
   ##############################################################################
   @moduledoc """
-
+  ## Module
   """
 
   use Utils
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def init_state!(name, state \\ %{})
 
@@ -53,7 +53,7 @@ defmodule StateUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def get_state!(name)
       when not is_atom(name),
@@ -84,7 +84,7 @@ defmodule StateUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def get_state!(name, key)
       when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
@@ -115,7 +115,7 @@ defmodule StateUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def set_state!(name, state)
       when not is_atom(name) or not is_map(state),
@@ -154,7 +154,7 @@ defmodule StateUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def set_state!(name, key, _value)
       when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
@@ -193,7 +193,7 @@ defmodule StateUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def is_exists?(name)
       when not is_atom(name),

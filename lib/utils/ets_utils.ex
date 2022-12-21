@@ -2,7 +2,7 @@ defmodule EtsUtils do
   ##############################################################################
   ##############################################################################
   @moduledoc """
-
+  ## Module
   """
 
   use Utils
@@ -11,7 +11,7 @@ defmodule EtsUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def new!(table_name, opt) do
     result = UniError.rescue_error!(Ets.new(table_name, opt))
@@ -21,7 +21,7 @@ defmodule EtsUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def insert!(table_name, {key, _value} = record) do
     result = UniError.rescue_error!(Ets.insert(table_name, record))
@@ -46,7 +46,7 @@ defmodule EtsUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def lookup!(table_name, key) do
     result = UniError.rescue_error!(Ets.lookup(table_name, key))
@@ -65,7 +65,7 @@ defmodule EtsUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def tab2list!(table_name) do
     result = UniError.rescue_error!(Ets.tab2list(table_name))
@@ -84,7 +84,7 @@ defmodule EtsUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def lookup_one!(table_name, key) do
     result = UniError.rescue_error!(Ets.lookup(table_name, key))
@@ -103,7 +103,7 @@ defmodule EtsUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def delete!(table_name, key) do
     result = UniError.rescue_error!(Ets.delete(table_name, key))

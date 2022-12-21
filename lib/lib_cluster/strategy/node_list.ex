@@ -24,7 +24,7 @@ defmodule LibCluster.Strategy.NodeList do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def start_link([%State{config: config} = state] = args) do
     node_list = Keyword.get(config, :node_list, [])

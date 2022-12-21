@@ -110,7 +110,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro count_time(clause) do
     quote do
@@ -272,7 +272,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro is_datetime(o) do
     quote do
@@ -282,7 +282,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro is_struct_of_type(o, type) do
     quote do
@@ -292,7 +292,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro is_enumerable(o) do
     quote do
@@ -302,7 +302,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro build_error_(code, messages, data \\ nil)
 
@@ -379,7 +379,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro throw_error!(code, messages, data \\ nil)
 
@@ -391,7 +391,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro throw_error!(e) do
     quote do
@@ -407,7 +407,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro throw_if_empty!(o, type, message) do
     quote do
@@ -426,7 +426,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro throw_if_empty!(map, key, key_value_type, message) do
     quote do
@@ -445,7 +445,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro raise_if_empty!(o, type, message) do
     quote do
@@ -464,7 +464,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro raise_if_empty!(map, key, key_value_type, message) do
     quote do
@@ -483,7 +483,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro get_app_env!(key) do
     quote do
@@ -495,7 +495,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro get_app_env_(key) do
     quote do
@@ -509,7 +509,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro string_to_struct!(
              data,
@@ -531,7 +531,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro string_clause_to_code!(clause) do
     result = [Code.string_to_quoted!(clause)]

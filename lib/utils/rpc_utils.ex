@@ -11,7 +11,7 @@ defmodule RPCUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def call_rpc!(node, module, function, args)
       when is_nil(node) or is_nil(module) or is_nil(function) or is_nil(args) or
@@ -57,7 +57,7 @@ defmodule RPCUtils do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   def call_local_or_rpc!(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
     raise_if_empty!(remote_node_name_prefixes, :list, "Wrong remote_node_name_prefixes value")

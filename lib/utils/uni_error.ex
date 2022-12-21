@@ -2,7 +2,7 @@ defmodule UniError do
   ##############################################################################
   ##############################################################################
   @moduledoc """
-
+  ## Module
   """
 
   require Logger
@@ -19,7 +19,7 @@ defmodule UniError do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro build_uni_error_(code, messages, data \\ nil)
 
@@ -105,7 +105,7 @@ defmodule UniError do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro build_error_(code, messages, data \\ nil)
 
@@ -275,7 +275,7 @@ defmodule UniError do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro raise_error!(e) do
     quote do
@@ -285,7 +285,7 @@ defmodule UniError do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   defmacro raise_error!(code, messages, data \\ nil)
 
@@ -297,7 +297,7 @@ defmodule UniError do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   @impl true
   def exception(code: code, data: data, messages: messages) do
@@ -316,7 +316,7 @@ defmodule UniError do
 
   ##############################################################################
   @doc """
-
+  # Function
   """
   @impl true
   def message(%__MODULE__{code: _code, data: _data, messages: _messages} = e) do
