@@ -102,12 +102,28 @@ defmodule HttpResponseUtils do
   defp map_code(code, messages) do
     result =
       case code do
-        :CODE_OK -> {200, code, messages}
-        :CODE_UNEXPECTED_ERROR -> {500, code, messages}
-        value when value in [:CODE_HANDLER_NOT_FOUND, :CODE_NOTHING_FOUND] -> {404, code, messages}
-        value when value in [:CODE_TOKEN_NOT_FOUND_ERROR, :CODE_NOT_AUTHENTICATED_ERROR, :CODE_ESSENCE_NOT_FOUND_ERROR] -> {401, :CODE_NOT_AUTHENTICATED_ERROR, ["Not authenticated"]}
-        value when value in [:CODE_BY_ROLE_ACCESS_DENIED_ERROR, :CODE_BY_CHANNEL_ACCESS_DENIED_ERROR, :CODE_ACTION_NOT_ALLOWED_ERROR] -> {403, :CODE_ACCESS_DENIED_ERROR, ["Access denied"]}
-        _ -> {400, code, messages}
+        :CODE_OK ->
+          {200, code, messages}
+
+        :CODE_UNEXPECTED_ERROR ->
+          {500, code, messages}
+
+        value when value in [:CODE_HANDLER_NOT_FOUND, :CODE_NOTHING_FOUND] ->
+          {404, code, messages}
+
+        value when value in [:CODE_TOKEN_NOT_FOUND_ERROR, :CODE_NOT_AUTHENTICATED_ERROR, :CODE_ESSENCE_NOT_FOUND_ERROR] ->
+          {401, :CODE_NOT_AUTHENTICATED_ERROR, ["Not authenticated"]}
+
+        value
+        when value in [
+               :CODE_BY_ROLE_ACCESS_DENIED_ERROR,
+               :CODE_BY_CHANNEL_ACCESS_DENIED_ERROR,
+               :CODE_REST_API_ACTION_NOT_ALLOWED_ERROR
+             ] ->
+          {403, :CODE_ACCESS_DENIED_ERROR, ["Access denied"]}
+
+        _ ->
+          {400, code, messages}
       end
 
     {:ok, result}
@@ -153,7 +169,7 @@ defmodule HttpResponseUtils do
     get_response({:error, code, data, messages}, stack, add_debug_data, inspect_debug_data)
   end
 
-    def get_response({:ok, data}, _stack, _add_debug_data, _inspect_debug_data) do
+  def get_response({:ok, data}, _stack, _add_debug_data, _inspect_debug_data) do
     status = 200
     code = :CODE_OK
 
