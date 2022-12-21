@@ -317,7 +317,7 @@ defmodule StateUtils2 do
   """
   def string_to_atom(val)
       when not is_bitstring(val) and not is_atom(val),
-      do: build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val must be an atom or string"])
+      do: UniError.build_error_(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val must be an atom or string"])
 
   def string_to_atom(val) when is_atom(val) do
     {:ok, val}

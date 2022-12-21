@@ -25,25 +25,29 @@ defmodule UniError do
 
   defmacro build_uni_error_(code, messages, data) do
     quote do
+      code = unquote(code)
+      messages = unquote(messages)
+      data = unquote(data)
+
       {previous_messages, data} =
-        if is_nil(unquote(data)) or (not is_list(unquote(data)) and not is_map(unquote(data))) do
+        if is_nil(data) or (not is_list(data) and not is_map(data)) do
           data =
-            if not is_list(unquote(data)) and not is_map(unquote(data)) and not is_nil(unquote(data)) do
+            if is_nil(data) do
+              %{eid: UUID.uuid1()}
+            else
               %{
                 eid: UUID.uuid1(),
-                unsupported_data: unquote(data)
+                unsupported_data: data
               }
-            else
-              %{eid: UUID.uuid1()}
             end
 
           {[], data}
         else
           data =
-            if is_list(unquote(data)) do
-              Enum.into(unquote(data), %{})
+            if is_list(data) do
+              Enum.into(data, %{})
             else
-              unquote(data)
+              data
             end
 
           previous = Map.get(data, :previous, nil)
@@ -79,14 +83,16 @@ defmodule UniError do
       timestamp = now = System.system_time(:nanosecond)
       data = Map.put(data, :timestamp, timestamp)
 
+      messages = if is_nil(messages), do: [], else: messages
+
       messages =
-        if not is_list(unquote(messages)) do
-          [unquote(messages)]
+        if not is_list(messages) do
+          [messages]
         else
-          unquote(messages)
+          messages
         end
 
-      previous_messages = previous_messages || []
+      previous_messages = if is_nil(previous_messages), do: [], else: previous_messages
 
       previous_messages =
         if not is_list(previous_messages) do
@@ -96,7 +102,7 @@ defmodule UniError do
         end
 
       result = %UniError{
-        code: unquote(code),
+        code: code,
         data: data,
         messages: previous_messages ++ messages
       }
