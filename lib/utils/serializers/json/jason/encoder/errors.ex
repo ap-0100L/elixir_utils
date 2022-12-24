@@ -171,7 +171,7 @@ defimpl Jason.Encoder,
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   @impl Jason.Encoder
   def encode(%struct{} = value, options) do

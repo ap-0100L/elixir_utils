@@ -23,7 +23,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   @impl true
   def init(state) do
@@ -35,7 +35,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def start_link(state \\ %{}) do
     name = Map.fetch!(state, :name)
@@ -45,7 +45,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   @impl true
   def handle_call({:get, key}, _from, state) do
@@ -74,7 +74,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def init_state!(name, state \\ %{})
 
@@ -128,7 +128,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def get_state!(name)
       when not is_atom(name),
@@ -162,7 +162,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def get_state!(name, key)
       when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
@@ -195,7 +195,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def set_state!(name, state)
       when not is_atom(name) or not is_map(state),
@@ -237,7 +237,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def set_state!(name, key, _value)
       when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
@@ -279,7 +279,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def is_exists?(name)
       when not is_atom(name),
@@ -313,7 +313,7 @@ defmodule StateUtils2 do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def string_to_atom(val)
       when not is_bitstring(val) and not is_atom(val),

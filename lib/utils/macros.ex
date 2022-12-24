@@ -57,7 +57,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro count_time(clause) do
     quote do
@@ -73,7 +73,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro is_datetime(o) do
     quote do
@@ -83,7 +83,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro is_struct_of_type(o, type) do
     quote do
@@ -93,7 +93,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro is_enumerable(o) do
     quote do
@@ -103,7 +103,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro raise_if_empty!(o, type, message) do
     quote do
@@ -122,7 +122,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro raise_if_empty!(map, key, key_value_type, message) do
     quote do
@@ -141,7 +141,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro get_app_env!(key) do
     quote do
@@ -153,7 +153,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro get_app_env_(key) do
     quote do
@@ -167,7 +167,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro string_to_struct!(
              data,
@@ -189,7 +189,7 @@ defmodule Macros do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defmacro string_clause_to_code!(clause) do
     result = [Code.string_to_quoted!(clause)]

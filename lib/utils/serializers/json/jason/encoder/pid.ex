@@ -7,7 +7,7 @@ defimpl Jason.Encoder, for: PID do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   @impl Jason.Encoder
   def encode(value, options) do

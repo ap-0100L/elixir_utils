@@ -7,7 +7,7 @@ defimpl Jason.Encoder, for: Config.Provider do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   @impl Jason.Encoder
   def encode(value, options) do

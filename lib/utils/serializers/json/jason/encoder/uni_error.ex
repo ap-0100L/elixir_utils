@@ -8,7 +8,7 @@ defimpl Jason.Encoder,
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   @impl Jason.Encoder
   def encode(%struct{code: code, data: data, messages: messages} = value, options) do

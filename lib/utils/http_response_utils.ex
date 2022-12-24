@@ -9,7 +9,7 @@ defmodule HttpResponseUtils do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defp build_response(code, data, messages \\ nil, debug_data \\ nil) do
     {:ok, timestamptz} = Utils.get_now_datetime_with_TZ_to_iso8601!()
@@ -39,7 +39,7 @@ defmodule HttpResponseUtils do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def get_debug_data() do
     {:ok, hostname} = :inet.gethostname()
@@ -57,7 +57,7 @@ defmodule HttpResponseUtils do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defp get_debug_data(data, messages, stack, inspect_debug_data) do
     {:ok, hostname} = :inet.gethostname()
@@ -97,7 +97,7 @@ defmodule HttpResponseUtils do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   defp map_code(code, messages) do
     result =

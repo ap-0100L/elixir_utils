@@ -9,7 +9,7 @@ defmodule JsonConverter do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def encode!(input, opts \\ []) do
 
@@ -20,7 +20,7 @@ defmodule JsonConverter do
 
   ##############################################################################
   @doc """
-  # Function
+  ## Function
   """
   def decode!(input, opts \\ []) do
     result = Jason.decode!(input, opts)
