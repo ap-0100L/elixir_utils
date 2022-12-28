@@ -9,6 +9,10 @@ defmodule UniError do
 
   defexception [:code, :messages, :data]
 
+  ##############################################################################
+  @doc """
+  ## Function
+  """
   def expand_macro() do
     Macro.expand(
       nil,
@@ -20,6 +24,35 @@ defmodule UniError do
   ##############################################################################
   @doc """
   ## Function
+
+  ### Call
+  UniError.raise_error!(
+    :CODE_SOME_NAME_ERROR,
+    ["Message1", "Message2"],
+    useful_data1: useful_data1,
+    useful_data2: useful_data2,
+    previous: %UniError{
+      code: :CODE_PREVIOUS_ERROR,
+      data: %{some_data: "some_data"},
+      messages: ["Previous message"]
+    }
+  )
+
+  ### Return
+  %UniError{
+    code: :CODE_SOME_NAME_ERROR,
+    data: %{
+      useful_data1: useful_data1,
+      useful_data2: useful_data2,
+      previous: %UniError{
+        code: :CODE_PREVIOUS_ERROR,
+        data: %{some_data: "some_data"},
+        messages: ["Previous message"]
+      }
+    },
+    messages: ["Message1", "Message2", "Previous message"],
+  }
+
   """
   defmacro build_uni_error_(code, messages, data \\ nil)
 
@@ -104,7 +137,7 @@ defmodule UniError do
       result = %UniError{
         code: code,
         data: data,
-        messages: previous_messages ++ messages
+        messages: messages ++ previous_messages
       }
     end
   end
@@ -306,7 +339,13 @@ defmodule UniError do
   ## Function
   """
   @impl true
-  def exception(code: code, data: data, messages: messages) do
+  def exception(%__MODULE__{code: _code, data: _data, messages: _messages} = exception) do
+    exception
+  end
+
+  @impl true
+  def exception(code: code, data: data, messages: messages)
+      when is_list(data) or is_map(data) do
     build_uni_error_(code, messages, data)
   end
 
@@ -325,8 +364,8 @@ defmodule UniError do
   ## Function
   """
   @impl true
-  def message(%__MODULE__{code: _code, data: _data, messages: _messages} = e) do
-    inspect(e)
+  def message(%__MODULE__{code: _code, data: _data, messages: _messages} = exception) do
+    inspect(exception)
   end
 
   ##############################################################################

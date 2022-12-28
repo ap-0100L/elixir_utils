@@ -47,7 +47,6 @@ defmodule Macros do
           end
 
         quote do
-
         end
       ),
       __ENV__
@@ -110,10 +109,7 @@ defmodule Macros do
       result = Utils.is_not_empty(unquote(o), unquote(type))
 
       if result !== :ok do
-        {:error, code, _data, messages} = result
-        messages = messages || []
-        messages = messages ++ [unquote(message)]
-        UniError.raise_error!(code, messages)
+        UniError.raise_error!(UniError.build_uni_error_(:CODE_EMPTY_VALUE_ERROR, unquote(message), previous: result))
       end
 
       :ok
@@ -129,10 +125,7 @@ defmodule Macros do
       result = Utils.is_not_empty(unquote(map), unquote(key), unquote(key_value_type))
 
       if result !== :ok do
-        {:error, code, data, messages} = result
-        messages = messages || []
-        messages = messages ++ [unquote(message)]
-        UniError.raise_error!({:error, code, data, messages})
+        UniError.raise_error!(UniError.build_uni_error_(:CODE_EMPTY_VALUE_ERROR, unquote(message), previous: result))
       end
 
       {:ok, Map.get(unquote(map), unquote(key))}

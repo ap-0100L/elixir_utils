@@ -186,9 +186,7 @@ defmodule Utils do
 
   def is_not_empty(map, key, keyValueType) do
     result =
-      if not Map.has_key?(map, key) do
-        UniError.build_error_(:CODE_NO_KEY_IN_MAP_ERROR, ["No key '#{key}' in map"], key: key, type: keyValueType)
-      else
+      if Map.has_key?(map, key) do
         result = is_not_empty(Map.get(map, key), keyValueType)
 
         result =
@@ -197,10 +195,12 @@ defmodule Utils do
               :ok
 
             {:error, _code, _data, _messages} = e ->
-              UniError.build_error_(:CODE_WRONG_VALUE_IN_MAP_ERROR, ["Required key #{key}"], previous: e, key: key, type: keyValueType)
+              UniError.build_error_(:CODE_WRONG_VALUE_IN_MAP_ERROR, ["Required key: '#{key}'"], previous: e, key: key, type: keyValueType)
           end
 
         result
+      else
+        UniError.build_error_(:CODE_NO_KEY_IN_MAP_ERROR, ["No key '#{key}' in map"], key: key, type: keyValueType)
       end
 
     result
