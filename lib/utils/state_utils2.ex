@@ -89,13 +89,11 @@ defmodule StateUtils2 do
     result =
       UniError.rescue_error!(
         (
-
           state = Map.put(state, :name, name)
           item = Supervisor.child_spec({SelfModule, state}, id: name)
 
           DynamicSupervisor.start_child(@supervisor_name, item)
-
-          )
+        )
       )
 
     result =
@@ -123,7 +121,7 @@ defmodule StateUtils2 do
           )
       end
 
-      result
+    result
   end
 
   ##############################################################################
@@ -138,14 +136,10 @@ defmodule StateUtils2 do
         ])
 
   def get_state!(name) do
-    result =
-      UniError.rescue_error!(
-        GenServer.call(name, :get)
-      )
+    result = UniError.rescue_error!(GenServer.call(name, :get))
 
     result =
       case result do
-
         {:error, reason} ->
           UniError.raise_error!(
             :CODE_CAN_NOT_GET_STATE_BY_KEY_AGENT_ERROR,
@@ -172,10 +166,7 @@ defmodule StateUtils2 do
         ])
 
   def get_state!(name, key) do
-    result =
-      UniError.rescue_error!(
-        GenServer.call(name, {:get, key})
-      )
+    result = UniError.rescue_error!(GenServer.call(name, {:get, key}))
 
     result =
       case result do
@@ -205,10 +196,7 @@ defmodule StateUtils2 do
         ])
 
   def set_state!(name, state) do
-    result =
-      UniError.rescue_error!(
-        GenServer.call(name, {:set, state})
-      )
+    result = UniError.rescue_error!(GenServer.call(name, {:set, state}))
 
     result =
       case result do
@@ -247,10 +235,7 @@ defmodule StateUtils2 do
         ])
 
   def set_state!(name, key, value) do
-    result =
-      UniError.rescue_error!(
-        GenServer.call(name, {:set, key, value})
-      )
+    result = UniError.rescue_error!(GenServer.call(name, {:set, key, value}))
 
     result =
       case result do

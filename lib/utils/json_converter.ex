@@ -12,7 +12,6 @@ defmodule JsonConverter do
   ## Function
   """
   def encode!(input, opts \\ []) do
-
     result = Jason.encode!(input, opts)
 
     {:ok, result}
@@ -27,6 +26,7 @@ defmodule JsonConverter do
 
     {:ok, result}
   end
+
   ##############################################################################
   ##############################################################################
 end

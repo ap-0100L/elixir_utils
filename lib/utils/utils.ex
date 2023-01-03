@@ -1013,10 +1013,7 @@ defmodule Utils do
   def supervisor_start_link!(child_spec, opts \\ [])
 
   def supervisor_start_link!(child_spec, opts) do
-    result =
-      UniError.rescue_error!(
-        Supervisor.start_link(child_spec, opts)
-      )
+    result = UniError.rescue_error!(Supervisor.start_link(child_spec, opts))
 
     result =
       case result do
@@ -1055,10 +1052,7 @@ defmodule Utils do
   def supervisor_stop!(name, reason \\ :normal, timeout \\ :infinity)
 
   def supervisor_stop!(name, reason, timeout) do
-    result =
-      UniError.rescue_error!(
-        Supervisor.stop(name, reason, timeout)
-      )
+    result = UniError.rescue_error!(Supervisor.stop(name, reason, timeout))
 
     result =
       case result do
