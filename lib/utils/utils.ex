@@ -970,9 +970,8 @@ defmodule Utils do
   Generate random string
   """
   def random_string!(length)
-      when is_nil(length) or
-             not is_number(length),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["length cannot be nil; length must be a number"])
+      when not is_number(length) or length <= 0,
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["length cannot be nil; length must be a number; length must be > 0"])
 
   def random_string!(length) do
     result =
