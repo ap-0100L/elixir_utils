@@ -148,20 +148,6 @@ defmodule Macros do
   @doc """
   ## Function
   """
-  defmacro get_app_env_(key) do
-    quote do
-      application_name_atom = Application.get_application(__MODULE__)
-      Macros.raise_if_empty!(application_name_atom, :atom, "Wrong application_name_atom value")
-      {:ok, value} = Utils.get_app_env!(application_name_atom, unquote(key))
-
-      value
-    end
-  end
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
   defmacro string_to_struct!(
              data,
              type,
@@ -178,21 +164,6 @@ defmodule Macros do
 
       {:ok, data_struct}
     end
-  end
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
-  defmacro string_clause_to_code!(clause) do
-    result = [Code.string_to_quoted!(clause)]
-
-    result =
-      quote do
-        (unquote_splicing(result))
-      end
-
-    {:ok, result}
   end
 
   ##############################################################################

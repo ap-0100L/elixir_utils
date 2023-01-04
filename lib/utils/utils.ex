@@ -52,10 +52,12 @@ defmodule Utils do
       require Macros
       require Logger
       require UniError
+      require CodeUtils
 
       alias Utils, as: Utils
       alias EtsUtils, as: EtsUtils
       alias UniError, as: UniError
+      alias CodeUtils, as: CodeUtils
     end
   end
 
@@ -855,7 +857,7 @@ defmodule Utils do
   def string_to_type!(var, :regex) do
     Macros.raise_if_empty!(var, :string, "Wrong var value")
 
-    string_to_code!(var)
+    CodeUtils.string_to_code!(var)
   end
 
   def string_to_type!(var, :list_of_regex) do
@@ -880,18 +882,6 @@ defmodule Utils do
 
   def string_to_type!(_var, type),
     do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["Wrong type: #{inspect(type)}"], type: type, types: @types)
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
-  def string_to_code!(str) do
-    code_str = "Macros.string_clause_to_code!(#{inspect(str)})\n"
-
-    {result, _bindings} = Code.eval_string(code_str, [], __ENV__)
-
-    result
-  end
 
   ##############################################################################
   @doc """
@@ -1117,30 +1107,6 @@ defmodule Utils do
       end)
 
     {:ok, struct}
-  end
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
-  def create_module!(module, module_text, env \\ nil)
-
-  def create_module!(module, module_text, _env)
-      when not is_atom(module) or not is_bitstring(module_text),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string"])
-
-  def create_module!(module, module_text, env) do
-    UniError.rescue_error!(
-      (
-        module_contents = Code.string_to_quoted!(module_text)
-
-        env = env || Macro.Env.location(__ENV__)
-        Module.create(module, module_contents, env)
-
-        {:ok, module}
-      ),
-      true
-    )
   end
 
   ##############################################################################

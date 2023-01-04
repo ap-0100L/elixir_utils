@@ -42,9 +42,11 @@ defmodule UniError do
   %UniError{
     code: :CODE_SOME_NAME_ERROR,
     data: %{
+      eid: "721c47de-8bf8-11ed-933d-02420a000104",
       useful_data1: useful_data1,
       useful_data2: useful_data2,
       previous: %UniError{
+        eid: "5cd03bce-8bf8-11ed-933d-02420a000104",
         code: :CODE_PREVIOUS_ERROR,
         data: %{some_data: "some_data"},
         messages: ["Previous message"]
@@ -107,6 +109,12 @@ defmodule UniError do
                   {[], data}
               end
             end
+
+          #eid =
+          #  inspect(System.system_time(:nanosecond))
+          #  |> Stream.unfold(&String.split_at(&1, 3))
+          #  |> Enum.take_while(&(&1 != ""))
+          #  |> Enum.reduce("", fn item, accum -> accum <> item end)
 
           data = Map.put(data, :eid, UUID.uuid1())
 
@@ -344,8 +352,7 @@ defmodule UniError do
   end
 
   @impl true
-  def exception(code: code, data: data, messages: messages)
-      when is_list(data) or is_map(data) do
+  def exception(code: code, data: data, messages: messages) do
     build_uni_error_(code, messages, data)
   end
 
