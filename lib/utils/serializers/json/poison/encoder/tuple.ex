@@ -1,4 +1,4 @@
-#defimpl Poison.Encoder, for: Tuple do
+# defimpl Poison.Encoder, for: Tuple do
 #  ##############################################################################
 #  ##############################################################################
 #  @moduledoc """
@@ -16,4 +16,4 @@
 #    |> Tuple.to_list()
 #    |> Poison.Encoder.List.encode(options)
 #  end
-#end
+# end

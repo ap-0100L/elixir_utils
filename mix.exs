@@ -49,7 +49,7 @@ defmodule Utils.MixProject do
       #
       {:uuid, "~> 1.1.8"},
       {:inflex, "~> 2.1.0"},
-      {:jason, "~> 1.4"},
+      {:jason, "~> 1.4"}
     ]
   end
 

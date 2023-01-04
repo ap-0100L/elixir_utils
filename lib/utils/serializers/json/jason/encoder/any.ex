@@ -1,4 +1,4 @@
-#defimpl Jason.Encoder, for: Any do
+# defimpl Jason.Encoder, for: Any do
 #  defmacro __deriving__(module, struct, opts) do
 #    fields = fields_to_encode(struct, opts)
 #    kv = Enum.map(fields, &{&1, generated_var(&1, __MODULE__)})
@@ -94,4 +94,4 @@
 #        fields -- [:__struct__]
 #    end
 #  end
-#end
+# end

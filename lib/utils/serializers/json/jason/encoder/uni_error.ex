@@ -12,7 +12,6 @@ defimpl Jason.Encoder,
   """
   @impl Jason.Encoder
   def encode(%struct{code: code, data: data, messages: messages} = value, options) do
-
     stacktrace = Map.get(data, :stacktrace, nil)
     stack_from_data = Map.get(data, :stack, nil)
 
@@ -24,7 +23,6 @@ defimpl Jason.Encoder,
       else
         %{data | stacktrace: inspect(stacktrace)}
       end
-
 
     %{code: code, data: data, messages: messages}
     |> Map.put(:__struct__, struct)
