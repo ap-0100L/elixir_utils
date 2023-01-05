@@ -79,7 +79,7 @@ defmodule ConfigUtils do
     do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["env can not be nil; env must be a string"])
 
   def get_env_name!(env) do
-    in_container = in_container!()
+    {:ok, in_container} = in_container!()
 
     if in_container do
       env

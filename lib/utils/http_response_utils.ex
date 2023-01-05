@@ -111,7 +111,14 @@ defmodule HttpResponseUtils do
         value when value in [:CODE_HANDLER_NOT_FOUND, :CODE_NOTHING_FOUND] ->
           {404, code, messages}
 
-        value when value in [:CODE_TOKEN_NOT_FOUND_ERROR, :CODE_NOT_AUTHENTICATED_ERROR, :CODE_ESSENCE_NOT_FOUND_ERROR] ->
+        value
+        when value in [
+               :CODE_TOKEN_NOT_FOUND_ERROR,
+               :CODE_NOT_AUTHENTICATED_ERROR,
+               :CODE_ESSENCE_NOT_FOUND_ERROR,
+               :CODE_WRONG_PASSWORD_ERROR,
+               :CODE_USER_NOT_FOUND_ERROR
+             ] ->
           {401, :CODE_NOT_AUTHENTICATED_ERROR, ["Not authenticated"]}
 
         value
