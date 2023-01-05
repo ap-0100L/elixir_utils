@@ -22,6 +22,8 @@ defmodule Utils do
 
   @boolean_true ["true", "yes", "in", "on", "1"]
 
+  @crypto_alg [:sha256]
+
   @types [
     :string,
     :integer,
@@ -978,6 +980,36 @@ defmodule Utils do
       :crypto.strong_rand_bytes(length)
       |> Base.url_encode64()
       |> binary_part(0, length)
+
+    {:ok, result}
+  end
+
+  ##############################################################################
+  @doc """
+  ### Function
+  Hash string
+  """
+  def hash!(text, salt \\ nil, alg \\ :sha256)
+
+  def hash!(text, salt, alg)
+      when not is_bitstring(text) or (not is_nil(salt) and not is_bitstring(salt)) or alg not in @crypto_alg,
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["text, alg cannot be nil; text must be a string; salt if not nil must be a string; alg must be on of #{inspect(alg)}"])
+
+  def hash!(text, salt, alg) do
+    Macros.raise_if_empty!(text, :string, "")
+
+    result = is_not_empty(salt, :string)
+
+    text =
+      if :ok !== result do
+        text
+      else
+        salt <> text
+      end
+
+    result =
+      :crypto.hash(alg, text)
+      |> Base.encode64()
 
     {:ok, result}
   end
