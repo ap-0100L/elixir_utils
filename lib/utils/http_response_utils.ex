@@ -113,21 +113,32 @@ defmodule HttpResponseUtils do
 
         value
         when value in [
-               :CODE_TOKEN_NOT_FOUND_ERROR,
                :CODE_NOT_AUTHENTICATED_ERROR,
                :CODE_ESSENCE_NOT_FOUND_ERROR,
                :CODE_WRONG_PASSWORD_ERROR,
                :CODE_USER_NOT_FOUND_ERROR,
-               :CODE_REFRESH_TOKEN_NOT_FOUND_ERROR,
-               :CODE_REFRESH_TOKEN_EXPIRED_ERROR
+               :CODE_REFRESH_TOKEN_NOT_FOUND_ERROR
              ] ->
           {401, :CODE_NOT_AUTHENTICATED_ERROR, ["Not authenticated"]}
 
         value
         when value in [
+               :CODE_SECURITY_TOKEN_EXPIRED_ERROR,
+               :CODE_REFRESH_TOKEN_EXPIRED_ERROR
+             ] ->
+          {401, code, ["Not authenticated"]}
+
+        value
+        when value in [
                :CODE_BY_ROLE_ACCESS_DENIED_ERROR,
                :CODE_BY_CHANNEL_ACCESS_DENIED_ERROR,
-               :CODE_REST_API_ACTION_NOT_ALLOWED_ERROR
+               :CODE_REST_API_ACTION_NOT_ALLOWED_ERROR,
+               :CODE_GROUP_IS_PROHIBITED_ERROR,
+               :CODE_PERK_IS_PROHIBITED_ERROR,
+               :CODE_BY_GROUP_ACCESS_DENIED_ERROR,
+               :CODE_BY_PERK_ACCESS_DENIED_ERROR,
+               :CODE_ALL_GROUPS_IS_PROHIBITED_ERROR,
+               :CODE_ALL_PERKS_IS_PROHIBITED_ERROR
              ] ->
           {403, :CODE_ACCESS_DENIED_ERROR, ["Access denied"]}
 
