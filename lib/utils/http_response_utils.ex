@@ -117,6 +117,7 @@ defmodule HttpResponseUtils do
                :CODE_ESSENCE_NOT_FOUND_ERROR,
                :CODE_WRONG_PASSWORD_ERROR,
                :CODE_USER_NOT_FOUND_ERROR,
+               :CODE_SECURITY_TOKEN_NOT_FOUND_ERROR,
                :CODE_REFRESH_TOKEN_NOT_FOUND_ERROR
              ] ->
           {401, :CODE_NOT_AUTHENTICATED_ERROR, ["Not authenticated"]}
