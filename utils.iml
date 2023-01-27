@@ -104,5 +104,11 @@
     <orderEntry type="library" name="benchfella" level="project" />
     <orderEntry type="library" name="earmark" level="project" />
     <orderEntry type="library" name="benchfella" level="project" />
+    <orderEntry type="library" name="libcl" level="project" />
+    <orderEntry type="library" name="earmark" level="project" />
+    <orderEntry type="library" name="benchfella" level="project" />
+    <orderEntry type="library" name="libcluster" level="project" />
+    <orderEntry type="library" name="dialyxir" level="project" />
+    <orderEntry type="library" name="exvcr" level="project" />
   </component>
 </module>
