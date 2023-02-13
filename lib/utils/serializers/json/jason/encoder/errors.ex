@@ -144,7 +144,7 @@ defimpl Jason.Encoder,
     Ecto.MultipleResultsError,
     #
     Ecto.Changeset,
-    Ecto.Schema.Metadata,
+    ## Implemented in ECTO Ecto.Schema.Metadata,
     #
     Error,
     Phoenix.PubSub.BroadcastError,
