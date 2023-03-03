@@ -111,7 +111,7 @@ defmodule UniError do
             end
 
           #eid =
-          #  inspect(System.system_time(:nanosecond))
+          #  inspect(System.os_time(:nanosecond))
           #  |> Stream.unfold(&String.split_at(&1, 3))
           #  |> Enum.take_while(&(&1 != ""))
           #  |> Enum.reduce("", fn item, accum -> accum <> item end)
@@ -121,7 +121,7 @@ defmodule UniError do
           {messages, data}
         end
 
-      timestamp = now = System.system_time(:nanosecond)
+      timestamp = now = System.os_time(:nanosecond)
       data = Map.put(data, :timestamp, timestamp)
 
       messages = if is_nil(messages), do: [], else: messages
