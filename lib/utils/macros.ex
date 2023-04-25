@@ -15,36 +15,36 @@ defmodule Macros do
   def expand_macro() do
     Macro.expand(
       (
-        clause =
-          quote do
-            "claues"
-          end
-
-        do_rescue =
-          quote do
-            "do_rescue"
-          end
-
-        log_error =
-          quote do
-            "log_error"
-          end
-
-        reraise =
-          quote do
-            "reraise"
-          end
-
-        do_rescue =
-          if not is_nil(do_rescue) do
-            quote do
-              unquote(do_rescue)
-            end
-          else
-            quote do
-              nil
-            end
-          end
+#        clause =
+#          quote do
+#            "claues"
+#          end
+#
+#        do_rescue =
+#          quote do
+#            "do_rescue"
+#          end
+#
+#        log_error =
+#          quote do
+#            "log_error"
+#          end
+#
+#        reraise =
+#          quote do
+#            "reraise"
+#          end
+#
+#        do_rescue =
+#          if not is_nil(do_rescue) do
+#            quote do
+#              unquote(do_rescue)
+#            end
+#          else
+#            quote do
+#              nil
+#            end
+#          end
 
         quote do
         end
