@@ -120,7 +120,7 @@ defmodule Utils do
       if result == :ok do
         timezone
       else
-        {:ok, timezone} = get_app_env!(:time_zone)
+        {:ok, timezone} = get_app_env(:time_zone)
 
         timezone
       end
@@ -164,7 +164,7 @@ defmodule Utils do
   def get_now_datetime_with_TZ_as_string!(format \\ nil) do
     format =
       if is_nil(format) do
-        {:ok, date_time_with_tz_format} = get_app_env!(:date_time_with_tz_format)
+        {:ok, date_time_with_tz_format} = get_app_env(:date_time_with_tz_format)
 
         date_time_with_tz_format
       else
@@ -379,11 +379,11 @@ defmodule Utils do
   @doc """
   ## Function
   """
-  def get_app_env!(key) do
-    get_app_env!(@application_name, key)
+  def get_app_env(key) do
+    get_app_env(@application_name, key)
   end
 
-  def get_app_env!(application_name, key) do
+  def get_app_env(application_name, key) do
     Macros.raise_if_empty!(application_name, :atom, "Wrong application_name value")
     Macros.raise_if_empty!(key, :atom, "Wrong key value")
 

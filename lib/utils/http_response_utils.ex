@@ -164,7 +164,7 @@ defmodule HttpResponseUtils do
 
     add_debug_data =
       if is_nil(add_debug_data) do
-        {:ok, add_debug_data} = Utils.get_app_env!(:add_debug_data)
+        {:ok, add_debug_data} = Utils.get_app_env(:add_debug_data)
 
         add_debug_data
       else

@@ -136,11 +136,11 @@ defmodule Macros do
   @doc """
   ## Function
   """
-  defmacro get_app_env!(key) do
+  defmacro get_app_env(key) do
     quote do
       application_name_atom = Application.get_application(__MODULE__)
       Macros.raise_if_empty!(application_name_atom, :atom, "Wrong application_name_atom value")
-      Utils.get_app_env!(application_name_atom, unquote(key))
+      Utils.get_app_env(application_name_atom, unquote(key))
     end
   end
 
@@ -148,7 +148,7 @@ defmodule Macros do
   @doc """
   ## Function
   """
-  defmacro string_to_struct!(
+  defmacro string_to_struct(
              data,
              type,
              json_converter \\ Jason,
@@ -156,7 +156,7 @@ defmodule Macros do
              camelize_keys \\ false
            )
 
-  defmacro string_to_struct!(data, type, json_converter, underscore_keys, camelize_keys) do
+  defmacro string_to_struct(data, type, json_converter, underscore_keys, camelize_keys) do
     quote do
       data_map = unquote(json_converter).decode!(unquote(data))
       {:ok, data_map} = Utils.convert_to_atoms_keys_in_map(data_map, unquote(underscore_keys), unquote(camelize_keys))
