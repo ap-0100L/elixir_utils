@@ -1070,9 +1070,9 @@ defmodule Utils do
   @doc """
   ## Function
   """
-  def supervisor_stop!(name, reason \\ :normal, timeout \\ :infinity)
+  def supervisor_stop(name, reason \\ :normal, timeout \\ :infinity)
 
-  def supervisor_stop!(name, reason, timeout) do
+  def supervisor_stop(name, reason, timeout) do
     result = UniError.rescue_error!(Supervisor.stop(name, reason, timeout))
 
     result =
