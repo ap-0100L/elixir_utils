@@ -1031,9 +1031,9 @@ defmodule Utils do
   @doc """
   ## Function
   """
-  def supervisor_start_link!(child_spec, opts \\ [])
+  def supervisor_start_link(child_spec, opts \\ [])
 
-  def supervisor_start_link!(child_spec, opts) do
+  def supervisor_start_link(child_spec, opts) do
     result = UniError.rescue_error!(Supervisor.start_link(child_spec, opts))
 
     result =
