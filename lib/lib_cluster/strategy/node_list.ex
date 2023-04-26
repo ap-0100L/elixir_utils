@@ -26,7 +26,7 @@ defmodule LibCluster.Strategy.NodeList do
   @doc """
   ## Function
   """
-  def start_link([%State{config: config} = state] = args) do
+  def start_link([%State{config: config} = _state] = args) do
     node_list = Keyword.get(config, :node_list, [])
 
     case node_list do
@@ -55,7 +55,7 @@ defmodule LibCluster.Strategy.NodeList do
            topology: topology,
            config: config,
            connect: connect,
-           disconnect: disconnect,
+           disconnect: _disconnect,
            list_nodes: list_nodes
          } = state
        ) do

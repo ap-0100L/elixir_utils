@@ -11,7 +11,7 @@ defimpl Jason.Encoder,
   ## Function
   """
   @impl Jason.Encoder
-  def encode(%struct{code: code, data: data, messages: messages} = value, options) do
+  def encode(%struct{code: code, data: data, messages: messages} = _value, options) do
     stacktrace = Map.get(data, :stacktrace, nil)
     stack_from_data = Map.get(data, :stack, nil)
 
