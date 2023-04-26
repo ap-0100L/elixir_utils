@@ -68,26 +68,4 @@ defmodule ConfigUtils do
 
     result
   end
-
-  def in_container!() do
-    env_value = System.get_env("PROJECT_IN_CONTAINER")
-    raise_if_empty!(env_value, :string, "Wrong PROJECT_IN_CONTAINER value")
-    Utils.string_to_type!(env_value, :boolean)
-  end
-
-  def get_env_name!(env) when is_nil(env) or not is_bitstring(env),
-    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["env can not be nil; env must be a string"])
-
-  def get_env_name!(env) do
-    {:ok, in_container} = in_container!()
-
-    if in_container do
-      env
-    else
-      project_name = System.get_env("PROJECT_NAME")
-      raise_if_empty!(project_name, :string, "Wrong PROJECT_NAME value")
-
-      project_name <> "_" <> env
-    end
-  end
 end

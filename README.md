@@ -23,8 +23,8 @@ if in_container do
 
   config :logger,
          :console,
-         level: get_env!(get_env_name!("CONSOLE_LOG_LEVEL"), :atom, :info),
-         format: get_env!(get_env_name!("LOG_FORMAT"), :string, "[$date] [$time] [$level] [$node] [$metadata] [$levelpad] [$message]\n"),
+         level: get_env!("CONSOLE_LOG_LEVEL"), :atom, :info),
+         format: get_env!("LOG_FORMAT"), :string, "[$date] [$time] [$level] [$node] [$metadata] [$levelpad] [$message]\n"),
          metadata: :all
 else
   config :logger,
@@ -37,22 +37,22 @@ else
 
   config :logger,
          :console,
-         level: get_env!(get_env_name!("CONSOLE_LOG_LEVEL"), :atom, :info),
-         format: get_env!(get_env_name!("LOG_FORMAT"), :string, "[$date] [$time] [$level] [$node] [$metadata] [$levelpad] [$message]\n"),
+         level: get_env!("CONSOLE_LOG_LEVEL"), :atom, :info),
+         format: get_env!("LOG_FORMAT"), :string, "[$date] [$time] [$level] [$node] [$metadata] [$levelpad] [$message]\n"),
          metadata: :all
 
   config :logger,
          :info_log,
          level: :info,
-         path: get_env!(get_env_name!("LOG_PATH"), :string, "log") <> "/#{Node.self()}/info.log",
-         format: get_env!(get_env_name!("LOG_FORMAT"), :string, "[$date] [$time] [$level] [$node] [$metadata] [$levelpad] [$message]\n"),
+         path: get_env!("LOG_PATH"), :string, "log") <> "/#{Node.self()}/info.log",
+         format: get_env!("LOG_FORMAT"), :string, "[$date] [$time] [$level] [$node] [$metadata] [$levelpad] [$message]\n"),
          metadata: :all
 
   config :logger,
          :error_log,
          level: :error,
-         path: get_env!(get_env_name!("LOG_PATH"), :string, "log") <> "/#{Node.self()}/error.log",
-         format: get_env!(get_env_name!("LOG_FORMAT"), :string, "[$date] [$time] [$level] [$node] [$metadata] [$levelpad] [$message]\n"),
+         path: get_env!("LOG_PATH"), :string, "log") <> "/#{Node.self()}/error.log",
+         format: get_env!("LOG_FORMAT"), :string, "[$date] [$time] [$level] [$node] [$metadata] [$levelpad] [$message]\n"),
          metadata: :all
 end
 
