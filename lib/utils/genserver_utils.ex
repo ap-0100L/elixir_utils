@@ -32,7 +32,7 @@ defmodule GenServerUtils do
         unexpected ->
           UniError.raise_error!(
             :CODE_CAN_NOT_STOP_GENSERVER_UNEXPECTED_ERROR,
-            ["Unexpected error while starting child_spec"],
+            ["Unexpected error while stopping"],
             previous: unexpected,
             pid: pid,
             timeout: timeout,

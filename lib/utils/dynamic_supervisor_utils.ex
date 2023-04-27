@@ -33,7 +33,7 @@ defmodule DynamicSupervisorUtils do
         {:error, reason} ->
           UniError.raise_error!(
             :CODE_CAN_NOT_START_DYNAMIC_SUPERVISOR_CHILD_ERROR,
-            ["Error occurred while starting child_spec"],
+            ["Error occurred while starting"],
             previous: reason,
             dynamic_supervisor_name: dynamic_supervisor_name,
             child_spec: child_spec
@@ -42,7 +42,7 @@ defmodule DynamicSupervisorUtils do
         unexpected ->
           UniError.raise_error!(
             :CODE_CAN_NOT_START_DYNAMIC_SUPERVISOR_CHILD_UNEXPECTED_ERROR,
-            ["Unexpected error while starting child_spec"],
+            ["Unexpected error while starting"],
             previous: unexpected,
             dynamic_supervisor_name: dynamic_supervisor_name,
             child_spec: child_spec
