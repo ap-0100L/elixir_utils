@@ -1072,6 +1072,14 @@ defmodule Utils do
   """
   def supervisor_stop(name, reason \\ :normal, timeout \\ :infinity)
 
+  def supervisor_stop(name, reason, timeout)
+      when not is_atom(name) or not is_atom(reason) or (not is_atom(timeout) and not is_number(timeout)),
+      do:
+        UniError.raise_error!(
+          :CODE_WRONG_FUNCTION_ARGUMENT_ERROR,
+          ["name, reason, timeout cannot be nil; name, reason must be an atom; timeout must be an atom or number"]
+        )
+
   def supervisor_stop(name, reason, timeout) do
     result = UniError.rescue_error!(Supervisor.stop(name, reason, timeout))
 

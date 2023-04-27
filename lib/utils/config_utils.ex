@@ -59,13 +59,6 @@ defmodule ConfigUtils do
           end
       end
 
-    log_config_env_name = get_env_name!("LOG_CONFIG")
-    log_config = System.get_env(log_config_env_name, "false")
-
-    if log_config === "true" do
-      Logger.info("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] var: #{inspect(var)}, result: #{inspect(result)}, :no_default, type: #{inspect(type)}")
-    end
-
     result
   end
 end
