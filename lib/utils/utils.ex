@@ -926,12 +926,12 @@ defmodule Utils do
   @doc """
   ## Function
   """
-  def get_nodes_list_by_prefixes!(node_name_prefixes, nodes)
+  def get_nodes_list_by_prefixes(node_name_prefixes, nodes)
       when is_nil(node_name_prefixes) or is_nil(nodes) or
              not is_list(node_name_prefixes) or not is_list(nodes),
       do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node_name_prefixes, nodes cannot be nil; node_name_prefixes must be a string; nodes must be a list"])
 
-  def get_nodes_list_by_prefixes!(node_name_prefixes, nodes) do
+  def get_nodes_list_by_prefixes(node_name_prefixes, nodes) do
     result =
       Utils.enum_reduce_to_list!(
         node_name_prefixes,

@@ -47,7 +47,7 @@ defmodule RPCUtils do
   end
 
   def call_rpc!(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
-    {:ok, nodes} = Utils.get_nodes_list_by_prefixes!(remote_node_name_prefixes, Node.list())
+    {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, Node.list())
     raise_if_empty!(nodes, :list, "Wrong nodes value")
 
     node = Enum.random(nodes)
@@ -63,10 +63,10 @@ defmodule RPCUtils do
     raise_if_empty!(remote_node_name_prefixes, :list, "Wrong remote_node_name_prefixes value")
 
     node = Node.self()
-    {:ok, nodes} = Utils.get_nodes_list_by_prefixes!(remote_node_name_prefixes, [node])
+    {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, [node])
 
     if nodes == [] do
-      {:ok, nodes} = Utils.get_nodes_list_by_prefixes!(remote_node_name_prefixes, Node.list())
+      {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, Node.list())
       raise_if_empty!(nodes, :list, "Wrong nodes value")
 
       node = Enum.random(nodes)
