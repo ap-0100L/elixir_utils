@@ -47,8 +47,6 @@ defmodule Utils.MixProject do
       #
       {:libcluster, "~> 3.3.1"},
       #
-      {:logger_file_backend, "~> 0.0.13"},
-      #
       {:uuid, "~> 1.1.8"},
       {:inflex, "~> 2.1.0"},
       {:jason, "~> 1.4"}

@@ -16,7 +16,7 @@ defmodule Utils do
   @string_separator ";"
   @json_converter Jason
 
-  @format_string_wildcard_pattern "{#}"
+  @format_stringwildcard_pattern "{#}"
 
   @primitive_types [:string, :binary, :integer, :integer_id, :map, :atom, :boolean, :list, :uuid_string]
 
@@ -1019,7 +1019,7 @@ defmodule Utils do
   ## Function
   """
   def format_string(string, [head | tail]) do
-    string = String.replace(string, @format_string_wildcard_pattern, head, global: false)
+    string = String.replace(string, @format_stringwildcard_pattern, head, global: false)
     format_string(string, tail)
   end
 
