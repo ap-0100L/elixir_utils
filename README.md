@@ -10,7 +10,7 @@ by adding `utils` to your list of dependencies in `mix.exs`:
 ```elixir
 import Config
 
-import ConfigUtils, only: [get_env!: 3, get_env!: 2, get_env_name!: 1, in_container!: 0]
+import ConfigUtils, only: [get_env!: 3, get_env!: 2]
 
 {:ok, in_container} = in_container!()
 
