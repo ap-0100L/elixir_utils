@@ -1018,6 +1018,10 @@ defmodule Utils do
   @doc """
   ## Function
   """
+  def format_string(string, list)
+      when not is_bitstring(string) or not is_list(list),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["string, list cannot be nil; string must be a string; list must be a list"])
+
   def format_string(string, [head | tail]) do
     string = String.replace(string, @format_stringwildcard_pattern, head, global: false)
     format_string(string, tail)
