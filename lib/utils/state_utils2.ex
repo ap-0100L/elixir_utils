@@ -16,8 +16,6 @@ defmodule StateUtils2 do
   require Logger
   require Macros
 
-  alias __MODULE__, as: SelfModule
-
   @registry_name StateUtils.Registry
   @supervisor_name StateUtils.Supervisor
 
@@ -40,7 +38,7 @@ defmodule StateUtils2 do
   def start_link(state \\ %{}) do
     name = Map.fetch!(state, :name)
 
-    GenServer.start_link(SelfModule, state, name: name)
+    GenServer.start_link(__MODULE__, state, name: name)
   end
 
   ##############################################################################
@@ -90,7 +88,7 @@ defmodule StateUtils2 do
       UniError.rescue_error!(
         (
           state = Map.put(state, :name, name)
-          item = Supervisor.child_spec({SelfModule, state}, id: name)
+          item = Supervisor.child_spec({__MODULE__, state}, id: name)
 
           DynamicSupervisor.start_child(@supervisor_name, item)
         )

@@ -18,7 +18,10 @@ defmodule RPCUtils do
              (not is_atom(node) and not is_list(node)) or not is_atom(module) or
              not is_atom(function) or
              not is_list(args),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node, module, function, args cannot be nil; module, function must be an atom; node must be an atom or a list; args must be list"])
+      do:
+        UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node, module, function, args cannot be nil; module, function must be an atom; node must be an atom or a list; args must be list"],
+          arguments: [node: node, module: module, function: function, args: args]
+        )
 
   def call_rpc!(node, module, function, args) when is_atom(node) do
     result = :rpc.call(node, module, function, args)
@@ -47,6 +50,7 @@ defmodule RPCUtils do
   end
 
   def call_rpc!(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
+    raise_if_empty!(remote_node_name_prefixes, :list, "Wrong remote_node_name_prefixes value")
     {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, Node.list())
     raise_if_empty!(nodes, :list, "Wrong nodes value")
 
@@ -62,18 +66,18 @@ defmodule RPCUtils do
   def call_local_or_rpc!(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
     raise_if_empty!(remote_node_name_prefixes, :list, "Wrong remote_node_name_prefixes value")
 
-    node = Node.self()
-    {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, [node])
+    {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, Node.list())
 
     if nodes == [] do
-      {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, Node.list())
+      node = Node.self()
+      {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, [node])
       raise_if_empty!(nodes, :list, "Wrong nodes value")
 
+      apply(module, function, args)
+    else
       node = Enum.random(nodes)
 
       call_rpc!(node, module, function, args)
-    else
-      apply(module, function, args)
     end
   end
 

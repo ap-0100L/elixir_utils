@@ -68,11 +68,12 @@ defmodule UniError do
         if is_nil(data) or (not is_list(data) and not is_map(data)) do
           data =
             if is_nil(data) do
-              %{eid: UUID.uuid1()}
+              %{eid: UUID.uuid1(), module: __MODULE__, function: __ENV__.function}
             else
               %{
                 eid: UUID.uuid1(),
-                unsupported_data: data
+                unsupported_data: data,
+                module: __MODULE__, function: __ENV__.function
               }
             end
 
@@ -80,9 +81,11 @@ defmodule UniError do
         else
           data =
             if is_list(data) do
-              Enum.into(data, %{})
+              Enum.into(data ++ [module: __MODULE__, function: __ENV__.function], %{})
             else
               data
+              Map.put(data, :function, __ENV__.function)
+              Map.put(data, :module, __MODULE__)
             end
 
           previous = Map.get(data, :previous, nil)
@@ -110,7 +113,7 @@ defmodule UniError do
               end
             end
 
-          #eid =
+          # eid =
           #  inspect(System.os_time(:nanosecond))
           #  |> Stream.unfold(&String.split_at(&1, 3))
           #  |> Enum.take_while(&(&1 != ""))
