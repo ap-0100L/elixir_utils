@@ -145,7 +145,7 @@ defmodule UniError do
           previous_messages
         end
 
-      result = %UniError{
+      %UniError{
         code: code,
         data: data,
         messages: messages ++ previous_messages
@@ -327,9 +327,10 @@ defmodule UniError do
   @doc """
   ## Function
   """
-  defmacro raise_error!(e) do
+  defmacro raise_error!(exception) do
     quote do
-      raise(UniError, unquote(e))
+      exception = UniError.build_uni_error(:CODE_UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: unquote(exception))
+      raise(exception)
     end
   end
 
@@ -341,7 +342,8 @@ defmodule UniError do
 
   defmacro raise_error!(code, messages, data) do
     quote do
-      raise(UniError, code: unquote(code), data: unquote(data), messages: unquote(messages))
+      exception = UniError.build_uni_error(unquote(code), unquote(messages), data: unquote(data))
+      raise(exception)
     end
   end
 

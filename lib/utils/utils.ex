@@ -16,7 +16,7 @@ defmodule Utils do
   @string_separator ";"
   @json_converter Jason
 
-  @format_stringwildcard_pattern "{#}"
+  @format_string_wildcard_pattern "{#}"
 
   @primitive_types [:string, :binary, :integer, :integer_id, :map, :atom, :boolean, :list, :uuid_string]
 
@@ -1023,7 +1023,10 @@ defmodule Utils do
       do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["string, list cannot be nil; string must be a string; list must be a list"])
 
   def format_string(string, [head | tail]) do
-    string = String.replace(string, @format_stringwildcard_pattern, head, global: false)
+
+    head = if is_bitstring(head), do: head, else: inspect(head)
+
+    string = String.replace(string, @format_string_wildcard_pattern, head, global: false)
     format_string(string, tail)
   end
 
