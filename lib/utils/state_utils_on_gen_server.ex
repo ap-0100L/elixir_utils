@@ -1,23 +1,44 @@
-defmodule StateUtils2 do
+defmodule StateUtils.OnGenServer do
   ##############################################################################
   ##############################################################################
   @moduledoc """
     children = [
-      {Registry, keys: :unique, name: StateUtils.Registry},
-      {DynamicSupervisor, strategy: :one_for_one, name: StateUtils.Supervisor},
+      {Registry, keys: :unique, name: StateUtils.OnGenServer.get_registry_name()},
+      {DynamicSupervisor, strategy: :one_for_one, name: StateUtils.OnGenServer.get_dynamic_supervisor_name()}
   ]
   """
 
   use GenServer
   use Utils
 
-#  import Macros
+  @registry_name StateUtils.OnGenServer.Registry
+  @dynamic_supervisor_name StateUtils.OnGenServer.DynamicSupervisor
 
-  require Logger
-  require Macros
+  ##############################################################################
+  @doc """
+  ## Function
+  """
+  def get_registry_name() do
+    @registry_name
+  end
 
-  @registry_name StateUtils.Registry
-  @supervisor_name StateUtils.Supervisor
+  ##############################################################################
+  @doc """
+  ## Function
+  """
+  def get_dynamic_supervisor_name() do
+    @dynamic_supervisor_name
+  end
+
+  ##############################################################################
+  @doc """
+  ## Function
+  """
+  def init_registry() do
+    Registry.start_link(keys: :unique, name: @registry_name)
+    DynamicSupervisor.start_link(strategy: :one_for_one, name: @dynamic_supervisor_name)
+  end
+
 
   ##############################################################################
   @doc """
@@ -26,7 +47,6 @@ defmodule StateUtils2 do
   @impl true
   def init(state) do
     name = Map.fetch!(state, :name)
-    Registry.register(@registry_name, name, :value)
 
     {:ok, state}
   end
@@ -38,7 +58,7 @@ defmodule StateUtils2 do
   def start_link(state \\ %{}) do
     name = Map.fetch!(state, :name)
 
-    GenServer.start_link(__MODULE__, state, name: name)
+    GenServer.start_link(__MODULE__, state, name: {:via, Registry, {@registry_name, name}})
   end
 
   ##############################################################################
@@ -90,7 +110,7 @@ defmodule StateUtils2 do
           state = Map.put(state, :name, name)
           item = Supervisor.child_spec({__MODULE__, state}, id: name)
 
-          DynamicSupervisor.start_child(@supervisor_name, item)
+          DynamicSupervisor.start_child(@dynamic_supervisor_name, item)
         )
       )
 

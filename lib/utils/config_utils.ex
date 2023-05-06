@@ -23,10 +23,10 @@ defmodule ConfigUtils do
   If no default value is given, or `:no_default` is given as the default, an error is raised if the variable is not
   set.
   """
-  @spec get_env!(String.t(), config_type(), :no_default | any()) :: any()
-  def get_env!(var, type, default \\ :no_default)
+  @spec get_env(String.t(), config_type(), :no_default | any()) :: any()
+  def get_env(var, type, default \\ :no_default)
 
-  def get_env!(var, type, default) do
+  def get_env(var, type, default) do
     result =
       with {:ok, val} <- System.fetch_env(var) do
         {:ok, result} =
