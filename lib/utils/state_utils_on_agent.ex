@@ -1,11 +1,11 @@
-defmodule StateUtils.OnAgent do
+defmodule StateUtils.On.Agent do
   ##############################################################################
   ##############################################################################
   @moduledoc """
   ## Module
 
     children = [
-      {Registry, keys: :unique, name: StateUtils.OnAgent.Registry}
+      {Registry, keys: :unique, name: StateUtils.On.Agent.get_registry_name()}
   ]
   """
 

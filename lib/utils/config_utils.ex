@@ -1,29 +1,10 @@
 defmodule ConfigUtils do
   use Utils
 
-  @type config_type ::
-          :string
-          | :integer
-          | :boolean
-          | :json
-          | :map_with_atom_keys
-          | :atom
-          | :list
-          | :list_of_tuples
-          | :keyword_list
-          | :list_of_atoms
-          | :keyword_list_of_atoms
-          | :list_of_tuples_with_atoms
-          | :regex
-          | :list_of_regex
-
+  ##############################################################################
   @doc """
-  Get value from environment variable, converting it to the given type if needed.
-
-  If no default value is given, or `:no_default` is given as the default, an error is raised if the variable is not
-  set.
+  ## Function
   """
-  @spec get_env(String.t(), config_type(), :no_default | any()) :: any()
   def get_env(var, type, default \\ :no_default)
 
   def get_env(var, type, default) do

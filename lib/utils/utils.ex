@@ -14,7 +14,6 @@ defmodule Utils do
   @application_name :api_core
   @valid_id_start_at -1
   @string_separator ";"
-  @json_converter Jason
 
   @format_string_wildcard_pattern "{#}"
 
@@ -99,8 +98,7 @@ defmodule Utils do
             hwaddr: inspect(opts[:hwaddr])
           }
 
-          # FIXME: It revers list
-          [obj | accum]
+          accum ++ [obj]
         end
       )
 
@@ -429,6 +427,8 @@ defmodule Utils do
 
               # FIXME: It revers list
               # [val | accum]
+
+              # accum ++ [val]
             end
           )
 
@@ -736,19 +736,6 @@ defmodule Utils do
   @doc """
   ## Function
   """
-  def decode64!(str) when not is_bitstring(str),
-    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["str must be a string"])
-
-  def decode64!(str) do
-    result = Base.url_decode64!(str)
-
-    {:ok, result}
-  end
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
   def string_to_type!(var, type \\ :string)
 
   def string_to_type!(var, type)
@@ -760,6 +747,8 @@ defmodule Utils do
       do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type must be one of #{inspect(@types)}"], type: type, types: @types)
 
   def string_to_type!(var, :string), do: {:ok, var}
+  
+  def string_to_type!(var, :uuid_string), do: {:ok, var}
 
   def string_to_type!(var, :integer) do
     Macros.raise_if_empty!(var, :string, "Wrong var value")
@@ -787,8 +776,8 @@ defmodule Utils do
   def string_to_type!(var, :list_of_tuples) do
     Macros.raise_if_empty!(var, :string, "Wrong var value")
 
-    # {:ok, var} = @json_converter.decode!(var)
-    var = @json_converter.decode!(var)
+    {:ok, var} = JsonConverter.decode!(var)
+    # var = Jason.decode!(var)
     Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, false)
@@ -799,8 +788,8 @@ defmodule Utils do
   def string_to_type!(var, :list_of_tuples_with_atoms) do
     Macros.raise_if_empty!(var, :string, "Wrong var value")
 
-    # {:ok, var} = @json_converter.decode!(var)
-    var = @json_converter.decode!(var)
+    {:ok, var} = JsonConverter.decode!(var)
+    # var = Jason.decode!(var)
     Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, false, :atom)
@@ -811,8 +800,8 @@ defmodule Utils do
   def string_to_type!(var, :keyword_list) do
     Macros.raise_if_empty!(var, :string, "Wrong var value")
 
-    # {:ok, var} = @json_converter.decode!(var)
-    var = @json_converter.decode!(var)
+    {:ok, var} = JsonConverter.decode!(var)
+    # var = Jason.decode!(var)
     Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, true)
@@ -823,8 +812,8 @@ defmodule Utils do
   def string_to_type!(var, :keyword_list_of_atoms) do
     Macros.raise_if_empty!(var, :string, "Wrong var value")
 
-    # {:ok, var} = @json_converter.decode!(var)
-    var = @json_converter.decode!(var)
+    {:ok, var} = JsonConverter.decode!(var)
+    # var = Jason.decode!(var)
     Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = Utils.map_to_list_of_tuples!(var, true, :atom)
@@ -851,7 +840,7 @@ defmodule Utils do
   def string_to_type!(var, :json) do
     Macros.raise_if_empty!(var, :string, "Wrong var value")
 
-    var = @json_converter.decode!(var)
+    # var = Jason.decode!(var)
 
     {:ok, var}
   end
@@ -873,11 +862,19 @@ defmodule Utils do
   def string_to_type!(var, :map_with_atom_keys) do
     Macros.raise_if_empty!(var, :string, "Wrong var value")
 
-    # {:ok, var} = @json_converter.decode!(var)
-    var = @json_converter.decode!(var)
+    {:ok, var} = JsonConverter.decode!(var)
+    # var = Jason.decode!(var)
     Macros.raise_if_empty!(var, :map, "Wrong var value")
 
     {:ok, result} = convert_to_atoms_keys_in_map(var)
+
+    {:ok, result}
+  end
+
+  def string_to_type!(var, :uuid) do
+    Macros.raise_if_empty!(var, :uuid_string, "Wrong var value")
+
+    result = UUID.string_to_binary!(var)
 
     {:ok, result}
   end
@@ -1076,36 +1073,6 @@ defmodule Utils do
 
     {:ok, struct}
   end
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
-  def error_to_map(error)
-      when not is_tuple(error),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["error cannot be nil; error must be a tuple"])
-
-  def error_to_map({:error, code, data, messages} = _error)
-      when not is_atom(code) or not is_map(data) or not is_list(messages),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["code, messages, data cannot be nil; code must be an atom; data must be a map; messages must be a list"])
-
-  def error_to_map({:error, code, data, messages} = _error) do
-    result = %{
-      code: code,
-      data: data,
-      messages: messages
-    }
-
-    result
-  end
-
-  def error_to_map(error),
-    do:
-      UniError.raise_error!(
-        :CODE_WRONG_ARGUMENT_COMBINATION_ERROR,
-        ["Wrong argument combination"],
-        error: error
-      )
 
   ##############################################################################
   ##############################################################################

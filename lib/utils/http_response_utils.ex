@@ -108,7 +108,7 @@ defmodule HttpResponseUtils do
         :CODE_UNEXPECTED_ERROR ->
           {500, code, messages}
 
-        value when value in [:CODE_HANDLER_NOT_FOUND, :CODE_NOTHING_FOUND] ->
+        value when value in [:CODE_HANDLER_NOT_FOUND_ERROR, :CODE_NOT_FOUND] ->
           {404, code, messages}
 
         value

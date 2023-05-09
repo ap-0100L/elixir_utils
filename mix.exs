@@ -46,6 +46,7 @@ defmodule Utils.MixProject do
       # {:sibling_app_in_umbrella, in_umbrella: true}
       #
       {:libcluster, "~> 3.3.1"},
+      {:kaffe, "~> 1.22.0"},
       #
       {:uuid, "~> 1.1.8"},
       {:inflex, "~> 2.1.0"},

@@ -54,7 +54,7 @@ defmodule EtsUtils do
     result =
       case result do
         [] ->
-          :CODE_NOTHING_FOUND
+          :CODE_NOT_FOUND
 
         result ->
           result
@@ -73,7 +73,7 @@ defmodule EtsUtils do
     result =
       case result do
         [] ->
-          :CODE_NOTHING_FOUND
+          :CODE_NOT_FOUND
 
         result ->
           result
@@ -92,7 +92,7 @@ defmodule EtsUtils do
     result =
       case result do
         [] ->
-          :CODE_NOTHING_FOUND
+          :CODE_NOT_FOUND
 
         [result | _] ->
           result

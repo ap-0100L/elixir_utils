@@ -73,7 +73,8 @@ defmodule UniError do
               %{
                 eid: UUID.uuid1(),
                 unsupported_data: data,
-                module: __MODULE__, function: __ENV__.function
+                module: __MODULE__,
+                function: __ENV__.function
               }
             end
 
@@ -229,7 +230,27 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNSUPPORTED ERROR: #{inspect(unsupported)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          e = UniError.build_uni_error(:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported)
+          {code, messages, data} =
+            if is_tuple(reraise) do
+
+              case tuple_size(reraise) do
+                3 ->
+                  {code, messages, data} = reraise
+                  {code, messages, data: data, previous: unsupported}
+
+                2 ->
+                  {code, messages} = reraise
+                  {code, messages, previous: unsupported}
+
+                _ ->
+                  {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
+              end
+
+            else
+              {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
+            end
+
+          e = UniError.build_uni_error(code, messages, data)
 
           result =
             if not is_nil(rescue_func) do
@@ -294,7 +315,27 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT UNSUPPORTED REASON: #{inspect(reason)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          e = UniError.build_uni_error(:CODE_EXIT_CAUGHT_ERROR, ["Caught unsupported EXIT reason"], previous: reason)
+          {code, messages, data} =
+            if is_tuple(reraise) do
+
+              case tuple_size(reraise) do
+                3 ->
+                  {code, messages, data} = reraise
+                  {code, messages, data: data, previous: reason}
+
+                2 ->
+                  {code, messages} = reraise
+                  {code, messages, previous: reason}
+
+                _ ->
+                  {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
+              end
+
+            else
+              {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
+            end
+
+          e = UniError.build_uni_error(code, messages, data)
 
           result =
             if not is_nil(rescue_func) do
