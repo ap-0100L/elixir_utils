@@ -36,11 +36,11 @@ defmodule StateUtils.On.Agent do
   def init_state(name, state \\ %{})
 
   def init_state(name, state)
-      when not is_atom(name) or not is_map(state),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, state cannot be nil; name must be an atom; state must a map"])
+      when is_nil(name) or not is_map(state),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, state cannot be nil; state must a map"])
 
   def init_state(name, state) do
-    result = UniError.rescue_error!(Agent.start_link(fn -> state end, name: {:via, Registry, {@registry_name, name}}))
+    result = UniError.rescue_error!(Agent.start_link(fn -> state end, name: {:via, Registry, {@registry_name, name}}), {:CODE_STATE_AGENT_INIT_ERROR, ["Cannot init state on Agent"], name: name, registry_name: @registry_name})
 
     result =
       case result do
@@ -75,11 +75,11 @@ defmodule StateUtils.On.Agent do
   ## Function
   """
   def get_state(name)
-      when not is_atom(name),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name cannot be nil; name must be an atom"])
+      when is_nil(name),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name cannot be nil"])
 
   def get_state(name) do
-    result = UniError.rescue_error!(Agent.get({:via, Registry, {@registry_name, name}}, fn state -> state end))
+    result = UniError.rescue_error!(Agent.get({:via, Registry, {@registry_name, name}}, fn state -> state end), {:CODE_STATE_AGENT_GET_ERROR, ["Cannot get state on Agent"], name: name, registry_name: @registry_name})
 
     result =
       case result do
@@ -102,8 +102,8 @@ defmodule StateUtils.On.Agent do
   ## Function
   """
   def get_state(name, key)
-      when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, key cannot be nil; name must be an atom; key must a string or an atom"])
+      when is_nil(name) or (not is_atom(key) and not is_bitstring(key)),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, key cannot be nil; key must a string or an atom"])
 
   def get_state(name, key) do
     result = UniError.rescue_error!(Agent.get({:via, Registry, {@registry_name, name}}, &Map.get(&1, key)))
@@ -129,8 +129,8 @@ defmodule StateUtils.On.Agent do
   ## Function
   """
   def set_state(name, state)
-      when not is_atom(name) or not is_map(state),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, state cannot be nil; name must be an atom; state must a map"])
+      when is_nil(name) or not is_map(state),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, state cannot be nil; state must a map"])
 
   def set_state(name, state) do
     result = UniError.rescue_error!(Agent.cast({:via, Registry, {@registry_name, name}}, fn _state -> state end))
@@ -165,8 +165,8 @@ defmodule StateUtils.On.Agent do
   ## Function
   """
   def set_state(name, key, _value)
-      when not is_atom(name) or (not is_atom(key) and not is_bitstring(key)),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, key, state cannot be nil; name must be an atom; key must an atom or a string"])
+      when is_nil(name) or (not is_atom(key) and not is_bitstring(key)),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, key, state cannot be nil; key must an atom or a string"])
 
   def set_state(name, key, value) do
     result = UniError.rescue_error!(Agent.cast({:via, Registry, {@registry_name, name}}, &Map.put(&1, key, value)))
@@ -201,8 +201,8 @@ defmodule StateUtils.On.Agent do
   ## Function
   """
   def is_exists(name)
-      when not is_atom(name),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name cannot be nil; name must be an atom"])
+      when is_nil(name),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name cannot be nil"])
 
   def is_exists(name) do
     result =

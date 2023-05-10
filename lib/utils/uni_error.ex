@@ -232,11 +232,10 @@ defmodule UniError do
 
           {code, messages, data} =
             if is_tuple(reraise) do
-
               case tuple_size(reraise) do
                 3 ->
                   {code, messages, data} = reraise
-                  {code, messages, data: data, previous: unsupported}
+                  if is_list(data), do: {code, messages, [previous: unsupported] ++ data}, else: {code, messages, data: data, previous: unsupported}
 
                 2 ->
                   {code, messages} = reraise
@@ -245,7 +244,6 @@ defmodule UniError do
                 _ ->
                   {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
               end
-
             else
               {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
             end
@@ -317,11 +315,10 @@ defmodule UniError do
 
           {code, messages, data} =
             if is_tuple(reraise) do
-
               case tuple_size(reraise) do
                 3 ->
                   {code, messages, data} = reraise
-                  {code, messages, data: data, previous: reason}
+                  if is_list(data), do: {code, messages, [previous: reason] ++ data}, else: {code, messages, data: data, previous: reason}
 
                 2 ->
                   {code, messages} = reraise
@@ -330,7 +327,6 @@ defmodule UniError do
                 _ ->
                   {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
               end
-
             else
               {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
             end
