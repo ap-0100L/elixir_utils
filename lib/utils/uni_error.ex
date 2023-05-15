@@ -219,7 +219,7 @@ defmodule UniError do
           data = Map.put(data, :stacktrace, stacktrace)
           e = Map.put(e, :data, data)
 
-          if reraise do
+          if reraise != false do
             reraise(e, __STACKTRACE__)
           end
 
@@ -267,7 +267,7 @@ defmodule UniError do
           data = Map.put(data, :stacktrace, stacktrace)
           e = Map.put(e, :data, data)
 
-          if reraise do
+          if reraise != false do
             reraise(e, __STACKTRACE__)
           end
 
@@ -302,7 +302,7 @@ defmodule UniError do
           data = Map.put(data, :stacktrace, stacktrace)
           e = Map.put(e, :data, data)
 
-          if reraise do
+          if reraise != false do
             exit(e)
           end
 
@@ -351,7 +351,7 @@ defmodule UniError do
           data = Map.put(data, :stacktrace, stacktrace)
           e = Map.put(e, :data, data)
 
-          if reraise do
+          if reraise != false do
             exit(e)
           end
 

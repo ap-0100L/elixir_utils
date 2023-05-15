@@ -228,5 +228,44 @@ defmodule StateUtils.On.Agent do
   end
 
   ##############################################################################
+  @doc """
+  ## Function
+  """
+  def delete_state(name)
+      when is_nil(name),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, cannot be nil"])
+
+  def delete_state(name) do
+    result = UniError.rescue_error!(Agent.stop([name: {:via, Registry, {@registry_name, name}}], :normal, :infinity), {:CODE_STATE_AGENT_DELETE_ERROR, ["Cannot delete state on Agent"], name: name, registry_name: @registry_name})
+
+    result =
+      case result do
+        :ok ->
+          {:ok, :STOPPED}
+
+        {:error, {:already_started, pid}} ->
+          {:ok, pid}
+
+        {:error, reason} ->
+          UniError.raise_error!(
+            :CODE_CAN_NOT_STOP_AGENT_ERROR,
+            ["Error occurred while starting agent"],
+            previous: reason,
+            name: name
+          )
+
+        unexpected ->
+          UniError.raise_error!(
+            :CODE_CAN_NOT_STOP_AGENT_UNEXPECTED_ERROR,
+            ["Unexpected error while starting agent"],
+            previous: unexpected,
+            name: name
+          )
+      end
+
+    result
+  end
+
+  ##############################################################################
   ##############################################################################
 end

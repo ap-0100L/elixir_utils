@@ -59,6 +59,7 @@ defmodule Utils do
       alias EtsUtils, as: EtsUtils
       alias UniError, as: UniError
       alias CodeUtils, as: CodeUtils
+      alias MapUtils, as: MapUtils
     end
   end
 
@@ -421,14 +422,7 @@ defmodule Utils do
             [],
             fn item, accum ->
               {:ok, val} = convert_to_atoms_keys_in_map(item, underscore_keys, camelize_keys)
-
-              # FIXME: It probably slow action
-              :lists.append(accum, [val])
-
-              # FIXME: It revers list
-              # [val | accum]
-
-              # accum ++ [val]
+              accum ++ [val]
             end
           )
 
@@ -500,12 +494,7 @@ defmodule Utils do
             [],
             fn item, accum ->
               {:ok, result} = string_to_type!(item, type)
-
-              # FIXME: It probably slow action
-              :lists.append(accum, [result])
-
-              # FIXME: It revers list
-              # [result | accum]
+              accum ++ [result]
             end
           )
 
@@ -650,92 +639,6 @@ defmodule Utils do
   @doc """
   ## Function
   """
-  def enum_each!(enum, function, args \\ nil)
-
-  def enum_each!(enum, function, args)
-      when is_nil(enum) or is_nil(function) or not Macros.is_enumerable(enum) or
-             (not is_nil(args) and not is_list(args)),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["enum, function cannot be nil; enum must be an enumerable; args must be a list"])
-
-  def enum_each!(enum, function, args) do
-    Enum.each(
-      enum,
-      fn item ->
-        if is_nil(args) do
-          function.(item)
-        else
-          function.(item, args)
-        end
-      end
-    )
-
-    :ok
-  end
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
-  def enum_reduce_to_list!(enum, function \\ nil, args \\ nil)
-
-  def enum_reduce_to_list!(enum, function, args)
-      when is_nil(enum) or not Macros.is_enumerable(enum) or
-             (not is_nil(function) and (not is_nil(args) and not is_list(args))),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["enum, function cannot be nil; enum must be an enumerable; args must be a list"])
-
-  def enum_reduce_to_list!(enum, function, args) do
-    result =
-      Enum.reduce(
-        enum,
-        [],
-        fn item, accum ->
-          {:ok, result} =
-            if not is_nil(function) do
-              if is_nil(args) do
-                function.(item)
-              else
-                function.(item, args)
-              end
-            else
-              {:ok, item}
-            end
-
-          if is_list(result) do
-            # FIXME: It probably slow action
-            :lists.append(accum, result)
-
-            # FIXME: It revers enum
-            # result ++ accum
-          else
-            # FIXME: It probably slow action
-            :lists.append(accum, [result])
-
-            # FIXME: It revers enum
-            # [result] ++ accum
-          end
-        end
-      )
-
-    {:ok, result}
-  end
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
-  def encode64!(str) when not is_bitstring(str),
-    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["str must be a string"])
-
-  def encode64!(str) do
-    result = Base.url_encode64(str)
-
-    {:ok, result}
-  end
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
   def string_to_type!(var, type \\ :string)
 
   def string_to_type!(var, type)
@@ -747,7 +650,7 @@ defmodule Utils do
       do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type must be one of #{inspect(@types)}"], type: type, types: @types)
 
   def string_to_type!(var, :string), do: {:ok, var}
-  
+
   def string_to_type!(var, :uuid_string), do: {:ok, var}
 
   def string_to_type!(var, :integer) do
@@ -930,29 +833,23 @@ defmodule Utils do
 
   def get_nodes_list_by_prefixes(node_name_prefixes, nodes) do
     result =
-      Utils.enum_reduce_to_list!(
+      Enum.reduce(
         node_name_prefixes,
-        fn prefix, nodes ->
-          Utils.enum_reduce_to_list!(
-            nodes,
-            fn item, [prefix] ->
-              item_str = "#{item}"
-
-              result = String.match?(item_str, prefix)
-
-              if result do
-                {:ok, [item]}
-              else
-                {:ok, []}
+        [],
+        fn prefix, accum ->
+          result =
+            Enum.filter(
+              nodes,
+              fn n ->
+                String.match?("#{n}", prefix)
               end
-            end,
-            [prefix]
-          )
-        end,
-        nodes
+            )
+
+          accum ++ result
+        end
       )
 
-    result
+    {:ok, result}
   end
 
   ##############################################################################
@@ -1020,7 +917,6 @@ defmodule Utils do
       do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["string, list cannot be nil; string must be a string; list must be a list"])
 
   def format_string(string, [head | tail]) do
-
     head = if is_bitstring(head), do: head, else: inspect(head)
 
     string = String.replace(string, @format_string_wildcard_pattern, head, global: false)
