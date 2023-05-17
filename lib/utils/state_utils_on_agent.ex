@@ -102,11 +102,18 @@ defmodule StateUtils.On.Agent do
   ## Function
   """
   def get_state(name, key)
-      when is_nil(name) or (not is_atom(key) and not is_bitstring(key)),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, key cannot be nil; key must a string or an atom"])
+      when is_nil(name) or (not is_atom(key) and not is_bitstring(key) and not is_list(key)),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, key cannot be nil; key must a string or an atom or an list"])
 
   def get_state(name, key) do
     result = UniError.rescue_error!(Agent.get({:via, Registry, {@registry_name, name}}, &Map.get(&1, key)))
+
+    result =
+      if is_list(key) do
+        result = UniError.rescue_error!(Agent.get({:via, Registry, {@registry_name, name}}, &get_in(&1, key)))
+      else
+        result = UniError.rescue_error!(Agent.get({:via, Registry, {@registry_name, name}}, &Map.get(&1, key)))
+      end
 
     result =
       case result do
@@ -165,11 +172,16 @@ defmodule StateUtils.On.Agent do
   ## Function
   """
   def set_state(name, key, _value)
-      when is_nil(name) or (not is_atom(key) and not is_bitstring(key)),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, key, state cannot be nil; key must an atom or a string"])
+      when is_nil(name) or (not is_atom(key) and not is_bitstring(key) and not is_list(key)),
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, key, state cannot be nil; key must an atom or a string or a list"])
 
   def set_state(name, key, value) do
-    result = UniError.rescue_error!(Agent.cast({:via, Registry, {@registry_name, name}}, &Map.put(&1, key, value)))
+    result =
+      if is_list(key) do
+        UniError.rescue_error!(Agent.cast({:via, Registry, {@registry_name, name}}, &put_in(&1, key, value)))
+      else
+        UniError.rescue_error!(Agent.cast({:via, Registry, {@registry_name, name}}, &Map.put(&1, key, value)))
+      end
 
     result =
       case result do
@@ -200,43 +212,14 @@ defmodule StateUtils.On.Agent do
   @doc """
   ## Function
   """
-  def is_exists(name)
-      when is_nil(name),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name cannot be nil"])
-
-  def is_exists(name) do
-    result =
-      UniError.rescue_error!(
-        Agent.get({:via, Registry, {@registry_name, name}}, fn state -> state end),
-        false,
-        false
-      )
-
-    result =
-      case result do
-        %UniError{} ->
-          false
-
-        {:error, _reason} ->
-          false
-
-        _ ->
-          true
-      end
-
-    result
-  end
-
-  ##############################################################################
-  @doc """
-  ## Function
-  """
   def delete_state(name)
       when is_nil(name),
       do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, cannot be nil"])
 
   def delete_state(name) do
-    result = UniError.rescue_error!(Agent.stop([name: {:via, Registry, {@registry_name, name}}], :normal, :infinity), {:CODE_STATE_AGENT_DELETE_ERROR, ["Cannot delete state on Agent"], name: name, registry_name: @registry_name})
+    [{pid, _}] = Registry.lookup(@registry_name, name)
+
+    result = UniError.rescue_error!(Agent.stop(pid, :normal, :infinity), {:CODE_STATE_AGENT_DELETE_ERROR, ["Cannot delete state on Agent"], name: name, registry_name: @registry_name})
 
     result =
       case result do
