@@ -37,5 +37,10 @@
     <orderEntry type="library" name="brod" level="project" />
     <orderEntry type="library" name="retry" level="project" />
     <orderEntry type="library" name="excoveralls" level="project" />
+    <orderEntry type="library" name="ex_doc" level="project" />
+    <orderEntry type="library" name="dialyxir" level="project" />
+    <orderEntry type="library" name="exvcr" level="project" />
+    <orderEntry type="library" name="earmark" level="project" />
+    <orderEntry type="library" name="benchfella" level="project" />
   </component>
 </module>
