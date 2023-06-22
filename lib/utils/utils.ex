@@ -365,7 +365,7 @@ defmodule Utils do
           UniError.raise_error!(:CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name)
 
         :undefined ->
-          UniError.raise_error!(:CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
+          UniError.raise_error!(:CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, previous: :undefined)
 
         result ->
           result
@@ -394,7 +394,7 @@ defmodule Utils do
           UniError.raise_error!(:CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name, key: key)
 
         :undefined ->
-          UniError.raise_error!(:CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
+          UniError.raise_error!(:CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, previous: :undefined)
 
         result ->
           result

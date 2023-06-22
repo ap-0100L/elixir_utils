@@ -202,6 +202,10 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNI-EXCEPTION: #{inspect(e)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
+          %UniError{data: %{eid: eid}, messages: messages} = e
+          messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+          e = Map.put(e, :messages, messages)
+
           result =
             if not is_nil(rescue_func) do
               if not is_nil(module) do
@@ -250,6 +254,10 @@ defmodule UniError do
 
           e = UniError.build_uni_error(code, messages, data)
 
+          %UniError{data: %{eid: eid}, messages: messages} = e
+          messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+          e = Map.put(e, :messages, messages)
+
           result =
             if not is_nil(rescue_func) do
               if not is_nil(module) do
@@ -283,6 +291,10 @@ defmodule UniError do
 
           # e = UniError.build_uni_error(:EXIT_CAUGHT_ERROR, ["Caught EXIT Uni-reason"], previous: reason)
           e = reason
+
+          %UniError{data: %{eid: eid}, messages: messages} = e
+          messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+          e = Map.put(e, :messages, messages)
 
           result =
             if not is_nil(rescue_func) do
@@ -332,6 +344,10 @@ defmodule UniError do
             end
 
           e = UniError.build_uni_error(code, messages, data)
+
+          %UniError{data: %{eid: eid}, messages: messages} = e
+          messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+          e = Map.put(e, :messages, messages)
 
           result =
             if not is_nil(rescue_func) do

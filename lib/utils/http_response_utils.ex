@@ -82,9 +82,6 @@ defmodule HttpResponseUtils do
         error_data
       end
 
-    eid = Map.get(error_data, :eid)
-    messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(stacktrace)}]"]
-
     debug_data = %{
       hostname: "#{hostname}",
       node_name: Node.self(),
@@ -94,7 +91,7 @@ defmodule HttpResponseUtils do
       messages: messages
     }
 
-    {:ok, {debug_data, messages}}
+    {:ok, debug_data}
   end
 
   ##############################################################################
@@ -173,16 +170,17 @@ defmodule HttpResponseUtils do
         add_debug_data
       end
 
-    {:ok, {debug_data, messages}} = get_debug_data(data, messages, stack, inspect_debug_data)
-
     debug_data =
       if add_debug_data do
+        {:ok, debug_data} = get_debug_data(data, messages, stack, inspect_debug_data)
+
         debug_data
       else
         nil
       end
 
-    {:ok, response} = build_response(code, nil, messages, debug_data)
+    data = nil
+    {:ok, response} = build_response(code, data, messages, debug_data)
 
     {:ok, {status, response}}
   end
