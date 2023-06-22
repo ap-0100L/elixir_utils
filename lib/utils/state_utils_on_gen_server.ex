@@ -11,8 +11,8 @@ defmodule StateUtils.On.GenServer do
   use GenServer
   use Utils
 
-  @registry_name StateUtils.OnGenServer.Registry
-  @dynamic_supervisor_name StateUtils.OnGenServer.DynamicSupervisor
+  @registry_name StateUtils.On.GenServer.Registry
+  @dynamic_supervisor_name StateUtils.On.GenServer.DynamicSupervisor
 
   ##############################################################################
   @doc """

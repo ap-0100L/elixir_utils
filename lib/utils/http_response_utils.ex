@@ -12,10 +12,10 @@ defmodule HttpResponseUtils do
   ## Function
   """
   defp build_response(code, data, messages \\ nil, debug_data \\ nil) do
-    {:ok, timestamptz} = Utils.get_now_datetime_with_TZ_to_iso8601!()
+    timestamp = System.os_time(:millisecond)
 
     response = %{
-      timestamptz: timestamptz,
+      timestamp: timestamp,
       code: code,
       data: data
     }
@@ -178,6 +178,14 @@ defmodule HttpResponseUtils do
         debug_data
       else
         nil
+      end
+
+    messages =
+      if add_debug_data do
+        messages
+      else
+        eid = get_in(data, [:eid])
+        messages = messages ++ ["EID: [#{eid}]"] ++ ["STACKTRACE: [#{inspect(stack)}]"]
       end
 
     data = nil

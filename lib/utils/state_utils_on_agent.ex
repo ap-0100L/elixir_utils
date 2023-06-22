@@ -11,7 +11,7 @@ defmodule StateUtils.On.Agent do
 
   use Utils
 
-  @registry_name StateUtils.OnAgent.Registry
+  @registry_name StateUtils.On.Agent.Registry
 
   ##############################################################################
   @doc """
@@ -33,14 +33,21 @@ defmodule StateUtils.On.Agent do
   @doc """
   ## Function
   """
-  def init_state(name, state \\ %{})
+  def init_state(name, state \\ %{}, linked \\ true)
 
-  def init_state(name, state)
-      when is_nil(name) or not is_map(state),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, state cannot be nil; state must a map"])
+  def init_state(name, state, linked)
+      when is_nil(name) or not is_map(state) or linked not in [true, false],
+      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["name, state cannot be nil; state must a map; linked must be a boolean"])
 
-  def init_state(name, state) do
-    result = UniError.rescue_error!(Agent.start_link(fn -> state end, name: {:via, Registry, {@registry_name, name}}), {:CODE_STATE_AGENT_INIT_ERROR, ["Cannot init state on Agent"], name: name, registry_name: @registry_name})
+  def init_state(name, state, linked) do
+    name = {:via, Registry, {@registry_name, name}}
+    error = {:CODE_STATE_AGENT_INIT_ERROR, ["Cannot init state on Agent"], name: name, registry_name: @registry_name}
+    result =
+      if linked do
+        UniError.rescue_error!(Agent.start_link(fn -> state end, name: name), error)
+      else
+        UniError.rescue_error!(Agent.start(fn -> state end, name: name), error)
+      end
 
     result =
       case result do

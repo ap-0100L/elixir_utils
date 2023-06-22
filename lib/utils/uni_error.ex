@@ -125,7 +125,7 @@ defmodule UniError do
           {messages, data}
         end
 
-      timestamp = now = System.os_time(:nanosecond)
+      timestamp = System.os_time(:nanosecond)
       data = Map.put(data, :timestamp, timestamp)
 
       messages = if is_nil(messages), do: [], else: messages
