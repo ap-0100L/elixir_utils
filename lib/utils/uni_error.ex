@@ -27,12 +27,12 @@ defmodule UniError do
 
   ### Call
   UniError.raise_error!(
-    :CODE_SOME_NAME_ERROR,
+    :SOME_NAME_ERROR,
     ["Message1", "Message2"],
     useful_data1: useful_data1,
     useful_data2: useful_data2,
     previous: %UniError{
-      code: :CODE_PREVIOUS_ERROR,
+      code: :PREVIOUS_ERROR,
       data: %{some_data: "some_data"},
       messages: ["Previous message"]
     }
@@ -40,14 +40,14 @@ defmodule UniError do
 
   ### Return
   %UniError{
-    code: :CODE_SOME_NAME_ERROR,
+    code: :SOME_NAME_ERROR,
     data: %{
       eid: "721c47de-8bf8-11ed-933d-02420a000104",
       useful_data1: useful_data1,
       useful_data2: useful_data2,
       previous: %UniError{
         eid: "5cd03bce-8bf8-11ed-933d-02420a000104",
-        code: :CODE_PREVIOUS_ERROR,
+        code: :PREVIOUS_ERROR,
         data: %{some_data: "some_data"},
         messages: ["Previous message"]
       }
@@ -242,10 +242,10 @@ defmodule UniError do
                   {code, messages, previous: unsupported}
 
                 _ ->
-                  {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
+                  {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
               end
             else
-              {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
+              {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
             end
 
           e = UniError.build_uni_error(code, messages, data)
@@ -281,7 +281,7 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT REASON: #{inspect(reason)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          # e = UniError.build_uni_error(:CODE_EXIT_CAUGHT_ERROR, ["Caught EXIT Uni-reason"], previous: reason)
+          # e = UniError.build_uni_error(:EXIT_CAUGHT_ERROR, ["Caught EXIT Uni-reason"], previous: reason)
           e = reason
 
           result =
@@ -325,10 +325,10 @@ defmodule UniError do
                   {code, messages, previous: reason}
 
                 _ ->
-                  {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
+                  {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
               end
             else
-              {:CODE_RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
+              {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
             end
 
           e = UniError.build_uni_error(code, messages, data)
@@ -366,7 +366,7 @@ defmodule UniError do
   """
   defmacro raise_error!(exception) do
     quote do
-      exception = UniError.build_uni_error(:CODE_UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: unquote(exception))
+      exception = UniError.build_uni_error(:UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: unquote(exception))
       raise(exception)
     end
   end
@@ -405,7 +405,7 @@ defmodule UniError do
 
   @impl true
   def exception(exception) do
-    build_uni_error(:CODE_UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: exception)
+    build_uni_error(:UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: exception)
   end
 
   ##############################################################################

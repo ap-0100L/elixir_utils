@@ -37,7 +37,7 @@ defmodule LibCluster.Strategy.NodeList do
         GenServer.start_link(__MODULE__, args)
 
       _ ->
-        UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node_list must be a list"])
+        UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["node_list must be a list"])
     end
   end
 

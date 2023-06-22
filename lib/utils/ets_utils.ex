@@ -33,7 +33,7 @@ defmodule EtsUtils do
 
         unexpected ->
           UniError.raise_error!(
-            :CODE_INSER_ETS_CAUGHT_UNEXPECTED_ERROR,
+            :INSER_ETS_CAUGHT_UNEXPECTED_ERROR,
             ["Unexpected error caught while process operation on ETS"],
             previous: unexpected,
             table_name: table_name,
@@ -54,7 +54,7 @@ defmodule EtsUtils do
     result =
       case result do
         [] ->
-          :CODE_NOT_FOUND
+          :NOT_FOUND
 
         result ->
           result
@@ -73,7 +73,7 @@ defmodule EtsUtils do
     result =
       case result do
         [] ->
-          :CODE_NOT_FOUND
+          :NOT_FOUND
 
         result ->
           result
@@ -92,7 +92,7 @@ defmodule EtsUtils do
     result =
       case result do
         [] ->
-          :CODE_NOT_FOUND
+          :NOT_FOUND
 
         [result | _] ->
           result
@@ -115,7 +115,7 @@ defmodule EtsUtils do
 
         unexpected ->
           UniError.raise_error!(
-            :CODE_INSER_ETS_CAUGHT_UNEXPECTED_ERROR,
+            :INSER_ETS_CAUGHT_UNEXPECTED_ERROR,
             ["Unexpected error caught while process operation on ETS"],
             previous: unexpected,
             table_name: table_name,

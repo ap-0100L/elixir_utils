@@ -17,7 +17,7 @@ defmodule Flk do
   def check_iin!(iin)
       when is_nil(iin) or
              not is_bitstring(iin),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["iin cannot be nil; iin must be a string"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["iin cannot be nil; iin must be a string"])
 
   def check_iin!(iin) do
     origin_iin = iin
@@ -91,7 +91,7 @@ defmodule Flk do
         #              check_sum1
         #
         #            true ->
-        #              UniError.raise_error!(:CODE_FLK_IIN_ARITHMETIC_1_ERROR, ["Arithmetical error in check IIN algorithm"], iin: origin_iin, check_sum: check_sum1)
+        #              UniError.raise_error!(:FLK_IIN_ARITHMETIC_1_ERROR, ["Arithmetical error in check IIN algorithm"], iin: origin_iin, check_sum: check_sum1)
         #          end
 
         #        check_passed =
@@ -103,7 +103,7 @@ defmodule Flk do
         #              Enum.at(iin, 11) == check_sum
         #
         #            true ->
-        #              UniError.raise_error!(:CODE_FLK_IIN_ARITHMETIC_2_ERROR, ["Arithmetical error in check IIN algorithm"], iin: origin_iin, check_sum: check_sum)
+        #              UniError.raise_error!(:FLK_IIN_ARITHMETIC_2_ERROR, ["Arithmetical error in check IIN algorithm"], iin: origin_iin, check_sum: check_sum)
         #          end
 
         #        error_messages =
@@ -128,9 +128,9 @@ defmodule Flk do
       end
 
     if error_messages == [] do
-      {:ok, :CODE_FLK_IIN_CORRECT}
+      {:ok, :FLK_IIN_CORRECT}
     else
-      UniError.raise_error!(:CODE_FLK_IIN_NOT_CORRECT_ERROR, error_messages, iin: origin_iin)
+      UniError.raise_error!(:FLK_IIN_NOT_CORRECT_ERROR, error_messages, iin: origin_iin)
     end
   end
 
@@ -141,7 +141,7 @@ defmodule Flk do
   def check_bin!(bin)
       when is_nil(bin) or
              not is_bitstring(bin),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["bin cannot be nil; bin must be a string"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["bin cannot be nil; bin must be a string"])
 
   def check_bin!(bin) do
     origin_bin = bin
@@ -215,7 +215,7 @@ defmodule Flk do
         #              check_sum1
         #
         #            true ->
-        #              UniError.raise_error!(:CODE_FLK_BIN_ARITHMETIC_1_ERROR, ["Arithmetical error in check BIN algorithm"], bin: origin_bin, check_sum: check_sum1)
+        #              UniError.raise_error!(:FLK_BIN_ARITHMETIC_1_ERROR, ["Arithmetical error in check BIN algorithm"], bin: origin_bin, check_sum: check_sum1)
         #          end
 
         #        check_passed =
@@ -227,7 +227,7 @@ defmodule Flk do
         #              Enum.at(bin, 11) == check_sum
         #
         #            true ->
-        #              UniError.raise_error!(:CODE_FLK_BIN_ARITHMETIC_2_ERROR, ["Arithmetical error in check BIN algorithm"], bin: origin_bin, check_sum: check_sum)
+        #              UniError.raise_error!(:FLK_BIN_ARITHMETIC_2_ERROR, ["Arithmetical error in check BIN algorithm"], bin: origin_bin, check_sum: check_sum)
         #          end
 
         #        error_messages =
@@ -252,9 +252,9 @@ defmodule Flk do
       end
 
     if error_messages == [] do
-      {:ok, :CODE_FLK_BIN_CORRECT}
+      {:ok, :FLK_BIN_CORRECT}
     else
-      UniError.raise_error!(:CODE_FLK_BIN_NOT_CORRECT_ERROR, error_messages, bin: origin_bin)
+      UniError.raise_error!(:FLK_BIN_NOT_CORRECT_ERROR, error_messages, bin: origin_bin)
     end
   end
 

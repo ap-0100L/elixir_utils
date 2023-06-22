@@ -96,7 +96,7 @@ defmodule MapUtils do
       when is_nil(map) or is_nil(type_of_second_elem) or is_nil(to_keyword_list) or
              not is_map(map) or not is_boolean(to_keyword_list) or is_nil(type_of_second_elem) or
              type_of_second_elem not in [:not_change, :atom],
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["map, type_of_second_elem, to_keyword_list cannot be nil; map must be a map; to_keyword_list mast be a boolean; type_of_second_elem must be on of :not_change, :atom"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["map, type_of_second_elem, to_keyword_list cannot be nil; map must be a map; to_keyword_list mast be a boolean; type_of_second_elem must be on of :not_change, :atom"])
 
   def map_to_list_of_tuples!(map, to_keyword_list, type_of_second_elem) do
     map =

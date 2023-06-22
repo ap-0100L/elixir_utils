@@ -27,7 +27,7 @@ defmodule SypervisorUtils do
 
         {:error, reason} ->
           UniError.raise_error!(
-            :CODE_CAN_NOT_START_SUPERVISOR_ERROR,
+            :CAN_NOT_START_SUPERVISOR_ERROR,
             ["Error occurred while starting"],
             previous: reason,
             child_spec: child_spec,
@@ -36,7 +36,7 @@ defmodule SypervisorUtils do
 
         unexpected ->
           UniError.raise_error!(
-            :CODE_CAN_NOT_START_SUPERVISOR_UNEXPECTED_ERROR,
+            :CAN_NOT_START_SUPERVISOR_UNEXPECTED_ERROR,
             ["Unexpected error while starting"],
             previous: unexpected,
             child_spec: child_spec,
@@ -57,7 +57,7 @@ defmodule SypervisorUtils do
       when not is_atom(name) or not is_atom(reason) or (not is_atom(timeout) and not is_number(timeout)),
       do:
         UniError.raise_error!(
-          :CODE_WRONG_FUNCTION_ARGUMENT_ERROR,
+          :WRONG_FUNCTION_ARGUMENT_ERROR,
           ["name, reason, timeout cannot be nil; name, reason must be an atom; timeout must be an atom or number"]
         )
 
@@ -71,7 +71,7 @@ defmodule SypervisorUtils do
 
         unexpected ->
           UniError.raise_error!(
-            :CODE_CAN_NOT_STOP_SUPERVISOR_UNEXPECTED_ERROR,
+            :CAN_NOT_STOP_SUPERVISOR_UNEXPECTED_ERROR,
             ["Unexpected error while stopping"],
             previous: unexpected
           )

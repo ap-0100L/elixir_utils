@@ -102,46 +102,46 @@ defmodule HttpResponseUtils do
   defp map_code(code, messages) do
     result =
       case code do
-        :CODE_OK ->
+        :OK ->
           {200, code, messages}
 
-        :CODE_UNEXPECTED_ERROR ->
+        :UNEXPECTED_ERROR ->
           {500, code, messages}
 
-        value when value in [:CODE_HANDLER_NOT_FOUND_ERROR, :CODE_NOT_FOUND] ->
+        value when value in [:HANDLER_NOT_FOUND_ERROR, :NOT_FOUND] ->
           {404, code, messages}
 
         value
         when value in [
-               :CODE_NOT_AUTHENTICATED_ERROR,
-               :CODE_ESSENCE_NOT_FOUND_ERROR,
-               :CODE_WRONG_PASSWORD_ERROR,
-               :CODE_USER_NOT_FOUND_ERROR,
-               :CODE_SECURITY_TOKEN_NOT_FOUND_ERROR,
-               :CODE_REFRESH_TOKEN_NOT_FOUND_ERROR
+               :NOT_AUTHENTICATED_ERROR,
+               :ESSENCE_NOT_FOUND_ERROR,
+               :WRONG_PASSWORD_ERROR,
+               :USER_NOT_FOUND_ERROR,
+               :SECURITY_TOKEN_NOT_FOUND_ERROR,
+               :REFRESH_TOKEN_NOT_FOUND_ERROR
              ] ->
-          {401, :CODE_NOT_AUTHENTICATED_ERROR, ["Not authenticated"]}
+          {401, :NOT_AUTHENTICATED_ERROR, ["Not authenticated"]}
 
         value
         when value in [
-               :CODE_SECURITY_TOKEN_EXPIRED_ERROR,
-               :CODE_REFRESH_TOKEN_EXPIRED_ERROR
+               :SECURITY_TOKEN_EXPIRED_ERROR,
+               :REFRESH_TOKEN_EXPIRED_ERROR
              ] ->
           {401, code, ["Not authenticated"]}
 
         value
         when value in [
-               :CODE_BY_ROLE_ACCESS_DENIED_ERROR,
-               :CODE_BY_CHANNEL_ACCESS_DENIED_ERROR,
-               :CODE_REST_API_ACTION_NOT_ALLOWED_ERROR,
-               :CODE_GROUP_IS_PROHIBITED_ERROR,
-               :CODE_PERK_IS_PROHIBITED_ERROR,
-               :CODE_BY_GROUP_ACCESS_DENIED_ERROR,
-               :CODE_BY_PERK_ACCESS_DENIED_ERROR,
-               :CODE_ALL_GROUPS_IS_PROHIBITED_ERROR,
-               :CODE_ALL_PERKS_IS_PROHIBITED_ERROR
+               :BY_ROLE_ACCESS_DENIED_ERROR,
+               :BY_CHANNEL_ACCESS_DENIED_ERROR,
+               :REST_API_ACTION_NOT_ALLOWED_ERROR,
+               :GROUP_IS_PROHIBITED_ERROR,
+               :PERK_IS_PROHIBITED_ERROR,
+               :BY_GROUP_ACCESS_DENIED_ERROR,
+               :BY_PERK_ACCESS_DENIED_ERROR,
+               :ALL_GROUPS_IS_PROHIBITED_ERROR,
+               :ALL_PERKS_IS_PROHIBITED_ERROR
              ] ->
-          {403, :CODE_ACCESS_DENIED_ERROR, ["Access denied"]}
+          {403, :ACCESS_DENIED_ERROR, ["Access denied"]}
 
         _ ->
           {400, code, messages}
@@ -200,7 +200,7 @@ defmodule HttpResponseUtils do
 
   def get_response({:ok, data}, _stack, _add_debug_data, _inspect_debug_data) do
     status = 200
-    code = :CODE_OK
+    code = :OK
 
     {:ok, response} = build_response(code, data)
 

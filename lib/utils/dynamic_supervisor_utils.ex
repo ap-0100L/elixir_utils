@@ -15,7 +15,7 @@ defmodule DynamicSupervisorUtils do
       when not is_atom(dynamic_supervisor_name),
       do:
         UniError.raise_error!(
-          :CODE_WRONG_FUNCTION_ARGUMENT_ERROR,
+          :WRONG_FUNCTION_ARGUMENT_ERROR,
           ["dynamic_supervisor_name cannot be nil; dynamic_supervisor_name must be an atom"]
         )
 
@@ -32,7 +32,7 @@ defmodule DynamicSupervisorUtils do
 
         {:error, reason} ->
           UniError.raise_error!(
-            :CODE_CAN_NOT_START_DYNAMIC_SUPERVISOR_CHILD_ERROR,
+            :CAN_NOT_START_DYNAMIC_SUPERVISOR_CHILD_ERROR,
             ["Error occurred while starting"],
             previous: reason,
             dynamic_supervisor_name: dynamic_supervisor_name,
@@ -41,7 +41,7 @@ defmodule DynamicSupervisorUtils do
 
         unexpected ->
           UniError.raise_error!(
-            :CODE_CAN_NOT_START_DYNAMIC_SUPERVISOR_CHILD_UNEXPECTED_ERROR,
+            :CAN_NOT_START_DYNAMIC_SUPERVISOR_CHILD_UNEXPECTED_ERROR,
             ["Unexpected error while starting"],
             previous: unexpected,
             dynamic_supervisor_name: dynamic_supervisor_name,

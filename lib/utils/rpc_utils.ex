@@ -19,7 +19,7 @@ defmodule RPCUtils do
              not is_atom(function) or
              not is_list(args),
       do:
-        UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node, module, function, args cannot be nil; module, function must be an atom; node must be an atom or a list; args must be list"],
+        UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["node, module, function, args cannot be nil; module, function must be an atom; node must be an atom or a list; args must be list"],
           arguments: [node: node, module: module, function: function, args: args]
         )
 
@@ -30,7 +30,7 @@ defmodule RPCUtils do
       case result do
         {:badrpc, reason} ->
           UniError.raise_error!(
-            :CODE_RPC_CALL_FAIL_ERROR,
+            :RPC_CALL_FAIL_ERROR,
             ["RPC call fail"],
             node: node,
             module: module,

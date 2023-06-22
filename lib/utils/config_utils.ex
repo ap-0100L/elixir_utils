@@ -33,7 +33,7 @@ defmodule ConfigUtils do
         :error ->
           case default do
             :no_default ->
-              UniError.raise_error!(:CODE_SYSTEM_ENVIRONMENT_VARIABLE_NOT_FOUND_ERROR, ["Variable with name #{var} of type #{type} in system environment not found"], variable: var, type: type)
+              UniError.raise_error!(:SYSTEM_ENVIRONMENT_VARIABLE_NOT_FOUND_ERROR, ["Variable with name #{var} of type #{type} in system environment not found"], variable: var, type: type)
 
             _ ->
               default

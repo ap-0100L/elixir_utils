@@ -76,10 +76,10 @@ defmodule Utils do
           ifaddr
 
         {:error, reason} ->
-          UniError.raise_error!(:CODE_CAN_NOT_GET_IF_ADDRS_ERROR, ["Cannot get If address"], previous: reason)
+          UniError.raise_error!(:CAN_NOT_GET_IF_ADDRS_ERROR, ["Cannot get If address"], previous: reason)
 
         unexpected ->
-          UniError.raise_error!(:CODE_CAN_NOT_GET_IF_ADDRS_UNEXPECTED_ERROR, ["Cannot get If address"], previous: unexpected)
+          UniError.raise_error!(:CAN_NOT_GET_IF_ADDRS_UNEXPECTED_ERROR, ["Cannot get If address"], previous: unexpected)
       end
 
     result =
@@ -135,10 +135,10 @@ defmodule Utils do
           {:ok, datetime}
 
         {:error, reason} ->
-          UniError.raise_error!(:CODE_GET_DATE_WITH_TZ_ERROR, ["Can not get datetime with TZ"], previous: reason, timezone: timezone)
+          UniError.raise_error!(:GET_DATE_WITH_TZ_ERROR, ["Can not get datetime with TZ"], previous: reason, timezone: timezone)
 
         unexpected ->
-          UniError.raise_error!(:CODE_GET_DATE_WITH_TZ_UNEXPECTED_ERROR, ["Can not get datetime with TZ"], previous: unexpected, timezone: timezone)
+          UniError.raise_error!(:GET_DATE_WITH_TZ_UNEXPECTED_ERROR, ["Can not get datetime with TZ"], previous: unexpected, timezone: timezone)
       end
 
     result
@@ -182,10 +182,10 @@ defmodule Utils do
   """
   def is_not_empty(_map, key, keyValueType)
       when is_nil(key) or is_nil(keyValueType),
-      do: UniError.build_uni_error(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["key, keyValueType cannot be nil"])
+      do: UniError.build_uni_error(:WRONG_FUNCTION_ARGUMENT_ERROR, ["key, keyValueType cannot be nil"])
 
   def is_not_empty(nil, _key, _keyValueType),
-    do: UniError.build_error(:CODE_MAP_IS_NIL_ERROR, ["map cannot be nil"])
+    do: UniError.build_error(:MAP_IS_NIL_ERROR, ["map cannot be nil"])
 
   def is_not_empty(map, key, keyValueType) do
     result =
@@ -198,12 +198,12 @@ defmodule Utils do
               :ok
 
             {:error, _code, _data, _messages} = e ->
-              UniError.build_error(:CODE_WRONG_VALUE_IN_MAP_ERROR, ["Required key: '#{key}'"], previous: e, key: key, type: keyValueType)
+              UniError.build_error(:WRONG_VALUE_IN_MAP_ERROR, ["Required key: '#{key}'"], previous: e, key: key, type: keyValueType)
           end
 
         result
       else
-        UniError.build_error(:CODE_NO_KEY_IN_MAP_ERROR, ["No key '#{key}' in map"], key: key, type: keyValueType)
+        UniError.build_error(:NO_KEY_IN_MAP_ERROR, ["No key '#{key}' in map"], key: key, type: keyValueType)
       end
 
     result
@@ -214,21 +214,21 @@ defmodule Utils do
   Is empty value for different types
   """
   def is_not_empty(_, type) when is_nil(type) or not is_atom(type) or type not in @primitive_types,
-    do: UniError.build_error(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type cannot be nil; type must be an atom; type must be one of #{@primitive_types}"])
+    do: UniError.build_error(:WRONG_FUNCTION_ARGUMENT_ERROR, ["type cannot be nil; type must be an atom; type must be one of #{@primitive_types}"])
 
   def is_not_empty(o, _) when is_nil(o),
-    do: UniError.build_error(:CODE_VALUE_IS_NIL_ERROR, ["is nil"])
+    do: UniError.build_error(:VALUE_IS_NIL_ERROR, ["is nil"])
 
   def is_not_empty(o, :string) do
     result =
       if is_bitstring(o) do
         if String.length(o) == 0 do
-          UniError.build_error(:CODE_EMPTY_VALUE_ERROR, ["string is empty"])
+          UniError.build_error(:EMPTY_VALUE_ERROR, ["string is empty"])
         else
           :ok
         end
       else
-        UniError.build_error(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not string"])
+        UniError.build_error(:WRONG_VALUE_TYPE_ERROR, ["is not string"])
       end
 
     result
@@ -238,16 +238,16 @@ defmodule Utils do
     result =
       if is_bitstring(o) do
         if String.length(o) == 0 do
-          UniError.build_error(:CODE_EMPTY_VALUE_ERROR, ["uuid_string is empty"])
+          UniError.build_error(:EMPTY_VALUE_ERROR, ["uuid_string is empty"])
         else
           if String.match?(o, ~r/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/) do
             :ok
           else
-            UniError.build_error(:CODE_WRONG_VALUE_FORMAT_ERROR, ["is not uuid_string format"])
+            UniError.build_error(:WRONG_VALUE_FORMAT_ERROR, ["is not uuid_string format"])
           end
         end
       else
-        UniError.build_error(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not uuid_string"])
+        UniError.build_error(:WRONG_VALUE_TYPE_ERROR, ["is not uuid_string"])
       end
 
     result
@@ -257,12 +257,12 @@ defmodule Utils do
     result =
       if is_binary(o) do
         if byte_size(o) == 0 do
-          UniError.build_error(:CODE_EMPTY_VALUE_ERROR, ["bytes is empty"])
+          UniError.build_error(:EMPTY_VALUE_ERROR, ["bytes is empty"])
         else
           :ok
         end
       else
-        UniError.build_error(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not binary"])
+        UniError.build_error(:WRONG_VALUE_TYPE_ERROR, ["is not binary"])
       end
 
     result
@@ -273,7 +273,7 @@ defmodule Utils do
       if is_integer(o) do
         :ok
       else
-        UniError.build_error(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not integer"])
+        UniError.build_error(:WRONG_VALUE_TYPE_ERROR, ["is not integer"])
       end
 
     result
@@ -284,7 +284,7 @@ defmodule Utils do
       if is_atom(o) do
         :ok
       else
-        UniError.build_error(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not atom"])
+        UniError.build_error(:WRONG_VALUE_TYPE_ERROR, ["is not atom"])
       end
 
     result
@@ -295,7 +295,7 @@ defmodule Utils do
       if is_boolean(o) do
         :ok
       else
-        UniError.build_error(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not boolean"])
+        UniError.build_error(:WRONG_VALUE_TYPE_ERROR, ["is not boolean"])
       end
 
     result
@@ -307,10 +307,10 @@ defmodule Utils do
         if o >= @valid_id_start_at do
           :ok
         else
-          UniError.build_error(:CODE_WRONG_INTEGER_ID_VALUE_ERROR, ["value with type integer_id must be >= #{@valid_id_start_at}"])
+          UniError.build_error(:WRONG_INTEGER_ID_VALUE_ERROR, ["value with type integer_id must be >= #{@valid_id_start_at}"])
         end
       else
-        UniError.build_error(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not integer_id"])
+        UniError.build_error(:WRONG_VALUE_TYPE_ERROR, ["is not integer_id"])
       end
 
     result
@@ -322,10 +322,10 @@ defmodule Utils do
         if map_size(o) > 0 do
           :ok
         else
-          UniError.build_error(:CODE_EMPTY_VALUE_ERROR, ["map is empty"])
+          UniError.build_error(:EMPTY_VALUE_ERROR, ["map is empty"])
         end
       else
-        UniError.build_error(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not map"])
+        UniError.build_error(:WRONG_VALUE_TYPE_ERROR, ["is not map"])
       end
 
     result
@@ -337,10 +337,10 @@ defmodule Utils do
         if length(o) > 0 do
           :ok
         else
-          UniError.build_error(:CODE_EMPTY_VALUE_ERROR, ["list is empty"])
+          UniError.build_error(:EMPTY_VALUE_ERROR, ["list is empty"])
         end
       else
-        UniError.build_error(:CODE_WRONG_VALUE_TYPE_ERROR, ["is not list"])
+        UniError.build_error(:WRONG_VALUE_TYPE_ERROR, ["is not list"])
       end
 
     result
@@ -362,10 +362,10 @@ defmodule Utils do
     result =
       case result do
         nil ->
-          UniError.raise_error!(:CODE_CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name)
+          UniError.raise_error!(:CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name)
 
         :undefined ->
-          UniError.raise_error!(:CODE_CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
+          UniError.raise_error!(:CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
 
         result ->
           result
@@ -391,10 +391,10 @@ defmodule Utils do
     result =
       case result do
         nil ->
-          UniError.raise_error!(:CODE_CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name, key: key)
+          UniError.raise_error!(:CONFIG_KEY_IS_NIL_ERROR, ["Module is not listed in any application spec"], application_name: application_name, key: key)
 
         :undefined ->
-          UniError.raise_error!(:CODE_CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
+          UniError.raise_error!(:CONFIG_KEY_UNDEFINED_ERROR, ["Key is undefined"], application_name: application_name, reason: :undefined)
 
         result ->
           result
@@ -483,7 +483,7 @@ defmodule Utils do
   def list_of_strings_to_list_of!(list, type \\ :atom)
 
   def list_of_strings_to_list_of!(list, type) when is_nil(list) or is_nil(type) or not is_list(list) or not is_atom(type) or type not in @types,
-    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["list, type cannot be nil; list must be a list; type must be an atom; type must be one of #{inspect(@types)}"], type: type, types: @types)
+    do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["list, type cannot be nil; list must be a list; type must be an atom; type must be one of #{inspect(@types)}"], type: type, types: @types)
 
   def list_of_strings_to_list_of!(list, type) do
     result =
@@ -511,7 +511,7 @@ defmodule Utils do
   ## Function
   """
   def string_to_atom(val) when not is_bitstring(val) and not is_atom(val),
-    do: UniError.build_error(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val must be an atom or string"])
+    do: UniError.build_error(:WRONG_FUNCTION_ARGUMENT_ERROR, ["val must be an atom or string"])
 
   def string_to_atom(val) when is_atom(val) do
     {:ok, val}
@@ -537,7 +537,7 @@ defmodule Utils do
   ## Function
   """
   def atom_to_string(val) when not is_bitstring(val) and not is_atom(val),
-    do: UniError.build_error(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val must be an atom or string"])
+    do: UniError.build_error(:WRONG_FUNCTION_ARGUMENT_ERROR, ["val must be an atom or string"])
 
   def atom_to_string(val) when is_bitstring(val) do
     {:ok, val}
@@ -558,7 +558,7 @@ defmodule Utils do
   ## Function
   """
   def underscore(val) when is_nil(val) or (not is_bitstring(val) and not is_atom(val)),
-    do: UniError.build_error(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val cannot be nil and must be an atom or string"])
+    do: UniError.build_error(:WRONG_FUNCTION_ARGUMENT_ERROR, ["val cannot be nil and must be an atom or string"])
 
   def underscore(val) when is_atom(val) do
     val = Atom.to_string(val)
@@ -578,7 +578,7 @@ defmodule Utils do
   ## Function
   """
   def camelize(val) when is_nil(val) or (not is_bitstring(val) and not is_atom(val)),
-    do: UniError.build_error(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["val cannot be nil and must be an atom or string"])
+    do: UniError.build_error(:WRONG_FUNCTION_ARGUMENT_ERROR, ["val cannot be nil and must be an atom or string"])
 
   def camelize(val) when is_atom(val) do
     #    val = Atom.to_string(val)
@@ -600,7 +600,7 @@ defmodule Utils do
   ## Function
   """
   def ensure_all_started!(apps) when is_nil(apps) or not is_list(apps),
-    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["apps cannot be nil; apps must be a list"])
+    do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["apps cannot be nil; apps must be a list"])
 
   def ensure_all_started!(apps) do
     Macros.raise_if_empty!(apps, :list, "Wrong apps value")
@@ -616,13 +616,13 @@ defmodule Utils do
               {:ok, obj}
 
             {:error, reason} ->
-              UniError.raise_error!(:CODE_ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
+              UniError.raise_error!(:ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
                 app: app,
                 previous: reason
               )
 
             unexpected ->
-              UniError.raise_error!(:CODE_ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
+              UniError.raise_error!(:ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
                 app: app,
                 previous: unexpected
               )
@@ -643,11 +643,11 @@ defmodule Utils do
 
   def string_to_type!(var, type)
       when is_nil(var) or is_nil(type) or not is_atom(type) or not is_bitstring(var),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["var and type cannot be nil; var must be a string; type must be an atom"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["var and type cannot be nil; var must be a string; type must be an atom"])
 
   def string_to_type!(_var, type)
       when type not in @types,
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["type must be one of #{inspect(@types)}"], type: type, types: @types)
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["type must be one of #{inspect(@types)}"], type: type, types: @types)
 
   def string_to_type!(var, :string), do: {:ok, var}
 
@@ -783,7 +783,7 @@ defmodule Utils do
   end
 
   def string_to_type!(_var, type),
-    do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["Wrong type: #{inspect(type)}"], type: type, types: @types)
+    do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["Wrong type: #{inspect(type)}"], type: type, types: @types)
 
   ##############################################################################
   @doc """
@@ -795,7 +795,7 @@ defmodule Utils do
       when is_nil(map) or is_nil(type_of_second_elem) or is_nil(to_keyword_list) or
              not is_map(map) or not is_boolean(to_keyword_list) or is_nil(type_of_second_elem) or
              type_of_second_elem not in [:not_change, :atom],
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["map, type_of_second_elem, to_keyword_list cannot be nil; map must be a map; to_keyword_list mast be a boolean; type_of_second_elem must be on of :not_change, :atom"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["map, type_of_second_elem, to_keyword_list cannot be nil; map must be a map; to_keyword_list mast be a boolean; type_of_second_elem must be on of :not_change, :atom"])
 
   def map_to_list_of_tuples!(map, to_keyword_list, type_of_second_elem) do
     map =
@@ -829,7 +829,7 @@ defmodule Utils do
   def get_nodes_list_by_prefixes(node_name_prefixes, nodes)
       when is_nil(node_name_prefixes) or is_nil(nodes) or
              not is_list(node_name_prefixes) or not is_list(nodes),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["node_name_prefixes, nodes cannot be nil; node_name_prefixes must be a string; nodes must be a list"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["node_name_prefixes, nodes cannot be nil; node_name_prefixes must be a string; nodes must be a list"])
 
   def get_nodes_list_by_prefixes(node_name_prefixes, nodes) do
     result =
@@ -867,7 +867,7 @@ defmodule Utils do
   """
   def random_string!(length)
       when not is_number(length) or length <= 0,
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["length cannot be nil; length must be a number; length must be > 0"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["length cannot be nil; length must be a number; length must be > 0"])
 
   def random_string!(length) do
     result =
@@ -887,7 +887,7 @@ defmodule Utils do
 
   def hash!(text, salt, alg)
       when not is_bitstring(text) or (not is_nil(salt) and not is_bitstring(salt)) or alg not in @crypto_alg,
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["text, alg cannot be nil; text must be a string; salt if not nil must be a string; alg must be on of #{inspect(alg)}"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["text, alg cannot be nil; text must be a string; salt if not nil must be a string; alg must be on of #{inspect(alg)}"])
 
   def hash!(text, salt, alg) do
     Macros.raise_if_empty!(text, :string, "")
@@ -914,7 +914,7 @@ defmodule Utils do
   """
   def format_string(string, list)
       when not is_bitstring(string) or not is_list(list),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["string, list cannot be nil; string must be a string; list must be a list"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["string, list cannot be nil; string must be a string; list must be a list"])
 
   def format_string(string, [head | tail]) do
     head = if is_bitstring(head), do: head, else: inspect(head)
@@ -933,7 +933,7 @@ defmodule Utils do
   """
   def map_to_struct!(module, map)
       when is_nil(map) or is_nil(module) or not is_map(map) or not is_atom(module),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["map, module cannot be nil; map must be a map; module must be an atom"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["map, module cannot be nil; map must be a map; module must be an atom"])
 
   def map_to_struct!(module, map) do
     struct = struct(module)
@@ -959,7 +959,7 @@ defmodule Utils do
 
         value =
           if not is_nil(value_from_atom_key) and not is_nil(value_from_string_key) do
-            UniError.raise_error!(:CODE_MAP_HAS_ATOM_AND_STRING_KEYS_WITH_SAME_NAME_ERROR, ["Map has atom and string keys with same name"], struct: module, key: k)
+            UniError.raise_error!(:MAP_HAS_ATOM_AND_STRING_KEYS_WITH_SAME_NAME_ERROR, ["Map has atom and string keys with same name"], struct: module, key: k)
           else
             value_from_atom_key || value_from_string_key
           end

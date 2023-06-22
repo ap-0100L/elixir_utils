@@ -49,7 +49,7 @@ defmodule CodeUtils do
 
   def create_module!(module, module_text, _env)
       when not is_atom(module) or not is_bitstring(module_text),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["module, module_text cannot be nil; module must be an atom; module_text must be a string"])
 
   def create_module!(module, module_text, env) do
     UniError.rescue_error!(
@@ -71,7 +71,7 @@ defmodule CodeUtils do
   """
   def ensure_compiled?(module)
       when not is_atom(module),
-      do: UniError.raise_error!(:CODE_WRONG_FUNCTION_ARGUMENT_ERROR, ["module cannot be nil; module must be an atom"])
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["module cannot be nil; module must be an atom"])
 
   def ensure_compiled?(module) do
     result = UniError.rescue_error!(Code.ensure_compiled(module))
@@ -84,7 +84,7 @@ defmodule CodeUtils do
         true
 
       unexpected ->
-        UniError.raise_error!(:CODE_ENSURE_COMPILED_UNEXPECTED_ERROR, ["Cannot ensure module compiled"], previous: unexpected, module: module)
+        UniError.raise_error!(:ENSURE_COMPILED_UNEXPECTED_ERROR, ["Cannot ensure module compiled"], previous: unexpected, module: module)
     end
   end
 

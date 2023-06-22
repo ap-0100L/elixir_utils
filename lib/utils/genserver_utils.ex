@@ -17,7 +17,7 @@ defmodule GenServerUtils do
       when is_nil(pid) or not is_atom(reason) or (not is_atom(timeout) and not is_number(timeout)),
       do:
         UniError.raise_error!(
-          :CODE_WRONG_FUNCTION_ARGUMENT_ERROR,
+          :WRONG_FUNCTION_ARGUMENT_ERROR,
           ["reason, timeout cannot be nil; reason must be an atom; timeout must be an atom or number"]
         )
 
@@ -31,7 +31,7 @@ defmodule GenServerUtils do
 
         unexpected ->
           UniError.raise_error!(
-            :CODE_CAN_NOT_STOP_GENSERVER_UNEXPECTED_ERROR,
+            :CAN_NOT_STOP_GENSERVER_UNEXPECTED_ERROR,
             ["Unexpected error while stopping"],
             previous: unexpected,
             pid: pid,
