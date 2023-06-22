@@ -185,7 +185,7 @@ defmodule HttpResponseUtils do
         messages
       else
         eid = get_in(data, [:eid])
-        messages = messages ++ ["EID: [#{eid}]"] ++ ["STACKTRACE: [#{inspect(stack)}]"]
+        messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(stack)}]"]
       end
 
     data = nil
