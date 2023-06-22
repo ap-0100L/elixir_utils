@@ -59,40 +59,42 @@ defmodule HttpResponseUtils do
   @doc """
   ## Function
   """
-  defp get_debug_data(data, messages, stack, inspect_debug_data) do
+  defp get_debug_data(error_data, messages, stack, inspect_debug_data) do
     {:ok, hostname} = :inet.gethostname()
     # {:ok, addrs} = Utils.get_if_addrs!()
 
-    stacktrace = Map.get(data, :stacktrace, nil)
-    stack_from_data = Map.get(data, :stack, nil)
+    stacktrace_from_error_data = Map.get(error_data, :stacktrace, nil)
+    stack_from_error_data = Map.get(error_data, :stack, nil)
 
-    stacktrace = stacktrace || stack_from_data
+    stacktrace = stack_from_error_data || stacktrace_from_error_data || stack
 
     data =
       if is_nil(stacktrace) or is_bitstring(stacktrace) do
-        data
+        error_data
       else
-        %{data | stacktrace: inspect(stacktrace)}
+        %{error_data | stacktrace: inspect(stacktrace)}
       end
 
-    data =
+    error_data =
       if inspect_debug_data do
-        inspect(data)
+        inspect(error_data)
       else
-        data
+        error_data
       end
+
+    eid = Map.get(error_data, :eid)
+    messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(stacktrace)}]"]
 
     debug_data = %{
       hostname: "#{hostname}",
       node_name: Node.self(),
       nodes: Node.list(),
       # ifaddrs: addrs,
-      error_data: data,
-      stacktrace: inspect(stack),
+      error_data: error_data,
       messages: messages
     }
 
-    {:ok, debug_data}
+    {:ok, {debug_data, messages}}
   end
 
   ##############################################################################
@@ -171,25 +173,16 @@ defmodule HttpResponseUtils do
         add_debug_data
       end
 
+    {:ok, {debug_data, messages}} = get_debug_data(data, messages, stack, inspect_debug_data)
+
     debug_data =
       if add_debug_data do
-        {:ok, debug_data} = get_debug_data(data, messages, stack, inspect_debug_data)
-
         debug_data
       else
         nil
       end
 
-    messages =
-      if add_debug_data do
-        messages
-      else
-        eid = get_in(data, [:eid])
-        messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(stack)}]"]
-      end
-
-    data = nil
-    {:ok, response} = build_response(code, data, messages, debug_data)
+    {:ok, response} = build_response(code, nil, messages, debug_data)
 
     {:ok, {status, response}}
   end
