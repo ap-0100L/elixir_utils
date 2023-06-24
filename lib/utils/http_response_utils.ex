@@ -17,15 +17,9 @@ defmodule HttpResponseUtils do
     response = %{
       timestamp: timestamp,
       code: code,
-      data: data
+      data: data,
+      messages: messages
     }
-
-    response =
-      if is_nil(messages) do
-        response
-      else
-        Map.put(response, :messages, messages)
-      end
 
     response =
       if is_nil(debug_data) do
