@@ -68,11 +68,11 @@ defmodule HttpResponseUtils do
 
     stacktrace = stack_from_error_data || stacktrace_from_error_data || stack
 
-    data =
+    error_data =
       if is_nil(stacktrace) or is_bitstring(stacktrace) do
         error_data
       else
-        %{error_data | stacktrace: inspect(stacktrace)}
+        Map.put(error_data, :stacktrace, inspect(stacktrace))
       end
 
     error_data =
