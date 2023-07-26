@@ -917,6 +917,7 @@ defmodule Utils do
       do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["string, list cannot be nil; string must be a string; list must be a list"])
 
   def format_string(string, [head | tail]) do
+    head = if is_atom(head), do: "#{head}", else: head
     head = if is_bitstring(head), do: head, else: inspect(head)
 
     string = String.replace(string, @format_string_wildcard_pattern, head, global: false)
