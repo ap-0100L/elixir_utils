@@ -64,15 +64,22 @@ defmodule UniError do
       messages = unquote(messages)
       data = unquote(data)
 
+      # FIXME: U can add stacktrace on build UniError
+      # {:current_stacktrace, stacktrace} = Process.info(self(), :current_stacktrace)
+      # stacktrace = inspect(stacktrace)
+
+      eid = UUID.uuid1()
+
       {previous_messages, data} =
         if is_nil(data) or (not is_list(data) and not is_map(data)) do
           data =
             if is_nil(data) do
-              %{eid: UUID.uuid1(), module: __MODULE__, function: __ENV__.function}
+              %{eid: eid, node: Node.self(), module: __MODULE__, function: __ENV__.function}
             else
               %{
-                eid: UUID.uuid1(),
+                eid: eid,
                 unsupported_data: data,
+                node: Node.self(),
                 module: __MODULE__,
                 function: __ENV__.function
               }
@@ -82,9 +89,10 @@ defmodule UniError do
         else
           data =
             if is_list(data) do
-              Enum.into(data ++ [module: __MODULE__, function: __ENV__.function], %{})
+              Enum.into(data ++ [node: Node.self(), module: __MODULE__, function: __ENV__.function], %{})
             else
               data
+              Map.put(data, :node, Node.self())
               Map.put(data, :function, __ENV__.function)
               Map.put(data, :module, __MODULE__)
             end
@@ -120,7 +128,7 @@ defmodule UniError do
           #  |> Enum.take_while(&(&1 != ""))
           #  |> Enum.reduce("", fn item, accum -> accum <> item end)
 
-          data = Map.put(data, :eid, UUID.uuid1())
+          data = Map.put(data, :eid, eid)
 
           {messages, data}
         end
@@ -149,7 +157,7 @@ defmodule UniError do
       %UniError{
         code: code,
         data: data,
-        messages: messages ++ previous_messages
+        messages: messages ++ previous_messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"]
       }
     end
   end
@@ -202,8 +210,17 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNI-EXCEPTION: #{inspect(e)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          %UniError{data: %{eid: eid}, messages: messages} = e
-          messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+          %UniError{messages: messages} = e
+
+          last_message = List.last(messages)
+
+          messages =
+            if String.contains?(last_message, "STACKTRACE: [") do
+              messages
+            else
+              messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+            end
+
           e = Map.put(e, :messages, messages)
 
           result =
@@ -255,7 +272,7 @@ defmodule UniError do
           e = UniError.build_uni_error(code, messages, data)
 
           %UniError{data: %{eid: eid}, messages: messages} = e
-          messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+          messages = messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
           e = Map.put(e, :messages, messages)
 
           result =
@@ -292,8 +309,17 @@ defmodule UniError do
           # e = UniError.build_uni_error(:EXIT_CAUGHT_ERROR, ["Caught EXIT Uni-reason"], previous: reason)
           e = reason
 
-          %UniError{data: %{eid: eid}, messages: messages} = e
-          messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+          %UniError{messages: messages} = e
+
+          last_message = List.last(messages)
+
+          messages =
+            if String.contains?(last_message, "STACKTRACE: [") do
+              messages
+            else
+              messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+            end
+
           e = Map.put(e, :messages, messages)
 
           result =
@@ -346,7 +372,7 @@ defmodule UniError do
           e = UniError.build_uni_error(code, messages, data)
 
           %UniError{data: %{eid: eid}, messages: messages} = e
-          messages = messages ++ ["EID: [#{eid}]"] ++ ["NODE: [#{Node.self()}]"] ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
+          messages = messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
           e = Map.put(e, :messages, messages)
 
           result =
@@ -382,6 +408,10 @@ defmodule UniError do
   """
   defmacro raise_error!(exception) do
     quote do
+      # FIXME: U can add stacktrace on raise UniError
+      # {:current_stacktrace, stacktrace} = Process.info(self(), :current_stacktrace)
+      # stacktrace = inspect(stacktrace)
+
       exception = UniError.build_uni_error(:UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: unquote(exception))
       raise(exception)
     end
@@ -395,6 +425,10 @@ defmodule UniError do
 
   defmacro raise_error!(code, messages, data) do
     quote do
+      # FIXME: U can add stacktrace on raise UniError
+      # {:current_stacktrace, stacktrace} = Process.info(self(), :current_stacktrace)
+      # stacktrace = inspect(stacktrace)
+
       exception = UniError.build_uni_error(unquote(code), unquote(messages), data: unquote(data))
       raise(exception)
     end
