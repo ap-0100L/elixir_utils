@@ -60,20 +60,21 @@ defmodule HttpResponseUtils do
     stacktrace_from_error_data = Map.get(error_data, :stacktrace, nil)
     stack_from_error_data = Map.get(error_data, :stack, nil)
 
+    error_data = Map.delete(error_data, :stacktrace)
+    error_data = Map.delete(error_data, :stack)
+
     stacktrace = stack_from_error_data || stacktrace_from_error_data || stack
 
     error_data =
-      if is_nil(stacktrace) or is_bitstring(stacktrace) do
-        error_data
-      else
-        Map.put(error_data, :stacktrace, inspect(stacktrace))
-      end
-
-    error_data =
       if inspect_debug_data do
+        Map.put(error_data, :stacktrace, stacktrace)
         inspect(error_data)
       else
-        error_data
+        if is_nil(stacktrace) or is_bitstring(stacktrace) do
+          Map.put(error_data, :stacktrace, stacktrace)
+        else
+          Map.put(error_data, :stacktrace, inspect(stacktrace))
+        end
       end
 
     debug_data = %{
@@ -98,7 +99,7 @@ defmodule HttpResponseUtils do
         :OK ->
           {200, code, messages}
 
-        :UNEXPECTED_ERROR ->
+        :UNHANDLED_ERROR ->
           {500, code, messages}
 
         value when value in [:HANDLER_NOT_FOUND_ERROR, :NOT_FOUND, :STATUS_NOT_FOUND_ERROR] ->
@@ -164,6 +165,7 @@ defmodule HttpResponseUtils do
         add_debug_data
       end
 
+    response_data = Map.get(data, :response_data, nil)
     debug_data =
       if add_debug_data do
         {:ok, debug_data} = get_debug_data(data, messages, stack, inspect_debug_data)
@@ -173,8 +175,7 @@ defmodule HttpResponseUtils do
         nil
       end
 
-    data = nil
-    {:ok, response} = build_response(code, data, messages, debug_data)
+    {:ok, response} = build_response(code, response_data, messages, debug_data)
 
     {:ok, {status, response}}
   end

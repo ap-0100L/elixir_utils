@@ -412,7 +412,13 @@ defmodule UniError do
       # {:current_stacktrace, stacktrace} = Process.info(self(), :current_stacktrace)
       # stacktrace = inspect(stacktrace)
 
-      exception = UniError.build_uni_error(:UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: unquote(exception))
+      exception = unquote(exception)
+      
+      if not is_nil(exception) and is_struct(exception) and exception.__struct__ === UniError do
+        raise(exception)  
+      end
+
+      exception = UniError.build_uni_error(:UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: exception)
       raise(exception)
     end
   end
