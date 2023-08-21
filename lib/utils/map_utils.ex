@@ -204,5 +204,33 @@ defmodule MapUtils do
   end
 
   ####################################################################################################################
+  @doc """
+  ## Function
+  """
+  def get_in(nil, [_ | _]) do
+    nil
+  end
+
+  def get_in(data, [h]) when :erlang.is_function(h) do
+    h.(:get, data, fn x1 -> x1 end)
+  end
+
+  def get_in(data, [h | t]) when :erlang.is_function(h) do
+    h.(:get, data, fn x1 -> Kernel.get_in(x1, t) end)
+  end
+
+  def get_in(data, [h]) when is_atom(h) do
+    data[h]
+  end
+
+  def get_in(data, [h]) when is_bitstring(h) do
+    data[h]
+  end
+
+  def get_in(data, [h | t]) do
+    Kernel.get_in(data[h], t)
+  end
+
+  ####################################################################################################################
   ####################################################################################################################
 end
