@@ -202,6 +202,13 @@ defmodule UniError do
       rescue_func_args = unquote(rescue_func_args)
       module = unquote(module)
 
+      {reraise, re_error} =
+        if is_tuple(reraise) do
+          reraise
+        else
+          {(if reraise, do: true, else: false), nil}
+        end
+
       try do
         unquote(clause)
       rescue
@@ -252,14 +259,14 @@ defmodule UniError do
           end
 
           {code, messages, data} =
-            if is_tuple(reraise) do
-              case tuple_size(reraise) do
+            if is_tuple(re_error) do
+              case tuple_size(re_error) do
                 3 ->
-                  {code, messages, data} = reraise
+                  {code, messages, data} = re_error
                   if is_list(data), do: {code, messages, [previous: unsupported] ++ data}, else: {code, messages, data: data, previous: unsupported}
 
                 2 ->
-                  {code, messages} = reraise
+                  {code, messages} = re_error
                   {code, messages, previous: unsupported}
 
                 _ ->
@@ -352,14 +359,14 @@ defmodule UniError do
           end
 
           {code, messages, data} =
-            if is_tuple(reraise) do
-              case tuple_size(reraise) do
+            if is_tuple(re_error) do
+              case tuple_size(re_error) do
                 3 ->
-                  {code, messages, data} = reraise
+                  {code, messages, data} = re_error
                   if is_list(data), do: {code, messages, [previous: reason] ++ data}, else: {code, messages, data: data, previous: reason}
 
                 2 ->
-                  {code, messages} = reraise
+                  {code, messages} = re_error
                   {code, messages, previous: reason}
 
                 _ ->
@@ -413,9 +420,9 @@ defmodule UniError do
       # stacktrace = inspect(stacktrace)
 
       exception = unquote(exception)
-      
+
       if not is_nil(exception) and is_struct(exception) and exception.__struct__ === UniError do
-        raise(exception)  
+        raise(exception)
       end
 
       exception = UniError.build_uni_error(:UNEXPECTED_NOT_STRUCTURED_ERROR, ["Unexpected not structured error"], previous: exception)

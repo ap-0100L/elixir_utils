@@ -41,7 +41,7 @@ defmodule StateUtils.On.Agent do
 
   def init_state(name, state, linked) do
     name = {:via, Registry, {@registry_name, name}}
-    error = {:STATE_AGENT_INIT_ERROR, ["Cannot init state on Agent"], name: name, registry_name: @registry_name}
+    error = {true, {:STATE_AGENT_INIT_ERROR, ["Cannot init state on Agent"], name: name, registry_name: @registry_name}}
     result =
       if linked do
         UniError.rescue_error!(Agent.start_link(fn -> state end, name: name), error)
@@ -86,7 +86,7 @@ defmodule StateUtils.On.Agent do
       do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["name cannot be nil"])
 
   def get_state(name) do
-    result = UniError.rescue_error!(Agent.get({:via, Registry, {@registry_name, name}}, fn state -> state end), {:STATE_AGENT_GET_ERROR, ["Cannot get state on Agent"], name: name, registry_name: @registry_name})
+    result = UniError.rescue_error!(Agent.get({:via, Registry, {@registry_name, name}}, fn state -> state end), {true, {:STATE_AGENT_GET_ERROR, ["Cannot get state on Agent"], name: name, registry_name: @registry_name}})
 
     result =
       case result do
@@ -226,7 +226,7 @@ defmodule StateUtils.On.Agent do
   def delete_state(name) do
     [{pid, _}] = Registry.lookup(@registry_name, name)
 
-    result = UniError.rescue_error!(Agent.stop(pid, :normal, :infinity), {:STATE_AGENT_DELETE_ERROR, ["Cannot delete state on Agent"], name: name, registry_name: @registry_name})
+    result = UniError.rescue_error!(Agent.stop(pid, :normal, :infinity), {true, {:STATE_AGENT_DELETE_ERROR, ["Cannot delete state on Agent"], name: name, registry_name: @registry_name}})
 
     result =
       case result do
