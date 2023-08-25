@@ -6,6 +6,9 @@ defmodule MapUtils do
   """
   use Utils
 
+  @if_key_not_exists_default_value :KEY_NOT_EXISTS_RND124477854144754
+  @if_no_default_value :NO_DEFAULT_VALUE_RND355845215478965
+
   ####################################################################################################################
   @doc """
   ## Function
@@ -26,13 +29,7 @@ defmodule MapUtils do
             fn item, accum ->
               {:ok, val} = convert_to_atoms_keys_in_map(item, underscore_keys, camelize_keys)
 
-              # FIXME: It probably slow action
-              :lists.append(accum, [val])
-
-              # FIXME: It revers list
-              # [val | accum]
-
-              # accum ++ [val]
+              accum ++ [val]
             end
           )
 
@@ -207,28 +204,163 @@ defmodule MapUtils do
   @doc """
   ## Function
   """
-  def get_in(nil, [_ | _]) do
-    nil
+  # FIXME: Fix this shit please
+  def put_nested(data, [_ | _] = keys, value) do
+    elem(get_and_update_nested(data, keys, fn _ -> {nil, value} end), 1)
   end
 
-  def get_in(data, [h]) when :erlang.is_function(h) do
-    h.(:get, data, fn x1 -> x1 end)
+  def get_and_update_nested(data, [head], fun) when :erlang.is_function(head, 3) do
+    head.(:get_and_update, data, fun)
   end
 
-  def get_in(data, [h | t]) when :erlang.is_function(h) do
-    h.(:get, data, fn x1 -> Kernel.get_in(x1, t) end)
+  def get_and_update_nested(data, [head | tail], fun) when :erlang.is_function(head, 3) do
+    head.(:get_and_update, data, fn x1 -> get_and_update_nested(x1, tail, fun) end)
   end
 
-  def get_in(data, [h]) when is_atom(h) do
-    data[h]
+  def get_and_update_nested(data, [head], fun) when :erlang.is_function(fun, 1) do
+    get_and_update(data, head, fun)
   end
 
-  def get_in(data, [h]) when is_bitstring(h) do
-    data[h]
+  def get_and_update_nested(data, [head | tail], fun) when :erlang.is_function(fun, 1) do
+    get_and_update(data, head, fn x1 -> get_and_update_nested(x1, tail, fun) end)
   end
 
-  def get_in(data, [h | t]) do
-    Kernel.get_in(data[h], t)
+  def get_and_update(map, key, fun) when is_map(map) and is_atom(key) do
+    get_and_update_from_map(map, key, fun)
+  end
+
+  def get_and_update(map, key, fun) when is_map(map) and is_bitstring(key) do
+    get_and_update_from_map(map, key, fun)
+  end
+
+  def get_and_update_from_map(map, key, fun) when is_map(map) and :erlang.is_function(fun, 1) do
+    (
+      current = Map.get(map, key, @if_key_not_exists_default_value)
+      case(fun.(current)) do
+        {get, update} ->
+          {get, Map.put(map, key, update)}
+        :pop ->
+          {current, Map.delete(map, key)}
+        other ->
+          :erlang.error(RuntimeError.exception(<<"the given function must return a two-element tuple or :pop, got: "::binary(), Kernel.inspect(other)::binary()>>), :none, error_info: %{module: Exception})
+      end
+      )
+  end
+
+  def get_and_update(nil, key, _fun) do
+    raise(ArgumentError, <<"could not put/update key "::binary(), inspect(key)::binary(), " on a nil value"::binary()>>)
+  end
+
+  ####################################################################################################################
+  @doc """
+  ## Function
+  """
+  def get_nested(map, list, default \\ @if_no_default_value)
+
+  def get_nested(map, list, _default)
+      when is_map(map) or not is_list(list),
+      do: UniError.raise_error!(:WRONG_FUNCTION_ARGUMENT_ERROR, ["map, list cannot be nil; map must be a map; list mast be a list"])
+
+  def get_nested(value, [_ | _], _default) when not is_map(value) do
+    value
+  end
+
+  def get_nested(map, [h], _default) when is_map(map) and :erlang.is_function(h) do
+    h.(:get, map, fn x1 -> x1 end)
+  end
+
+  def get_nested(map, [h | t], default) when is_map(map) and :erlang.is_function(h) do
+    h.(:get, map, fn x1 -> get_nested(x1, t, default) end)
+  end
+
+  def get_nested(map, [h], default) when is_map(map) and is_atom(h) do
+    value = Map.get(map, h, @if_key_not_exists_default_value)
+
+    if value == @if_key_not_exists_default_value do
+      {:ok, h} = Utils.atom_to_string(h)
+      value = Map.get(map, h, @if_key_not_exists_default_value)
+
+      if value == @if_key_not_exists_default_value do
+        if default === @if_no_default_value do
+          UniError.raise_error!(:KEY_NOT_EXISTS_ERROR, ["Key [#{h}] not exists error}"], key: h)
+        else
+          default
+        end
+      else
+        value
+      end
+    else
+      value
+    end
+  end
+
+  def get_nested(map, [h], default) when is_map(map) and is_bitstring(h) do
+    value = Map.get(map, h, @if_key_not_exists_default_value)
+
+    if value == @if_key_not_exists_default_value do
+      {:ok, h} = Utils.string_to_atom(h)
+      value = Map.get(map, h, @if_key_not_exists_default_value)
+
+      if value == @if_key_not_exists_default_value do
+        if default === @if_no_default_value do
+          UniError.raise_error!(:KEY_NOT_EXISTS_ERROR, ["Key [#{h}] not exists error}"], key: h)
+        else
+          default
+        end
+      else
+        value
+      end
+    else
+      value
+    end
+  end
+
+  def get_nested(map, [h | t], default) when is_map(map) and is_atom(h) do
+    value = Map.get(map, h, @if_key_not_exists_default_value)
+
+    value =
+      if value == @if_key_not_exists_default_value do
+        {:ok, h} = Utils.atom_to_string(h)
+        value = Map.get(map, h, @if_key_not_exists_default_value)
+
+        if value == @if_key_not_exists_default_value do
+          if default === @if_no_default_value do
+            UniError.raise_error!(:KEY_NOT_EXISTS_ERROR, ["Key [#{h}] not exists error}"], key: h)
+          else
+            default
+          end
+        else
+          value
+        end
+      else
+        value
+      end
+
+    get_nested(value, t, default)
+  end
+
+  def get_nested(map, [h | t], default) when is_map(map) and is_bitstring(h) do
+    value = Map.get(map, h, @if_key_not_exists_default_value)
+
+    value =
+      if value == @if_key_not_exists_default_value do
+        {:ok, h} = Utils.string_to_atom(h)
+        value = Map.get(map, h, @if_key_not_exists_default_value)
+
+        if value == @if_key_not_exists_default_value do
+          if default === @if_no_default_value do
+            UniError.raise_error!(:KEY_NOT_EXISTS_ERROR, ["Key [#{h}] not exists error}"], key: h)
+          else
+            default
+          end
+        else
+          value
+        end
+      else
+        value
+      end
+
+    get_nested(value, t, default)
   end
 
   ####################################################################################################################
