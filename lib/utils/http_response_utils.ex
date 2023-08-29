@@ -149,14 +149,14 @@ defmodule HttpResponseUtils do
 
   ####################################################################################################################
   @doc """
-  def get_response({:error, code, data, messages}, stack)
+  def get_response({:error, code, messages, data}, stack)
 
-  {:error, code, data, messages}
+  {:error, code, messages, data}
   {:ok, data}
   """
   def get_response(result, stack \\ nil, add_debug_data \\ nil, inspect_debug_data \\ true)
 
-  def get_response({:error, code, data, messages}, stack, add_debug_data, inspect_debug_data) do
+  def get_response({:error, code, messages, data}, stack, add_debug_data, inspect_debug_data) do
     {:ok, {status, code, messages}} = map_code(code, messages)
 
     add_debug_data =
@@ -183,8 +183,8 @@ defmodule HttpResponseUtils do
     {:ok, {status, response}}
   end
 
-  def get_response(%UniError{code: code, data: data, messages: messages}, stack, add_debug_data, inspect_debug_data) do
-    get_response({:error, code, data, messages}, stack, add_debug_data, inspect_debug_data)
+  def get_response(%UniError{code: code, messages: messages, data: data}, stack, add_debug_data, inspect_debug_data) do
+    get_response({:error, code, messages, data}, stack, add_debug_data, inspect_debug_data)
   end
 
   def get_response({:ok, data}, _stack, _add_debug_data, _inspect_debug_data) do

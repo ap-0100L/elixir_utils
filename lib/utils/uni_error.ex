@@ -105,17 +105,17 @@ defmodule UniError do
               {[], data}
             else
               case previous do
-                {:error, _code, _data, messages} ->
+                {:error, _code, messages, _data} ->
                   {messages, data}
 
-                %_{code: _code, data: _data, messages: messages} ->
+                %_{code: _code, messages: messages, data: _data} ->
                   {messages, data}
 
                 %_{messages: messages} ->
                   {messages, data}
 
-                %_{message: messages} ->
-                  {messages, data}
+                %_{message: message} ->
+                  {[message], data}
 
                 _ ->
                   {[], data}
@@ -181,7 +181,7 @@ defmodule UniError do
         messages: messages
       } = e
 
-      {:error, code, data, messages}
+      {:error, code, messages, data}
     end
   end
 
@@ -263,7 +263,7 @@ defmodule UniError do
               case tuple_size(re_error) do
                 3 ->
                   {code, messages, data} = re_error
-                  if is_list(data), do: {code, messages, [previous: unsupported] ++ data}, else: {code, messages, data: data, previous: unsupported}
+                  if is_list(data), do: {code, messages, [previous: unsupported] ++ data}, else: {code, messages, [data: data, previous: unsupported]}
 
                 2 ->
                   {code, messages} = re_error
@@ -363,7 +363,7 @@ defmodule UniError do
               case tuple_size(re_error) do
                 3 ->
                   {code, messages, data} = re_error
-                  if is_list(data), do: {code, messages, [previous: reason] ++ data}, else: {code, messages, data: data, previous: reason}
+                  if is_list(data), do: {code, messages, [previous: reason] ++ data}, else: {code, messages, [data: data, previous: reason]}
 
                 2 ->
                   {code, messages} = re_error
@@ -378,7 +378,7 @@ defmodule UniError do
 
           e = UniError.build_uni_error(code, messages, data)
 
-          %UniError{data: %{eid: eid}, messages: messages} = e
+          %UniError{messages: messages, data: %{eid: eid}} = e
           messages = messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
           e = Map.put(e, :messages, messages)
 
@@ -452,17 +452,17 @@ defmodule UniError do
   ## Function
   """
   @impl true
-  def exception(%__MODULE__{code: _code, data: _data, messages: _messages} = exception) do
+  def exception(%__MODULE__{code: _code, messages: _messages, data: _data} = exception) do
     exception
   end
 
   @impl true
-  def exception(code: code, data: data, messages: messages) do
+  def exception(code: code, messages: messages, data: data) do
     build_uni_error(code, messages, data)
   end
 
   @impl true
-  def exception({:error, code, data, messages} = _exception) do
+  def exception({:error, code, messages, data} = _exception) do
     build_uni_error(code, messages, data)
   end
 
@@ -476,7 +476,7 @@ defmodule UniError do
   ## Function
   """
   @impl true
-  def message(%__MODULE__{code: _code, data: _data, messages: _messages} = exception) do
+  def message(%__MODULE__{code: _code, messages: _messages, data: _data} = exception) do
     inspect(exception)
   end
 

@@ -35,11 +35,10 @@ defmodule RPCUtils do
             node: node,
             module: module,
             function: function,
-            # args: args,
             previous: reason
           )
 
-        {:error, _code, _data, _messages} = e ->
+        {:error, _code, _messages, _data} = e ->
           UniError.raise_error!(e)
 
         result ->

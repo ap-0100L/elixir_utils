@@ -12,7 +12,7 @@ defimpl Jason.Encoder, for: Tuple do
   @impl Jason.Encoder
   def encode(value, options) do
     case value do
-      {:error, code, data, messages} ->
+      {:error, code, messages, data} ->
         stacktrace = Map.get(data, :stacktrace, nil)
         stack_from_data = Map.get(data, :stack, nil)
 
@@ -25,11 +25,11 @@ defimpl Jason.Encoder, for: Tuple do
             %{data | stacktrace: inspect(stacktrace)}
           end
 
-        %{code: code, data: data, messages: messages}
+        %{code: code, messages: messages, data: data}
         |> Jason.Encode.map(options)
 
       {:EXIT, {reason, data}} ->
-        %{code: :EXIT, data: %{stacktrace: inspect(data), previous: reason}, messages: "Exit"}
+        %{code: :EXIT, messages: "Exit", data: %{stacktrace: inspect(data), previous: reason}}
         |> Jason.Encode.map(options)
 
       _ ->

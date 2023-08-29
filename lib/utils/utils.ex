@@ -197,7 +197,7 @@ defmodule Utils do
             :ok ->
               :ok
 
-            {:error, _code, _data, _messages} = e ->
+            {:error, _code, _messages, _data} = e ->
               UniError.build_error(:WRONG_VALUE_IN_MAP_ERROR, ["Required key: '#{key}'"], previous: e, key: key, type: keyValueType)
           end
 
