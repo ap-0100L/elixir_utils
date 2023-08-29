@@ -202,11 +202,29 @@ defmodule UniError do
       rescue_func_args = unquote(rescue_func_args)
       module = unquote(module)
 
-      {reraise, re_error} =
+      {reraise, wrap, re_error} =
         if is_tuple(reraise) do
           reraise
         else
-          {(if reraise, do: true, else: false), nil}
+          {if(reraise, do: true, else: false), false, nil}
+        end
+
+      {wrap_code, wrap_messages, wrap_data} =
+        if is_tuple(re_error) do
+          case tuple_size(re_error) do
+            3 ->
+              {code, messages, data} = re_error
+              if is_list(data), do: {code, messages, data}, else: {code, messages, [data: data]}
+
+            2 ->
+              {code, messages} = re_error
+              {code, messages, %{}}
+
+            _ ->
+              {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], %{}}
+          end
+        else
+          {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], %{}}
         end
 
       try do
@@ -217,8 +235,7 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNI-EXCEPTION: #{inspect(e)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          %UniError{messages: messages} = e
-
+          %UniError{messages: messages, data: data} = e
           last_message = List.last(messages)
 
           messages =
@@ -228,7 +245,17 @@ defmodule UniError do
               messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
             end
 
+          stacktrace = Map.get(data, :stacktrace, __STACKTRACE__)
+          data = Map.put(data, :stacktrace, stacktrace)
+          e = Map.put(e, :data, data)
           e = Map.put(e, :messages, messages)
+
+          e =
+            if wrap != false do
+              UniError.build_uni_error(wrap_code, wrap_messages, wrap_data ++ [previous: e])
+            else
+              e
+            end
 
           result =
             if not is_nil(rescue_func) do
@@ -243,8 +270,6 @@ defmodule UniError do
 
           %UniError{data: data} = e
           data = Map.put(data, :rescue_func_result, result)
-          stacktrace = Map.get(data, :stacktrace, __STACKTRACE__)
-          data = Map.put(data, :stacktrace, stacktrace)
           e = Map.put(e, :data, data)
 
           if reraise != false do
@@ -258,29 +283,8 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNSUPPORTED ERROR: #{inspect(unsupported)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          {code, messages, data} =
-            if is_tuple(re_error) do
-              case tuple_size(re_error) do
-                3 ->
-                  {code, messages, data} = re_error
-                  if is_list(data), do: {code, messages, [previous: unsupported] ++ data}, else: {code, messages, [data: data, previous: unsupported]}
-
-                2 ->
-                  {code, messages} = re_error
-                  {code, messages, previous: unsupported}
-
-                _ ->
-                  {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
-              end
-            else
-              {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: unsupported}
-            end
-
+          {code, messages, data} = {wrap_code, wrap_messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"], wrap_data ++ [previous: unsupported, stacktrace: __STACKTRACE__]}
           e = UniError.build_uni_error(code, messages, data)
-
-          %UniError{data: %{eid: eid}, messages: messages} = e
-          messages = messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
-          e = Map.put(e, :messages, messages)
 
           result =
             if not is_nil(rescue_func) do
@@ -295,8 +299,6 @@ defmodule UniError do
 
           %UniError{data: data} = e
           data = Map.put(data, :rescue_func_result, result)
-          stacktrace = Map.get(data, :stacktrace, __STACKTRACE__)
-          data = Map.put(data, :stacktrace, stacktrace)
           e = Map.put(e, :data, data)
 
           if reraise != false do
@@ -313,11 +315,9 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT REASON: #{inspect(reason)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          # e = UniError.build_uni_error(:EXIT_CAUGHT_ERROR, ["Caught EXIT Uni-reason"], previous: reason)
           e = reason
 
-          %UniError{messages: messages} = e
-
+          %UniError{messages: messages, data: data} = e
           last_message = List.last(messages)
 
           messages =
@@ -327,7 +327,17 @@ defmodule UniError do
               messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
             end
 
+          stacktrace = Map.get(data, :stacktrace, __STACKTRACE__)
+          data = Map.put(data, :stacktrace, stacktrace)
+          e = Map.put(e, :data, data)
           e = Map.put(e, :messages, messages)
+
+          e =
+            if wrap != false do
+              UniError.build_uni_error(wrap_code, wrap_messages, wrap_data ++ [previous: e])
+            else
+              e
+            end
 
           result =
             if not is_nil(rescue_func) do
@@ -342,9 +352,6 @@ defmodule UniError do
 
           %UniError{data: data} = e
           data = Map.put(data, :rescue_func_result, result)
-          stacktrace = Map.get(data, :stacktrace, [])
-          stacktrace = stacktrace ++ [__STACKTRACE__]
-          data = Map.put(data, :stacktrace, stacktrace)
           e = Map.put(e, :data, data)
 
           if reraise != false do
@@ -358,29 +365,8 @@ defmodule UniError do
             Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT UNSUPPORTED REASON: #{inspect(reason)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
           end
 
-          {code, messages, data} =
-            if is_tuple(re_error) do
-              case tuple_size(re_error) do
-                3 ->
-                  {code, messages, data} = re_error
-                  if is_list(data), do: {code, messages, [previous: reason] ++ data}, else: {code, messages, [data: data, previous: reason]}
-
-                2 ->
-                  {code, messages} = re_error
-                  {code, messages, previous: reason}
-
-                _ ->
-                  {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
-              end
-            else
-              {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], previous: reason}
-            end
-
+          {code, messages, data} = {wrap_code, wrap_messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"], wrap_data ++ [previous: reason, stacktrace: __STACKTRACE__]}
           e = UniError.build_uni_error(code, messages, data)
-
-          %UniError{messages: messages, data: %{eid: eid}} = e
-          messages = messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"]
-          e = Map.put(e, :messages, messages)
 
           result =
             if not is_nil(rescue_func) do
@@ -395,9 +381,6 @@ defmodule UniError do
 
           %UniError{data: data} = e
           data = Map.put(data, :rescue_func_result, result)
-          stacktrace = Map.get(data, :stacktrace, [])
-          stacktrace = stacktrace ++ [__STACKTRACE__]
-          data = Map.put(data, :stacktrace, stacktrace)
           e = Map.put(e, :data, data)
 
           if reraise != false do

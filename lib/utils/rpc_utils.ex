@@ -29,6 +29,12 @@ defmodule RPCUtils do
     result =
       case result do
         {:badrpc, reason} ->
+          reason =
+            case reason do
+              {:EXIT, {reason, _stacktrace}} -> reason
+              _ -> reason
+            end
+
           UniError.raise_error!(
             :RPC_CALL_FAIL_ERROR,
             ["RPC call fail"],
