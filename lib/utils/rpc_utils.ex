@@ -29,15 +29,15 @@ defmodule RPCUtils do
     result =
       case result do
         {:badrpc, reason} ->
-          reason =
+          {reason, messages} =
             case reason do
-              {:EXIT, {reason, _stacktrace}} -> reason
-              _ -> reason
+              {:EXIT, {reason, _stacktrace}} -> {reason, ["RPC call fail", "EXIT"]}
+              _ -> {reason, ["RPC call fail"]}
             end
 
           UniError.raise_error!(
             :RPC_CALL_FAIL_ERROR,
-            ["RPC call fail"],
+            messages,
             node: node,
             module: module,
             function: function,
