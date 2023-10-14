@@ -13,7 +13,7 @@ defmodule RPCUtils do
   @doc """
   ## Function
   """
-  def call_rpc!(node, module, function, args)
+  defp call_rpc!(node, module, function, args)
       when is_nil(node) or is_nil(module) or is_nil(function) or is_nil(args) or
              (not is_atom(node) and not is_list(node)) or not is_atom(module) or
              not is_atom(function) or
@@ -23,7 +23,7 @@ defmodule RPCUtils do
           arguments: [node: node, module: module, function: function, args: args]
         )
 
-  def call_rpc!(node, module, function, args) when is_atom(node) do
+  defp call_rpc!(node, module, function, args) when is_atom(node) do
     result = :rpc.call(node, module, function, args)
 
     result =
@@ -54,7 +54,7 @@ defmodule RPCUtils do
     result
   end
 
-  def call_rpc!(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
+  defp call_rpc!(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
     raise_if_empty!(remote_node_name_prefixes, :list, "Wrong remote_node_name_prefixes value")
     {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, Node.list())
     raise_if_empty!(nodes, :list, "Wrong nodes value")
@@ -68,20 +68,17 @@ defmodule RPCUtils do
   @doc """
   ## Function
   """
-  def call_local_or_rpc!(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
+  def call_local_or_rpc(remote_node_name_prefixes, module, function, args) when is_list(remote_node_name_prefixes) do
     raise_if_empty!(remote_node_name_prefixes, :list, "Wrong remote_node_name_prefixes value")
 
-    {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, Node.list())
+    {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, Node.list() ++ [Node.self()])
+    raise_if_empty!(nodes, :list, "Wrong nodes value")
 
-    if nodes == [] do
-      node = Node.self()
-      {:ok, nodes} = Utils.get_nodes_list_by_prefixes(remote_node_name_prefixes, [node])
-      raise_if_empty!(nodes, :list, "Wrong nodes value")
+    node = Enum.random(nodes)
 
+    if node == Node.self() do
       apply(module, function, args)
     else
-      node = Enum.random(nodes)
-
       call_rpc!(node, module, function, args)
     end
   end
