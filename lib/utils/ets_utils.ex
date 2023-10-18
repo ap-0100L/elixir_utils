@@ -23,7 +23,7 @@ defmodule EtsUtils do
   @doc """
   ## Function
   """
-  def insert!(table_name, {key, _value} = record) do
+  def insert(table_name, {key, _value} = record) do
     result = UniError.rescue_error!(Ets.insert(table_name, record))
 
     result =

@@ -68,7 +68,7 @@ defmodule UniError do
       # {:current_stacktrace, stacktrace} = Process.info(self(), :current_stacktrace)
       # stacktrace = inspect(stacktrace)
 
-      eid = UUID.uuid1()
+      eid = UUID.uuid4()
 
       {previous_messages, data} =
         if is_nil(data) or (not is_list(data) and not is_map(data)) do
