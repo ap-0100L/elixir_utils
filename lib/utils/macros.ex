@@ -14,41 +14,39 @@ defmodule Macros do
 
   def expand_macro() do
     Macro.expand(
-      (
-#        clause =
-#          quote do
-#            "claues"
-#          end
-#
-#        do_rescue =
-#          quote do
-#            "do_rescue"
-#          end
-#
-#        log_error =
-#          quote do
-#            "log_error"
-#          end
-#
-#        reraise =
-#          quote do
-#            "reraise"
-#          end
-#
-#        do_rescue =
-#          if not is_nil(do_rescue) do
-#            quote do
-#              unquote(do_rescue)
-#            end
-#          else
-#            quote do
-#              nil
-#            end
-#          end
+      #        clause =
+      #          quote do
+      #            "claues"
+      #          end
+      #
+      #        do_rescue =
+      #          quote do
+      #            "do_rescue"
+      #          end
+      #
+      #        log_error =
+      #          quote do
+      #            "log_error"
+      #          end
+      #
+      #        reraise =
+      #          quote do
+      #            "reraise"
+      #          end
+      #
+      #        do_rescue =
+      #          if not is_nil(do_rescue) do
+      #            quote do
+      #              unquote(do_rescue)
+      #            end
+      #          else
+      #            quote do
+      #              nil
+      #            end
+      #          end
 
-        quote do
-        end
-      ),
+      quote do
+      end,
       __ENV__
     )
     |> Macro.to_string()
@@ -163,6 +161,30 @@ defmodule Macros do
       data_struct = struct(unquote(type), data_map)
 
       {:ok, data_struct}
+    end
+  end
+
+  ##############################################################################
+  @doc """
+  ## Function
+  """
+  defmacro convert_fields_in_map(map, fields_list, func) do
+    quote do
+      map = unquote(map)
+      fields_list = unquote(fields_list)
+      func = unquote(func)
+
+      Enum.reduce(
+        fields_list,
+        map,
+        fn field, accum ->
+          value = Map.get(accum, field)
+
+          value = func.(value)
+
+          Map.put(accum, field, value)
+        end
+      )
     end
   end
 
