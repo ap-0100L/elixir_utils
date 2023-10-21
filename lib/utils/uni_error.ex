@@ -221,20 +221,16 @@ defmodule UniError do
               {code, messages, %{}}
 
             _ ->
-              {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], %{}}
+              {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], []}
           end
         else
-          {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], %{}}
+          {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], []}
         end
 
       try do
         unquote(clause)
       rescue
         e in UniError ->
-          if log_error do
-            Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNI-EXCEPTION: #{inspect(e)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
-          end
-
           %UniError{messages: messages, data: data} = e
           last_message = List.last(messages)
 
@@ -256,6 +252,10 @@ defmodule UniError do
             else
               e
             end
+
+          if log_error do
+            Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNI-ERROR: #{inspect(e)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
+          end
 
           result =
             if not is_nil(rescue_func) do
@@ -279,12 +279,12 @@ defmodule UniError do
           {:error, e}
 
         unsupported ->
-          if log_error do
-            Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNSUPPORTED ERROR: #{inspect(unsupported)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
-          end
-
           {code, messages, data} = {wrap_code, wrap_messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"], wrap_data ++ [previous: unsupported, stacktrace: __STACKTRACE__]}
           e = UniError.build_uni_error(code, messages, data)
+
+          if log_error do
+            Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] RAISED UNSUPPORTED ERROR: #{inspect(e)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
+          end
 
           result =
             if not is_nil(rescue_func) do
@@ -311,10 +311,6 @@ defmodule UniError do
           returned
 
         exit, %UniError{} = reason ->
-          if log_error do
-            Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT REASON: #{inspect(reason)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
-          end
-
           e = reason
 
           %UniError{messages: messages, data: data} = e
@@ -339,6 +335,10 @@ defmodule UniError do
               e
             end
 
+          if log_error do
+            Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT WITH UNI-ERROR: #{inspect(e)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
+          end
+
           result =
             if not is_nil(rescue_func) do
               if not is_nil(module) do
@@ -361,12 +361,12 @@ defmodule UniError do
           {:error, e}
 
         exit, reason ->
-          if log_error do
-            Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT UNSUPPORTED REASON: #{inspect(reason)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
-          end
-
           {code, messages, data} = {wrap_code, wrap_messages ++ ["STACKTRACE: [#{inspect(__STACKTRACE__)}]"], wrap_data ++ [previous: reason, stacktrace: __STACKTRACE__]}
           e = UniError.build_uni_error(code, messages, data)
+
+          if log_error do
+            Logger.error("[#{inspect(__MODULE__)}][#{inspect(__ENV__.function)}] EXIT UNSUPPORTED REASON: #{inspect(e)}; STACKTRACE: #{inspect(__STACKTRACE__)}")
+          end
 
           result =
             if not is_nil(rescue_func) do
