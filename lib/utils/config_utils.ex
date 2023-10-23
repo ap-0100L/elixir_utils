@@ -25,7 +25,8 @@ defmodule ConfigUtils do
                 end
 
               {:ok, result}
-            )
+            ),
+            {true, true, {:CONFIG_UTILS_GET_ENV_ERROR, ["Error while convert system environment variable with name #{var} of type #{type}"], var: var, type: type, default: default}}
           )
 
         result
@@ -33,7 +34,7 @@ defmodule ConfigUtils do
         :error ->
           case default do
             :no_default ->
-              UniError.raise_error!(:SYSTEM_ENVIRONMENT_VARIABLE_NOT_FOUND_ERROR, ["Variable with name #{var} of type #{type} in system environment not found"], variable: var, type: type)
+              UniError.raise_error!(:CONFIG_UTILS_GET_ENV_ERROR, ["Variable with name #{var} of type #{type} in system environment not found"], var: var, type: type, default: default)
 
             _ ->
               default
