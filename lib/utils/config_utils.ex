@@ -19,14 +19,24 @@ defmodule ConfigUtils do
 
                   val
                 else
-                  {:ok, result} = Utils.string_to_type!(val, type)
+                  if val == "" or val == nil do
+                    case default do
+                      :no_default ->
+                        UniError.raise_error!(:CONFIG_UTILS_GET_ENV_ERROR, ["Variable [1] with name [#{var}] of type [#{type}] in system environment not found"], var: var, type: type, default: default)
 
-                  result
+                      _ ->
+                        default
+                    end
+                  else
+                    {:ok, result} = Utils.string_to_type!(val, type)
+
+                    result
+                  end
                 end
 
               {:ok, result}
             ),
-            {true, true, {:CONFIG_UTILS_GET_ENV_ERROR, ["Error while convert system environment variable with name #{var} of type #{type}"], var: var, type: type, default: default}}
+            {true, true, {:CONFIG_UTILS_GET_ENV_ERROR, ["Error while convert system environment variable with name [#{var}] of type [#{type}]"], var: var, type: type, default: default}}
           )
 
         result
@@ -34,7 +44,7 @@ defmodule ConfigUtils do
         :error ->
           case default do
             :no_default ->
-              UniError.raise_error!(:CONFIG_UTILS_GET_ENV_ERROR, ["Variable with name #{var} of type #{type} in system environment not found"], var: var, type: type, default: default)
+              UniError.raise_error!(:CONFIG_UTILS_GET_ENV_ERROR, ["Variable [2] with name [#{var}] of type [#{type}] in system environment not found"], var: var, type: type, default: default)
 
             _ ->
               default

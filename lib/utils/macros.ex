@@ -104,10 +104,12 @@ defmodule Macros do
   """
   defmacro raise_if_empty!(o, type, message) do
     quote do
-      result = Utils.is_not_empty(unquote(o), unquote(type))
+      o = unquote(o)
+      type = unquote(type)
+      result = Utils.is_not_empty(o, type)
 
       if result !== :ok do
-        UniError.raise_error!(:EMPTY_VALUE_ERROR, unquote(message), previous: result)
+        UniError.raise_error!(:EMPTY_VALUE_ERROR, unquote(message), previous: result, o: o, type: type)
       end
 
       :ok
@@ -120,10 +122,13 @@ defmodule Macros do
   """
   defmacro raise_if_empty!(map, key, key_value_type, message) do
     quote do
-      result = Utils.is_not_empty(unquote(map), unquote(key), unquote(key_value_type))
+      map = unquote(map)
+      key = unquote(key)
+      key_value_type = unquote(key_value_type)
+      result = Utils.is_not_empty(map, key, key_value_type)
 
       if result !== :ok do
-        UniError.raise_error!(:EMPTY_VALUE_ERROR, unquote(message), previous: result)
+        UniError.raise_error!(:EMPTY_VALUE_ERROR, unquote(message), previous: result, key: key, key_value_type: key_value_type)
       end
 
       {:ok, Map.get(unquote(map), unquote(key))}
