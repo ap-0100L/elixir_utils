@@ -218,7 +218,7 @@ defmodule UniError do
 
             2 ->
               {code, messages} = re_error
-              {code, messages, %{}}
+              {code, messages, []}
 
             _ ->
               {:RAISED_UNSUPPORTED_ERROR, ["Raised unsupported error"], []}
