@@ -616,13 +616,13 @@ defmodule Utils do
               {:ok, obj}
 
             {:error, reason} ->
-              UniError.raise_error!(:ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
+              UniError.raise_error!(:ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started [1]"],
                 app: app,
                 previous: reason
               )
 
             unexpected ->
-              UniError.raise_error!(:ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started"],
+              UniError.raise_error!(:ENSURE_APPLICATION_STARTED_ERROR, ["Not all necessary applications were started [2]"],
                 app: app,
                 previous: unexpected
               )
