@@ -28,7 +28,7 @@ defmodule Utils.MixProject do
       # TODO: Make it application with genserver
       # applications: [],
       # A list of OTP applications your application depends on which are not included in :deps
-      extra_applications: [:logger, :runtime_tools, :crypto]
+      extra_applications: [:logger, :logger_file_backend, :runtime_tools, :crypto]
     ]
   end
 
@@ -46,6 +46,7 @@ defmodule Utils.MixProject do
       # {:sibling_app_in_umbrella, in_umbrella: true}
       #
       {:libcluster, "~> 3.3.1"},
+      {:logger_file_backend, "~> 0.0.13"},
       #
       {:uuid, "~> 1.1.8"},
       {:inflex, "~> 2.1.0"},
