@@ -136,7 +136,7 @@ defmodule UniError do
       timestamp = System.os_time(:nanosecond)
       data = Map.put(data, :timestamp, timestamp)
 
-      messages = if is_nil(messages), do: [], else: messages
+      messages = if is_nil(messages) or messages == [nil], do: [], else: messages
 
       messages =
         if not is_list(messages) do
@@ -145,13 +145,13 @@ defmodule UniError do
           messages
         end
 
-      previous_messages = if is_nil(previous_messages), do: [], else: previous_messages
+      previous_messages = if is_nil(previous_messages) or previous_messages == [nil], do: [], else: previous_messages
 
       previous_messages =
-        if not is_list(previous_messages) do
-          [previous_messages]
-        else
+        if is_list(previous_messages) do
           previous_messages
+        else
+          [previous_messages]
         end
 
       %UniError{
