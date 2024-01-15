@@ -233,9 +233,6 @@ defmodule StateUtils.On.Agent do
         :ok ->
           {:ok, :STOPPED}
 
-        {:error, {:already_started, pid}} ->
-          {:ok, pid}
-
         {:error, reason} ->
           UniError.raise_error!(
             :CAN_NOT_STOP_AGENT_ERROR,
