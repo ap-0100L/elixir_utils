@@ -77,7 +77,10 @@ node_modules
 *.zip
 *.tgz
 
-**/mix.lock
-
 /.idea/libraries/*
 /.idea/libraries/**
+
+**/mix.lock
+./mix.lock
+**/*.log
+elixir_tzdata_data
